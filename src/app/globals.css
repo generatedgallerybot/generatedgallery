@@ -74,7 +74,7 @@ body > * {
 .masonry {
   column-count: 2;
   column-gap: 16px;
-  column-fill: auto;
+  column-fill: balance;
 }
 
 @media (min-width: 640px) {
@@ -98,8 +98,6 @@ body > * {
   margin-bottom: 16px;
   display: inline-block;
   width: 100%;
-  content-visibility: auto;
-  contain-intrinsic-size: auto 300px;
 }
 
 /* Focus styles */
