@@ -152,7 +152,7 @@ export default function HomePage() {
             <span className="text-accent/60">curated.</span>
           </h1>
           <p className="text-lg text-white/55 max-w-lg mx-auto leading-relaxed">
-            {imageCount || '...'} AI-generated images from across the internet. Browse, search, download — no account needed.
+            {imageCount || '...'} AI-generated images and prompts from across the internet. Browse, search, download — no account needed.
           </p>
           <SearchBar onSearch={handleSearch} />
         </div>

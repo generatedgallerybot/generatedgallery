@@ -92,6 +92,28 @@ export const getImage = async (id: string) => {
   return data;
 };
 
+export const getRelatedImages = async (image: { id: string; category?: string | null; model?: string | null }, limit = 12) => {
+  // Get images from same category, excluding current
+  let query = supabase
+    .from('images')
+    .select('*')
+    .neq('id', image.id)
+    .eq('is_nsfw', false)
+    .limit(limit);
+  
+  if (image.category && image.category !== 'Uncategorized') {
+    query = query.eq('category', image.category);
+  } else if (image.model) {
+    query = query.eq('model', image.model);
+  }
+  
+  query = query.order('upvotes', { ascending: false });
+  
+  const { data, error } = await query;
+  if (error) return [];
+  return data || [];
+};
+
 export const upvoteImage = async (imageId: string, voterIp: string) => {
   // First try to insert the vote
   const { error: voteError } = await supabase

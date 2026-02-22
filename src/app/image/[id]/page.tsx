@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getImage, upvoteImage, incrementDownloads, incrementViews } from '@/lib/supabase';
+import { getImage, getRelatedImages, upvoteImage, incrementDownloads, incrementViews } from '@/lib/supabase';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import type { Image as ImageType } from '@/types';
 
@@ -28,6 +28,7 @@ export default function ImageDetailPage() {
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [related, setRelated] = useState<ImageType[]>([]);
 
   useEffect(() => {
     if (params.id) loadImage(params.id as string);
@@ -39,6 +40,8 @@ export default function ImageDetailPage() {
       const data = await getImage(id);
       setImage(data);
       await incrementViews(id);
+      const rel = await getRelatedImages(data, 12);
+      setRelated(rel);
       const upvoted = JSON.parse(localStorage.getItem('gg_upvoted') || '[]');
       setHasUpvoted(upvoted.includes(id));
     } catch {
@@ -295,6 +298,31 @@ export default function ImageDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Related Images */}
+      {related.length > 0 && (
+        <div className="mt-16">
+          <h2 className="font-display text-xl font-semibold text-white/80 mb-6">More like this</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {related.map((rel) => (
+              <Link
+                key={rel.id}
+                href={`/image/${rel.id}`}
+                className="group relative bg-surface-2 rounded-xl overflow-hidden border border-white/[0.04] hover:border-white/[0.08] transition-all"
+              >
+                <Image
+                  src={rel.thumbnail_url || rel.image_url}
+                  alt={rel.title || rel.prompt || 'Related image'}
+                  width={200}
+                  height={200}
+                  className="w-full aspect-square object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                  unoptimized
+                />
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
