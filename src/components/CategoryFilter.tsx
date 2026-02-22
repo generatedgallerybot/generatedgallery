@@ -65,10 +65,10 @@ export function CategoryFilter({ selectedCategory, onCategorySelect }: CategoryF
     >
       <button
         onClick={() => onCategorySelect('')}
-        className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
+        className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 border ${
           !selectedCategory
-            ? 'bg-white text-surface-0'
-            : 'bg-white/[0.04] text-white/40 hover:text-white/60 hover:bg-white/[0.07]'
+            ? 'bg-accent/10 text-accent border-accent/20'
+            : 'bg-white/[0.03] text-white/40 hover:text-white/60 hover:bg-white/[0.07] border-white/[0.04]'
         }`}
       >
         All
@@ -77,10 +77,10 @@ export function CategoryFilter({ selectedCategory, onCategorySelect }: CategoryF
         <button
           key={cat.id}
           onClick={() => onCategorySelect(selectedCategory === cat.slug ? '' : cat.slug)}
-          className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
+          className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 border ${
             selectedCategory === cat.slug
-              ? 'bg-white text-surface-0'
-              : 'bg-white/[0.04] text-white/40 hover:text-white/60 hover:bg-white/[0.07]'
+              ? 'bg-accent/10 text-accent border-accent/20'
+              : 'bg-white/[0.03] text-white/40 hover:text-white/60 hover:bg-white/[0.07] border-white/[0.04]'
           }`}
         >
           {cat.name}

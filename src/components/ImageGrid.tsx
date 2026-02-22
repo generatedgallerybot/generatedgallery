@@ -11,16 +11,17 @@ interface ImageGridProps {
 
 export function ImageGrid({ images }: ImageGridProps) {
   const [loaded, setLoaded] = useState<Set<string>>(new Set());
+  const [errored, setErrored] = useState<Set<string>>(new Set());
 
   const fmt = (n: number) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
 
   return (
     <div className="masonry stagger-children">
-      {images.map((image) => (
+      {images.filter(img => !errored.has(img.id)).map((image) => (
         <Link
           key={image.id}
           href={`/image/${image.id}`}
-          className="masonry-item group block relative bg-surface-2 rounded-xl overflow-hidden cursor-pointer"
+          className="masonry-item group block relative bg-surface-2 rounded-2xl overflow-hidden cursor-pointer border border-white/[0.04] hover:border-white/[0.08] transition-all duration-300 hover:shadow-lg hover:shadow-black/20"
         >
           {/* Image */}
           <div className="relative overflow-hidden">
@@ -33,6 +34,7 @@ export function ImageGrid({ images }: ImageGridProps) {
                 loaded.has(image.id) ? 'opacity-100' : 'opacity-0'
               }`}
               onLoad={() => setLoaded(prev => new Set(prev).add(image.id))}
+              onError={() => setErrored(prev => new Set(prev).add(image.id))}
               unoptimized
             />
 

@@ -298,13 +298,20 @@ async function updateCategoryCounts() {
   }
 }
 
-// PromptHero crawler
+// PromptHero crawler — scrapes homepage HTML (no public API)
 async function crawlPromptHero(limit = 25) {
-  console.log('🔍 Crawling PromptHero...');
+  console.log('🔍 Crawling PromptHero (HTML scrape)...');
   
   try {
-    const response = await fetch(`https://prompthero.com/api/prompts?per_page=${limit}`, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; GeneratedGallery/1.0)' }
+    // Scrape different pages for variety
+    const pages = ['/', '/top', '/new', '/search?q=landscape', '/search?q=portrait', '/search?q=fantasy', '/search?q=sci-fi', '/search?q=architecture'];
+    const page = pages[Math.floor(Math.random() * pages.length)];
+    
+    const response = await fetch(`https://prompthero.com${page}`, {
+      headers: { 
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html'
+      }
     });
     
     if (!response.ok) {
@@ -312,31 +319,71 @@ async function crawlPromptHero(limit = 25) {
       return 0;
     }
     
-    const data = await response.json();
+    const html = await response.text();
     let inserted = 0;
     
-    const items = Array.isArray(data) ? data : data.prompts || data.data || [];
+    // Extract prompt slugs and CDN image URLs from HTML
+    const slugRegex = /\/prompt\/([a-f0-9]+)-([^"\\]+)/g;
+    const cdnRegex = /https:\/\/cdn\.prompthero\.com\/[a-z0-9]+-([^"\\]+\.(?:png|jpg|webp))/g;
     
-    for (const item of items.slice(0, limit)) {
+    // Build a map of slugs (deduplicated by id)
+    const slugMap = new Map();
+    let match;
+    while ((match = slugRegex.exec(html)) !== null) {
+      if (!slugMap.has(match[1])) {
+        slugMap.set(match[1], { id: match[1], slug: match[2], fullPath: match[0] });
+      }
+    }
+    
+    // Build a map of CDN images keyed by slug text (without extension)
+    const cdnBySlug = new Map();
+    const cdnFullRegex = /https:\/\/cdn\.prompthero\.com\/[a-z0-9]+-([^\x22\\]+\.(?:png|jpg|webp))/g;
+    while ((match = cdnFullRegex.exec(html)) !== null) {
+      const slugPart = match[1].replace(/\.(png|jpg|webp)$/, '');
+      const fullUrl = match[0];
+      cdnBySlug.set(slugPart, fullUrl);
+    }
+    
+    const uniqueSlugs = [...slugMap.values()].slice(0, limit);
+    
+    for (let i = 0; i < uniqueSlugs.length; i++) {
       try {
-        const imgUrl = item.image_url || item.image || item.url;
-        if (!imgUrl || await imageExists(imgUrl)) continue;
+        const { id, slug, fullPath } = uniqueSlugs[i];
         
-        const prompt = item.prompt || item.text || '';
-        const tags = extractTags(prompt);
-        const category = categorizeImage(prompt, tags);
-        const nsfw = item.nsfw || prompt.toLowerCase().match(/nsfw|nude|naked|explicit|erotic/) ? true : false;
+        // Reconstruct prompt from slug (replace hyphens with spaces)
+        const promptFromSlug = slug.replace(/-/g, ' ');
+        
+        // Try to find matching CDN image by slug text
+        const matchingCdn = cdnBySlug.get(slug);
+        if (!matchingCdn) continue;
+        
+        const sourceUrl = `https://prompthero.com${fullPath}`;
+        if (await imageExists(sourceUrl)) continue;
+        
+        // Extract model from slug prefix (common patterns)
+        let model = 'Unknown';
+        const modelPatterns = ['midjourney', 'stable-diffusion', 'flux', 'dall-e', 'chatgpt-image', 'juggernaut', 'hero-10', 'nano-banana'];
+        for (const mp of modelPatterns) {
+          if (slug.startsWith(mp.replace(/-/g, '-'))) {
+            model = mp.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            break;
+          }
+        }
+        
+        const tags = extractTags(promptFromSlug);
+        const category = categorizeImage(promptFromSlug, tags);
+        const nsfw = promptFromSlug.match(/nsfw|nude|naked|explicit|erotic/) ? true : false;
         
         const imageData = {
-          title: prompt.slice(0, 100) || 'PromptHero Image',
-          prompt: prompt,
-          model: item.model || item.model_name || 'Unknown',
-          source_url: item.permalink || `https://prompthero.com/prompt/${item.id || ''}`,
+          title: promptFromSlug.slice(0, 100),
+          prompt: promptFromSlug,
+          model: model,
+          source_url: sourceUrl,
           source_site: 'prompthero',
-          image_url: imgUrl,
-          thumbnail_url: item.thumbnail_url || imgUrl,
-          width: item.width || null,
-          height: item.height || null,
+          image_url: matchingCdn,
+          thumbnail_url: matchingCdn,
+          width: null,
+          height: null,
           tags,
           category,
           is_nsfw: nsfw,
@@ -346,7 +393,7 @@ async function crawlPromptHero(limit = 25) {
         if (await insertImage(imageData)) inserted++;
         await new Promise(r => setTimeout(r, 200));
       } catch (e) {
-        // skip
+        // skip individual items
       }
     }
     
@@ -358,64 +405,10 @@ async function crawlPromptHero(limit = 25) {
   }
 }
 
-// OpenArt crawler
+// OpenArt crawler — disabled (SPA, no public API, needs browser)
 async function crawlOpenArt(limit = 25) {
-  console.log('🔍 Crawling OpenArt...');
-  
-  try {
-    const response = await fetch(`https://openart.ai/api/feed?limit=${limit}`, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; GeneratedGallery/1.0)' }
-    });
-    
-    if (!response.ok) {
-      console.error('Failed to fetch from OpenArt:', response.statusText);
-      return 0;
-    }
-    
-    const data = await response.json();
-    let inserted = 0;
-    
-    const items = data.items || data.results || data.data || [];
-    
-    for (const item of items.slice(0, limit)) {
-      try {
-        const imgUrl = item.image_url || item.url || item.image;
-        if (!imgUrl || await imageExists(imgUrl)) continue;
-        
-        const prompt = item.prompt || item.text || item.description || '';
-        const tags = extractTags(prompt);
-        const category = categorizeImage(prompt, tags);
-        const nsfw = item.nsfw || false;
-        
-        const imageData = {
-          title: item.title || prompt.slice(0, 100) || 'OpenArt Image',
-          prompt: prompt,
-          model: item.model || 'Unknown',
-          source_url: item.permalink || item.link || 'https://openart.ai',
-          source_site: 'openart',
-          image_url: imgUrl,
-          thumbnail_url: item.thumbnail || imgUrl,
-          width: item.width || null,
-          height: item.height || null,
-          tags,
-          category,
-          is_nsfw: nsfw,
-          crawled_at: new Date().toISOString()
-        };
-        
-        if (await insertImage(imageData)) inserted++;
-        await new Promise(r => setTimeout(r, 200));
-      } catch (e) {
-        // skip
-      }
-    }
-    
-    console.log(`📊 OpenArt: ${inserted} images inserted`);
-    return inserted;
-  } catch (error) {
-    console.error('Error crawling OpenArt:', error.message || error);
-    return 0;
-  }
+  console.log('⏭️  OpenArt: skipped (SPA, no public API)');
+  return 0;
 }
 
 // Main crawler function
@@ -431,6 +424,14 @@ async function runCrawler() {
     totalInserted += count;
     if (count === 0) break; // no new images, stop
     await new Promise(r => setTimeout(r, 2000));
+  }
+  
+  // PromptHero — HTML scrape
+  try {
+    const phCount = await crawlPromptHero(25);
+    totalInserted += phCount;
+  } catch (e) {
+    console.error('PromptHero error:', e.message);
   }
   
   // Update category counts

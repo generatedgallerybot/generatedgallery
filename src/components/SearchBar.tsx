@@ -53,7 +53,7 @@ export function SearchBar({ onSearch, initialQuery = '' }: SearchBarProps) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder="Search images..."
-          className="w-full pl-12 pr-20 py-4 bg-surface-2 border border-white/[0.06] rounded-2xl text-[15px] text-white placeholder-white/25 focus:outline-none focus:border-white/[0.12] focus:bg-surface-3 transition-all duration-300"
+          className="w-full pl-12 pr-20 py-4 bg-surface-2 border border-white/[0.06] rounded-2xl text-[15px] text-white placeholder-white/25 focus:outline-none focus:border-accent/30 focus:bg-surface-3 focus:shadow-[0_0_0_3px_rgba(232,213,183,0.05)] transition-all duration-300"
         />
 
         {/* Right side: clear or shortcut hint */}

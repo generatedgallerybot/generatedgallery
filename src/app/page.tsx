@@ -87,14 +87,17 @@ export default function HomePage() {
   return (
     <div className="pt-16">
       {/* Hero */}
-      <section className="px-6 lg:px-10 pt-16 pb-10 max-w-[1800px] mx-auto">
-        <div className="max-w-3xl mx-auto text-center space-y-6 mb-12">
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
+      <section className="px-6 lg:px-10 pt-16 pb-10 max-w-[1800px] mx-auto relative">
+        {/* Hero glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-accent/[0.04] rounded-full blur-[120px] pointer-events-none" />
+        
+        <div className="max-w-3xl mx-auto text-center space-y-6 mb-12 relative">
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05]">
             AI art,<br />
-            <span className="text-white/30">curated.</span>
+            <span className="text-accent/60">curated.</span>
           </h1>
-          <p className="text-base text-white/35 max-w-md mx-auto leading-relaxed">
-            Thousands of AI-generated images. Browse, search, download. No account needed.
+          <p className="text-lg text-white/45 max-w-lg mx-auto leading-relaxed">
+            Thousands of AI-generated images from across the internet. Browse, search, download — no account needed.
           </p>
           <SearchBar onSearch={handleSearch} />
         </div>
@@ -103,23 +106,23 @@ export default function HomePage() {
         <div className="space-y-4">
           {/* View toggle + NSFW */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 bg-surface-2 rounded-full p-1">
+            <div className="flex items-center gap-1 bg-surface-2 rounded-full p-1 border border-white/[0.04]">
               <button
                 onClick={() => { setCurrentView('recent'); setSearchQuery(''); setSelectedCategory(''); }}
-                className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
+                className={`px-5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
                   currentView === 'recent'
-                    ? 'bg-white/[0.08] text-white/90'
-                    : 'text-white/35 hover:text-white/60'
+                    ? 'bg-accent/10 text-accent border border-accent/20'
+                    : 'text-white/35 hover:text-white/60 border border-transparent'
                 }`}
               >
                 Recent
               </button>
               <button
                 onClick={() => { setCurrentView('trending'); setSearchQuery(''); setSelectedCategory(''); }}
-                className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
+                className={`px-5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
                   currentView === 'trending'
-                    ? 'bg-white/[0.08] text-white/90'
-                    : 'text-white/35 hover:text-white/60'
+                    ? 'bg-accent/10 text-accent border border-accent/20'
+                    : 'text-white/35 hover:text-white/60 border border-transparent'
                 }`}
               >
                 Trending
