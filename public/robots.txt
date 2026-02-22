@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://generatedgallery.com/sitemap.xml
