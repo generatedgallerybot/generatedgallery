@@ -1,7 +1,6 @@
 {
   "forwardCursor": null,
   "backfillCursor": null,
-  "totalInserted": 49925,
-  "lastRun": "2026-02-22T19:15:12.272Z",
-  "backfillComplete": true
+  "totalInserted": 548851,
+  "lastRun": "2026-02-22T23:01:48.170Z"
 }

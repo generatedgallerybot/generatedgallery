@@ -152,6 +152,7 @@ async function run() {
             downloads: 0,
             views: 0,
             is_nsfw: item.nsfw || (item.nsfwLevel && item.nsfwLevel >= 3) || false,
+            media_type: item.url && (item.url.endsWith('.mp4') || item.url.endsWith('.webm')) ? 'video' : item.url && item.url.endsWith('.gif') ? 'gif' : (item.type === 'video' ? 'video' : 'image'),
             crawled_at: new Date().toISOString(),
           };
         });

@@ -72,32 +72,13 @@ body > * {
 
 /* Masonry */
 .masonry {
-  column-count: 2;
-  column-gap: 16px;
-  column-fill: balance;
-}
-
-@media (min-width: 640px) {
-  .masonry { column-count: 2; }
-}
-
-@media (min-width: 768px) {
-  .masonry { column-count: 3; }
-}
-
-@media (min-width: 1024px) {
-  .masonry { column-count: 4; }
-}
-
-@media (min-width: 1440px) {
-  .masonry { column-count: 4; }
+  position: relative;
+  width: 100%;
 }
 
 .masonry-item {
-  break-inside: avoid;
-  margin-bottom: 16px;
-  display: inline-block;
-  width: 100%;
+  position: absolute;
+  transition: none;
 }
 
 /* Focus styles */
@@ -127,24 +108,12 @@ body > * {
   display: none;
 }
 
-/* Stagger children animation */
-.stagger-children > * {
-  opacity: 0;
-  animation: fade-up 0.5s ease-out forwards;
-}
-
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(16px); }
+/* Fade in animation for new items (infinite scroll) */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
-.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
-.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
-.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
-.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
-.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
-.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
-.stagger-children > *:nth-child(9) { animation-delay: 400ms; }
-.stagger-children > *:nth-child(10) { animation-delay: 450ms; }
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+}

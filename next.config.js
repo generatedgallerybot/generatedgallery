@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Generate unique build ID to help with chunk caching
+  generateBuildId: async () => {
+    return Date.now().toString(36);
+  },
   images: {
     remotePatterns: [
       {

@@ -40,9 +40,12 @@ function HomePageInner() {
   );
   const [showNsfw, setShowNsfw] = useState(false);
   const [showAgeModal, setShowAgeModal] = useState(false);
+  const [mediaType, setMediaType] = useState<'all' | 'image' | 'video'>('all');
   const [hasMore, setHasMore] = useState(true);
   const [imageCount, setImageCount] = useState<string>('');
   const observerRef = useRef<HTMLDivElement>(null);
+  const imagesRef = useRef<Image[]>([]);
+  imagesRef.current = images;
 
   const handleNsfwToggle = () => {
     if (showNsfw) {
@@ -97,17 +100,17 @@ function HomePageInner() {
         else setLoading(true);
         setError(null);
 
-        const offset = append ? images.length : 0;
+        const offset = append ? imagesRef.current.length : 0;
         let data: Image[];
 
         if (searchQuery) {
-          data = await searchImages(searchQuery, PAGE_SIZE, offset, showNsfw);
+          data = await searchImages(searchQuery, PAGE_SIZE, offset, showNsfw, mediaType);
         } else if (selectedCategory) {
-          data = await getImagesByCategory(selectedCategory, PAGE_SIZE, offset, showNsfw);
+          data = await getImagesByCategory(selectedCategory, PAGE_SIZE, offset, showNsfw, mediaType);
         } else if (currentView === 'trending') {
-          data = await getTrendingImages(PAGE_SIZE, showNsfw);
+          data = await getTrendingImages(PAGE_SIZE, showNsfw, mediaType);
         } else {
-          data = await getImages(PAGE_SIZE, offset, showNsfw);
+          data = await getImages(PAGE_SIZE, offset, showNsfw, mediaType);
         }
 
         setHasMore(data.length === PAGE_SIZE);
@@ -125,29 +128,40 @@ function HomePageInner() {
         setLoadingMore(false);
       }
     }
-  }, [searchQuery, selectedCategory, currentView, showNsfw, images.length]);
+  }, [searchQuery, selectedCategory, currentView, showNsfw, mediaType]);
+
+  // Refs for intersection observer to avoid stale closures
+  const loadingRef = useRef(false);
+  const loadingMoreRef = useRef(false);
+  const hasMoreRef = useRef(true);
+  loadingRef.current = loading;
+  loadingMoreRef.current = loadingMore;
+  hasMoreRef.current = hasMore;
+  const loadImagesRef = useRef(loadImages);
+  loadImagesRef.current = loadImages;
 
   // Initial load + filter changes
   useEffect(() => {
     setImages([]);
     setHasMore(true);
     loadImages(false);
-  }, [searchQuery, selectedCategory, currentView, showNsfw]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, selectedCategory, currentView, showNsfw, mediaType]);
 
-  // Infinite scroll
+  // Infinite scroll - stable observer that reads refs
   useEffect(() => {
-    if (!observerRef.current || !hasMore) return;
+    if (!observerRef.current) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !loading && !loadingMore && hasMore) {
-          loadImages(true);
+        if (entries[0].isIntersecting && !loadingRef.current && !loadingMoreRef.current && hasMoreRef.current) {
+          loadImagesRef.current(true);
         }
       },
-      { rootMargin: '400px' }
+      { rootMargin: '600px' }
     );
     observer.observe(observerRef.current);
     return () => observer.disconnect();
-  }, [hasMore, loading, loadingMore, loadImages]);
+  }, []);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -160,9 +174,9 @@ function HomePageInner() {
   };
 
   return (
-    <div className="pt-16">
+    <div className="pt-16 overflow-x-hidden">
       {/* Hero */}
-      <section className="px-6 lg:px-10 pt-16 pb-10 max-w-[1800px] mx-auto relative">
+      <section className="px-4 sm:px-6 lg:px-10 pt-16 pb-10 max-w-[1800px] mx-auto relative overflow-hidden">
         {/* Hero glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-accent/[0.04] rounded-full blur-[120px] pointer-events-none" />
         
@@ -175,16 +189,23 @@ function HomePageInner() {
             {imageCount || '...'} AI-generated images and prompts from across the internet. Browse, search, download — no account needed.
           </p>
           <SearchBar onSearch={handleSearch} />
+          <a
+            href="/shuffle"
+            className="inline-flex md:hidden items-center gap-2 px-5 py-2 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/50 hover:text-white hover:bg-white/[0.1] transition-all text-[13px] font-medium"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 3 21 3 21 8" /><line x1="4" y1="20" x2="21" y2="3" /><polyline points="21 16 21 21 16 21" /><line x1="15" y1="15" x2="21" y2="21" /><line x1="4" y1="4" x2="9" y2="9" /></svg>
+            Shuffle
+          </a>
         </div>
 
         {/* Filters row */}
-        <div className="space-y-5 pt-4">
-          {/* View toggle + NSFW */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 bg-surface-2 rounded-full p-1 border border-white/[0.04]">
+        <div className="space-y-5 pt-4 overflow-hidden">
+          {/* View toggle + Media + NSFW */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1 bg-surface-2 rounded-full p-1 border border-white/[0.04] shrink-0">
               <button
                 onClick={() => { setCurrentView('recent'); setSearchQuery(''); setSelectedCategory(''); }}
-                className={`px-5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
+                className={`px-3 sm:px-5 py-1.5 rounded-full text-[11px] sm:text-[13px] font-medium transition-all duration-200 ${
                   currentView === 'recent'
                     ? 'bg-accent/10 text-accent border border-accent/20'
                     : 'text-white/35 hover:text-white/60 border border-transparent'
@@ -194,7 +215,7 @@ function HomePageInner() {
               </button>
               <button
                 onClick={() => { setCurrentView('trending'); setSearchQuery(''); setSelectedCategory(''); }}
-                className={`px-5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 ${
+                className={`px-3 sm:px-5 py-1.5 rounded-full text-[11px] sm:text-[13px] font-medium transition-all duration-200 ${
                   currentView === 'trending'
                     ? 'bg-accent/10 text-accent border border-accent/20'
                     : 'text-white/35 hover:text-white/60 border border-transparent'
@@ -204,19 +225,36 @@ function HomePageInner() {
               </button>
             </div>
 
+            {/* Media type toggle */}
+            <div className="flex items-center gap-1 bg-surface-2 rounded-full p-1 border border-white/[0.04] shrink-0">
+              {(['all', 'image', 'video'] as const).map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setMediaType(type)}
+                  className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-[12px] font-medium transition-all duration-200 ${
+                    mediaType === type
+                      ? 'bg-accent/10 text-accent border border-accent/20'
+                      : 'text-white/30 hover:text-white/50 border border-transparent'
+                  }`}
+                >
+                  {type === 'all' ? 'All' : type === 'image' ? '🖼' : '🎬'}
+                </button>
+              ))}
+            </div>
+
             {/* NSFW toggle */}
             <button
               onClick={handleNsfwToggle}
-              className="flex items-center gap-2 group"
+              className="flex items-center gap-1.5 group ml-auto shrink-0"
             >
-              <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${
+              <div className={`relative w-8 h-[18px] rounded-full transition-colors duration-200 ${
                 showNsfw ? 'bg-red-500/60' : 'bg-white/[0.06]'
               }`}>
-                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all duration-200 ${
-                  showNsfw ? 'left-[18px]' : 'left-0.5'
+                <div className={`absolute top-[2px] w-[14px] h-[14px] rounded-full bg-white transition-all duration-200 ${
+                  showNsfw ? 'left-[14px]' : 'left-[2px]'
                 }`} />
               </div>
-              <span className="text-[12px] text-white/25 group-hover:text-white/40 transition-colors">NSFW</span>
+              <span className="text-[11px] text-white/25 group-hover:text-white/40 transition-colors">NSFW</span>
             </button>
           </div>
 
@@ -227,7 +265,7 @@ function HomePageInner() {
 
       {/* Active filter indicator */}
       {(searchQuery || selectedCategory) && (
-        <div className="px-6 lg:px-10 pb-4 max-w-[1800px] mx-auto">
+        <div className="px-4 sm:px-6 lg:px-10 pb-4 max-w-[1800px] mx-auto">
           <div className="flex items-center gap-2 text-[13px] text-white/30">
             <span>
               {searchQuery ? `Results for "${searchQuery}"` : `${selectedCategory.replace('-', ' ')}`}
@@ -243,7 +281,7 @@ function HomePageInner() {
       )}
 
       {/* Image grid */}
-      <section className="px-6 lg:px-10 max-w-[1800px] mx-auto">
+      <section className="px-4 sm:px-6 lg:px-10 max-w-[1800px] mx-auto">
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
@@ -258,10 +296,22 @@ function HomePageInner() {
           </div>
         ) : images.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-white/30 text-base mb-2">No images found</p>
+            <p className="text-white/30 text-base mb-2">No results</p>
             <p className="text-white/15 text-sm">
-              {searchQuery || selectedCategory ? 'Try a different search or category.' : 'Images will appear once the gallery is populated.'}
+              {mediaType !== 'all'
+                ? `No ${mediaType === 'video' ? 'videos or GIFs' : 'images'} found. Try switching to "All".`
+                : searchQuery || selectedCategory
+                  ? 'Try a different search or category.'
+                  : 'Check back soon — new content is added regularly.'}
             </p>
+            {mediaType !== 'all' && (
+              <button
+                onClick={() => setMediaType('all')}
+                className="mt-4 text-[13px] px-5 py-2 rounded-full bg-white/[0.06] border border-white/[0.08] text-white/60 hover:text-white hover:bg-white/[0.1] transition-all"
+              >
+                Show all media
+              </button>
+            )}
           </div>
         ) : (
           <>

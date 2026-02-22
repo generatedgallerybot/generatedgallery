@@ -17,6 +17,7 @@ export interface Image {
   downloads: number;
   views: number;
   is_nsfw: boolean;
+  media_type?: string | null;
   uploaded_by: string | null;
   crawled_at: string | null;
   created_at: string;

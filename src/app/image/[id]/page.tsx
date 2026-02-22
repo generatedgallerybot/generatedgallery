@@ -5,7 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getImage, getRelatedImages, upvoteImage, incrementDownloads, incrementViews } from '@/lib/supabase';
+import { toggleUserLike } from '@/lib/user-data';
+import { useAuth } from '@/contexts/AuthContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { AddToGalleryModal } from '@/components/AddToGalleryModal';
 import type { Image as ImageType } from '@/types';
 
 function isVideo(url: string): boolean {
@@ -22,6 +25,7 @@ function isGif(url: string): boolean {
 export default function ImageDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const [image, setImage] = useState<ImageType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +33,7 @@ export default function ImageDetailPage() {
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [related, setRelated] = useState<ImageType[]>([]);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
 
   useEffect(() => {
     if (params.id) loadImage(params.id as string);
@@ -61,6 +66,10 @@ export default function ImageDetailPage() {
         const upvoted = JSON.parse(localStorage.getItem('gg_upvoted') || '[]');
         upvoted.push(image.id);
         localStorage.setItem('gg_upvoted', JSON.stringify(upvoted));
+        // Also track in user_likes for logged-in users
+        if (user) {
+          try { await toggleUserLike(user.id, image.id, false); } catch {}
+        }
       }
     } catch {}
   };
@@ -193,6 +202,17 @@ export default function ImageDetailPage() {
                 Source
               </a>
             )}
+
+            <button
+              onClick={() => setShowGalleryModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-medium bg-surface-3 text-white/60 border border-white/[0.06] hover:text-white hover:bg-surface-4 transition-all"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.2" />
+                <path d="M7 5V9M5 7H9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+              Add to gallery
+            </button>
           </div>
         </div>
 
@@ -298,6 +318,10 @@ export default function ImageDetailPage() {
           </div>
         </div>
       </div>
+
+      {showGalleryModal && image && (
+        <AddToGalleryModal imageId={image.id} onClose={() => setShowGalleryModal(false)} />
+      )}
 
       {/* Related Images */}
       {related.length > 0 && (
