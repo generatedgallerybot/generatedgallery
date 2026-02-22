@@ -195,8 +195,7 @@ async function crawlCivitai(limit = 50) {
     const period = periods[Math.floor(Math.random() * periods.length)];
     // Add random cursor offset for variety
     const cursor = Math.floor(Math.random() * 50000);
-    const nsfwLevels = [1, 2]; // 1=None, 2=Soft — skip explicit
-    const response = await fetch(`https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&cursor=${cursor}`, {
+    const response = await fetch(`https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&cursor=${cursor}&nsfw=true`, {
       method: 'GET',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; GeneratedGallery/1.0)'
@@ -239,7 +238,7 @@ async function crawlCivitai(limit = 50) {
           upvotes: 0,
           downloads: 0,
           views: 0,
-          is_nsfw: item.nsfw || (item.nsfwLevel && item.nsfwLevel > 1) || false,
+          is_nsfw: item.nsfw || (item.nsfwLevel && item.nsfwLevel >= 3) || false,
           crawled_at: new Date().toISOString(),
         };
         

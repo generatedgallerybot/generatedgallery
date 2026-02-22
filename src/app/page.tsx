@@ -8,6 +8,16 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getImages, getTrendingImages, searchImages, getImagesByCategory } from '@/lib/supabase';
 import type { Image } from '@/types';
 
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? match[2] : null;
+}
+
+function setCookie(name: string, value: string, days: number) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+}
+
 export default function HomePage() {
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,8 +27,32 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [currentView, setCurrentView] = useState<'recent' | 'trending'>('recent');
   const [showNsfw, setShowNsfw] = useState(false);
+  const [showAgeModal, setShowAgeModal] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<HTMLDivElement>(null);
+
+  const handleNsfwToggle = () => {
+    if (showNsfw) {
+      setShowNsfw(false);
+      return;
+    }
+    // Check if already verified
+    if (typeof document !== 'undefined' && getCookie('nsfw_age_verified') === 'true') {
+      setShowNsfw(true);
+      return;
+    }
+    setShowAgeModal(true);
+  };
+
+  const confirmAge = () => {
+    setCookie('nsfw_age_verified', 'true', 365);
+    setShowAgeModal(false);
+    setShowNsfw(true);
+  };
+
+  const cancelAge = () => {
+    setShowAgeModal(false);
+  };
 
   const PAGE_SIZE = 24;
 
@@ -131,7 +165,7 @@ export default function HomePage() {
 
             {/* NSFW toggle */}
             <button
-              onClick={() => setShowNsfw(!showNsfw)}
+              onClick={handleNsfwToggle}
               className="flex items-center gap-2 group"
             >
               <div className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${
@@ -204,6 +238,33 @@ export default function HomePage() {
           </>
         )}
       </section>
+
+      {/* Age Verification Modal */}
+      {showAgeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-surface-2 border border-white/[0.08] rounded-2xl p-8 max-w-sm mx-4 text-center space-y-5">
+            <div className="text-3xl">🔞</div>
+            <h2 className="text-xl font-semibold text-white">Age Verification</h2>
+            <p className="text-white/50 text-sm leading-relaxed">
+              NSFW content may contain mature or explicit imagery. Please confirm you are at least 18 years old to continue.
+            </p>
+            <div className="flex gap-3 justify-center pt-2">
+              <button
+                onClick={cancelAge}
+                className="px-5 py-2 rounded-full text-sm text-white/40 bg-white/[0.06] border border-white/[0.08] hover:text-white/60 hover:bg-white/[0.1] transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmAge}
+                className="px-5 py-2 rounded-full text-sm font-medium text-[#1a1a1a] bg-[#e8d5b7] hover:bg-[#d4c2a5] transition-all"
+              >
+                I'm 18+, continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
