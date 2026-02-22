@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, memo } from 'react';
+import { useState, useCallback, memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Lightbox } from '@/components/Lightbox';
 import type { Image as ImageType } from '@/types';
 
 interface ImageGridProps {
@@ -20,25 +21,21 @@ function isGif(url: string): boolean {
   return url.toLowerCase().endsWith('.gif');
 }
 
-const GridItem = memo(function GridItem({ image, loaded, onLoad, onError, fmt }: {
+const GridItem = memo(function GridItem({ image, loaded, onLoad, onError, fmt, onClick }: {
   image: ImageType;
   loaded: boolean;
   onLoad: () => void;
   onError: () => void;
   fmt: (n: number) => string;
+  onClick: () => void;
 }) {
   const url = image.thumbnail_url || image.image_url;
   const videoUrl = isVideo(url);
   const gifUrl = isGif(url);
 
-  const saveScroll = () => {
-    sessionStorage.setItem('gg_scroll', String(window.scrollY));
-  };
-
   return (
-    <Link
-      href={`/image/${image.id}`}
-      onClick={saveScroll}
+    <div
+      onClick={onClick}
       className="masonry-item group block relative bg-surface-2 rounded-2xl overflow-hidden cursor-pointer border border-white/[0.04] hover:border-white/[0.08] transition-all duration-300 hover:shadow-lg hover:shadow-black/20"
     >
       <div className="relative overflow-hidden" style={{ minHeight: '150px' }}>
@@ -125,28 +122,50 @@ const GridItem = memo(function GridItem({ image, loaded, onLoad, onError, fmt }:
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 });
 
 export function ImageGrid({ images }: ImageGridProps) {
   const [loaded, setLoaded] = useState<Set<string>>(new Set());
   const [errored, setErrored] = useState<Set<string>>(new Set());
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const fmt = (n: number) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
 
+  const visibleImages = images.filter(img => !errored.has(img.id));
+
+  const handlePrev = useCallback(() => {
+    setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i);
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setLightboxIndex(i => i !== null && i < visibleImages.length - 1 ? i + 1 : i);
+  }, [visibleImages.length]);
+
   return (
-    <div className="masonry stagger-children">
-      {images.filter(img => !errored.has(img.id)).map((image) => (
-        <GridItem
-          key={image.id}
-          image={image}
-          loaded={loaded.has(image.id)}
-          onLoad={() => setLoaded(prev => new Set(prev).add(image.id))}
-          onError={() => setErrored(prev => new Set(prev).add(image.id))}
-          fmt={fmt}
+    <>
+      <div className="masonry stagger-children">
+        {visibleImages.map((image, index) => (
+          <GridItem
+            key={image.id}
+            image={image}
+            loaded={loaded.has(image.id)}
+            onLoad={() => setLoaded(prev => new Set(prev).add(image.id))}
+            onError={() => setErrored(prev => new Set(prev).add(image.id))}
+            fmt={fmt}
+            onClick={() => setLightboxIndex(index)}
+          />
+        ))}
+      </div>
+      {lightboxIndex !== null && visibleImages[lightboxIndex] && (
+        <Lightbox
+          image={visibleImages[lightboxIndex]}
+          onClose={() => setLightboxIndex(null)}
+          onPrev={lightboxIndex > 0 ? handlePrev : undefined}
+          onNext={lightboxIndex < visibleImages.length - 1 ? handleNext : undefined}
         />
-      ))}
-    </div>
+      )}
+    </>
   );
 }

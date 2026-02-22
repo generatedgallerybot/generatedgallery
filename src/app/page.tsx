@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SearchBar } from '@/components/SearchBar';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { ImageGrid } from '@/components/ImageGrid';
@@ -19,13 +20,24 @@ function setCookie(name: string, value: string, days: number) {
 }
 
 export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="pt-16 flex items-center justify-center min-h-screen"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>}>
+      <HomePageInner />
+    </Suspense>
+  );
+}
+
+function HomePageInner() {
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [currentView, setCurrentView] = useState<'recent' | 'trending'>('recent');
+  const searchParams = useSearchParams();
+  const [currentView, setCurrentView] = useState<'recent' | 'trending'>(
+    searchParams.get('view') === 'trending' ? 'trending' : 'recent'
+  );
   const [showNsfw, setShowNsfw] = useState(false);
   const [showAgeModal, setShowAgeModal] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -78,32 +90,40 @@ export default function HomePage() {
   const PAGE_SIZE = 24;
 
   const loadImages = useCallback(async (append = false) => {
-    try {
-      if (append) setLoadingMore(true);
-      else setLoading(true);
-      setError(null);
+    const maxRetries = 3;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        if (append) setLoadingMore(true);
+        else setLoading(true);
+        setError(null);
 
-      const offset = append ? images.length : 0;
-      let data: Image[];
+        const offset = append ? images.length : 0;
+        let data: Image[];
 
-      if (searchQuery) {
-        data = await searchImages(searchQuery, PAGE_SIZE, offset, showNsfw);
-      } else if (selectedCategory) {
-        data = await getImagesByCategory(selectedCategory, PAGE_SIZE, offset, showNsfw);
-      } else if (currentView === 'trending') {
-        data = await getTrendingImages(PAGE_SIZE, showNsfw);
-      } else {
-        data = await getImages(PAGE_SIZE, offset, showNsfw);
+        if (searchQuery) {
+          data = await searchImages(searchQuery, PAGE_SIZE, offset, showNsfw);
+        } else if (selectedCategory) {
+          data = await getImagesByCategory(selectedCategory, PAGE_SIZE, offset, showNsfw);
+        } else if (currentView === 'trending') {
+          data = await getTrendingImages(PAGE_SIZE, showNsfw);
+        } else {
+          data = await getImages(PAGE_SIZE, offset, showNsfw);
+        }
+
+        setHasMore(data.length === PAGE_SIZE);
+        setImages(prev => append ? [...prev, ...data] : data);
+        return; // success
+      } catch (err) {
+        console.error(`Failed to load images (attempt ${attempt + 1}/${maxRetries}):`, err);
+        if (attempt < maxRetries - 1) {
+          await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+          continue;
+        }
+        if (!append) setError('Something went wrong loading images.');
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
       }
-
-      setHasMore(data.length === PAGE_SIZE);
-      setImages(prev => append ? [...prev, ...data] : data);
-    } catch (err) {
-      console.error('Failed to load images:', err);
-      if (!append) setError('Something went wrong loading images.');
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
     }
   }, [searchQuery, selectedCategory, currentView, showNsfw, images.length]);
 

@@ -30,8 +30,12 @@ export function Navbar() {
             <Link href="/" className="text-[13px] text-white/50 hover:text-white/90 transition-colors">
               Browse
             </Link>
-            <Link href="/trending" className="text-[13px] text-white/50 hover:text-white/90 transition-colors">
+            <Link href="/?view=trending" className="text-[13px] text-white/50 hover:text-white/90 transition-colors">
               Trending
+            </Link>
+            <Link href="/shuffle" className="text-[13px] text-white/50 hover:text-white/90 transition-colors flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+              Shuffle
             </Link>
             <Link
               href="/upload"
@@ -65,7 +69,8 @@ export function Navbar() {
           <div className="md:hidden py-4 border-t border-white/[0.06] animate-fade-in">
             <div className="flex flex-col gap-3">
               <Link href="/" onClick={() => setIsOpen(false)} className="text-sm text-white/60 hover:text-white py-1">Browse</Link>
-              <Link href="/trending" onClick={() => setIsOpen(false)} className="text-sm text-white/60 hover:text-white py-1">Trending</Link>
+              <Link href="/?view=trending" onClick={() => setIsOpen(false)} className="text-sm text-white/60 hover:text-white py-1">Trending</Link>
+              <Link href="/shuffle" onClick={() => setIsOpen(false)} className="text-sm text-white/60 hover:text-white py-1">🔀 Shuffle</Link>
               <Link href="/upload" onClick={() => setIsOpen(false)} className="text-sm text-white/60 hover:text-white py-1">Submit</Link>
             </div>
           </div>
