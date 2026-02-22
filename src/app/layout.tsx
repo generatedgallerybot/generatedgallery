@@ -17,6 +17,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://generatedgallery.com'),
   title: 'Generated Gallery — AI Art, Curated',
   description: 'Browse, search, and download thousands of AI-generated images. Free, open, no account needed.',
   keywords: 'AI art, AI images, generated images, stable diffusion, flux, midjourney, free AI art',

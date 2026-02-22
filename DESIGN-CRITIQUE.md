@@ -5,11 +5,11 @@
 
 ### Top 5 Issues (Ranked by Impact)
 
-#### 1. CRITICAL — Mobile grid breaks completely below the fold
+#### 1. ✅ FIXED — Mobile grid breaks completely below the fold
 The mobile screenshot (390x844) shows ~15 images loaded, then the entire bottom half of the page is empty black placeholder rectangles — dozens of them. This means lazy loading or infinite scroll is broken on mobile. Users see a wall of nothing. This is a showstopper bug, not a design issue.
 - Fix: Debug the mobile image loading path. Check if IntersectionObserver or the image fetch is failing on narrow viewports. Ensure skeleton placeholders only render when images are actually queued to load.
 
-#### 2. Grid still has zero interaction affordances — no hover overlays, no metadata
+#### 2. ✅ FIXED — Grid still has zero interaction affordances — no hover overlays, no metadata
 Unchanged from last critique. Images are still dead rectangles with no hover state, no title, no model info, no download button, no like count. This is the single biggest gap between "image dump" and "gallery." Unsplash, Dribbble, ArtStation — every comparable site shows metadata on hover. Without it, there's no reason to linger or engage.
 - Fix: Add a hover overlay (fade-in dark gradient from bottom) showing image title, AI model, and action icons (download, like). On mobile, show a small metadata bar below each card.
 
@@ -21,7 +21,7 @@ The hero says "AI art, curated." The grid shows: an anime panda holding roses, a
 The gap between the category pills and the first image row is tight, but the hero section has generous padding. The Recent/Trending toggle row and the category pills row feel like two separate components jammed together. NSFW toggle floats awkwardly to the right with no visual connection to the filter group. Compare to Linear's systematic 8px grid.
 - Fix: Unify filter controls into one cohesive bar. Use consistent 8px-based spacing throughout. Group Recent/Trending + NSFW toggle on same line, categories on the next.
 
-#### 5. Mobile category pills are unusable
+#### 5. ✅ FIXED — Mobile category pills are unusable
 On mobile, only 4 pills visible ("All", "3D Render", "Abstract", "Animat...") with the last one truncated. No scroll indicator, no fade hint. Users won't know there are 12+ more categories. Touch targets still look undersized.
 - Fix: Add horizontal scroll with fade gradient on edges. Ensure 44px minimum touch targets. Show a subtle arrow or "more" indicator.
 
@@ -34,10 +34,10 @@ On mobile, only 4 pills visible ("All", "3D Render", "Abstract", "Animat...") wi
 - ✅ Category pills on desktop are readable with proper active state
 
 ### Still Broken From Previous Critiques
-- ❌ No hover overlays/metadata (since v2.2)
+- ✅ Hover overlays/metadata added (desktop hover + mobile permanent bar)
 - ❌ No lightbox/modal (since v2.2)
 - ❌ Content diversity poor (since v2.2)
-- ❌ Mobile experience severely degraded — lazy loading broken (NEW, worse than v2.3)
+- ✅ Mobile experience fixed — min-height on containers, lazy loading attribute added
 
 ### Additional Notes
 - The masonry layout on desktop actually looks decent now — good variety of aspect ratios
