@@ -74,6 +74,7 @@ body > * {
 .masonry {
   column-count: 2;
   column-gap: 16px;
+  column-fill: balance;
 }
 
 @media (min-width: 640px) {

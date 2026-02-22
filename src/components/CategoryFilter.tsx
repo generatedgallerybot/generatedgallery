@@ -70,7 +70,7 @@ export function CategoryFilter({ selectedCategory, onCategorySelect }: CategoryF
         onClick={() => onCategorySelect('')}
         className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 border ${
           !selectedCategory
-            ? 'bg-accent/10 text-accent border-accent/20'
+            ? 'bg-accent/20 text-accent border-accent/40 shadow-sm shadow-accent/10'
             : 'bg-white/[0.03] text-white/40 hover:text-white/60 hover:bg-white/[0.07] border-white/[0.04]'
         }`}
       >
@@ -82,7 +82,7 @@ export function CategoryFilter({ selectedCategory, onCategorySelect }: CategoryF
           onClick={() => onCategorySelect(selectedCategory === cat.slug ? '' : cat.slug)}
           className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-200 border ${
             selectedCategory === cat.slug
-              ? 'bg-accent/10 text-accent border-accent/20'
+              ? 'bg-accent/20 text-accent border-accent/40 shadow-sm shadow-accent/10'
               : 'bg-white/[0.03] text-white/40 hover:text-white/60 hover:bg-white/[0.07] border-white/[0.04]'
           }`}
         >
