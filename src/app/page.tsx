@@ -5,7 +5,7 @@ import { SearchBar } from '@/components/SearchBar';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { ImageGrid } from '@/components/ImageGrid';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { getImages, getTrendingImages, searchImages, getImagesByCategory } from '@/lib/supabase';
+import { getImages, getTrendingImages, searchImages, getImagesByCategory, getImageCount } from '@/lib/supabase';
 import type { Image } from '@/types';
 
 function getCookie(name: string): string | null {
@@ -29,6 +29,7 @@ export default function HomePage() {
   const [showNsfw, setShowNsfw] = useState(false);
   const [showAgeModal, setShowAgeModal] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [imageCount, setImageCount] = useState<string>('');
   const observerRef = useRef<HTMLDivElement>(null);
 
   const handleNsfwToggle = () => {
@@ -53,6 +54,26 @@ export default function HomePage() {
   const cancelAge = () => {
     setShowAgeModal(false);
   };
+
+  // Fetch image count
+  useEffect(() => {
+    getImageCount().then(count => {
+      const rounded = Math.floor(count / 100) * 100;
+      setImageCount(rounded.toLocaleString() + '+');
+    });
+  }, []);
+
+  // Restore scroll position after navigating back
+  useEffect(() => {
+    const saved = sessionStorage.getItem('gg_scroll');
+    if (saved) {
+      const pos = parseInt(saved, 10);
+      // Wait for images to render then restore
+      const timer = setTimeout(() => window.scrollTo(0, pos), 100);
+      sessionStorage.removeItem('gg_scroll');
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const PAGE_SIZE = 24;
 
@@ -131,7 +152,7 @@ export default function HomePage() {
             <span className="text-accent/60">curated.</span>
           </h1>
           <p className="text-lg text-white/55 max-w-lg mx-auto leading-relaxed">
-            2,800+ AI-generated images from across the internet. Browse, search, download — no account needed.
+            {imageCount || '...'} AI-generated images from across the internet. Browse, search, download — no account needed.
           </p>
           <SearchBar onSearch={handleSearch} />
         </div>

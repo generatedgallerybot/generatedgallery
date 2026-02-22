@@ -6,6 +6,11 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
+export async function getImageCount(): Promise<number> {
+  const { count } = await supabase.from('images').select('*', { count: 'exact', head: true });
+  return count || 0;
+}
+
 // Client-side helper functions
 export const getImages = async (limit = 20, offset = 0, showNsfw = false) => {
   let query = supabase

@@ -8,6 +8,17 @@ import { getImage, upvoteImage, incrementDownloads, incrementViews } from '@/lib
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import type { Image as ImageType } from '@/types';
 
+function isVideo(url: string): boolean {
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  return lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.includes('/video');
+}
+
+function isGif(url: string): boolean {
+  if (!url) return false;
+  return url.toLowerCase().endsWith('.gif');
+}
+
 export default function ImageDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -103,15 +114,36 @@ export default function ImageDetailPage() {
         {/* Image */}
         <div className="space-y-4">
           <div className="relative bg-surface-2 rounded-2xl overflow-hidden">
-            <Image
-              src={image.image_url}
-              alt={image.title || image.prompt || 'AI Generated Image'}
-              width={image.width || 800}
-              height={image.height || 800}
-              className={`w-full h-auto transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-              onLoad={() => setImageLoaded(true)}
-              unoptimized
-            />
+            {isVideo(image.image_url) ? (
+              <video
+                src={image.image_url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                className={`w-full h-auto transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoadedData={() => setImageLoaded(true)}
+              />
+            ) : isGif(image.image_url) ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={image.image_url}
+                alt={image.title || image.prompt || 'AI Generated Image'}
+                className={`w-full h-auto transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoad={() => setImageLoaded(true)}
+              />
+            ) : (
+              <Image
+                src={image.image_url}
+                alt={image.title || image.prompt || 'AI Generated Image'}
+                width={image.width || 800}
+                height={image.height || 800}
+                className={`w-full h-auto transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoad={() => setImageLoaded(true)}
+                unoptimized
+              />
+            )}
             {!imageLoaded && <div className="absolute inset-0 img-loading" style={{ minHeight: '400px' }} />}
           </div>
 
