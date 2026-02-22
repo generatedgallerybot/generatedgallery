@@ -193,7 +193,10 @@ async function crawlCivitai(limit = 50) {
     const periods = ['Day', 'Week', 'Month', 'AllTime'];
     const sort = sorts[Math.floor(Math.random() * sorts.length)];
     const period = periods[Math.floor(Math.random() * periods.length)];
-    const response = await fetch(`https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&nsfw=false`, {
+    // Add random cursor offset for variety
+    const cursor = Math.floor(Math.random() * 50000);
+    const nsfwLevels = [1, 2]; // 1=None, 2=Soft — skip explicit
+    const response = await fetch(`https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&cursor=${cursor}`, {
       method: 'GET',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; GeneratedGallery/1.0)'
@@ -422,18 +425,13 @@ async function runCrawler() {
   const startTime = Date.now();
   let totalInserted = 0;
   
-  // Crawl from different sources
-  const lexicaCount = await crawlLexica(25);
-  totalInserted += lexicaCount;
-  
-  const civitaiCount = await crawlCivitai(50);
-  totalInserted += civitaiCount;
-  
-  const promptHeroCount = await crawlPromptHero(25);
-  totalInserted += promptHeroCount;
-  
-  const openArtCount = await crawlOpenArt(25);
-  totalInserted += openArtCount;
+  // Civitai is the primary working source — crawl multiple pages
+  for (let page = 0; page < 3; page++) {
+    const count = await crawlCivitai(100);
+    totalInserted += count;
+    if (count === 0) break; // no new images, stop
+    await new Promise(r => setTimeout(r, 2000));
+  }
   
   // Update category counts
   await updateCategoryCounts();
