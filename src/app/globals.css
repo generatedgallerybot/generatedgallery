@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg: #050505;
+  --bg: #121212;
   --text: #e8e8e8;
   --text-muted: #888888;
   --border: #1a1a1a;
@@ -90,7 +90,7 @@ body > * {
 }
 
 @media (min-width: 1440px) {
-  .masonry { column-count: 5; }
+  .masonry { column-count: 4; }
 }
 
 .masonry-item {
