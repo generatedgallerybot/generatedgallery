@@ -1,34 +1,39 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Space_Grotesk, DM_Sans } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+});
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: 'GeneratedGallery.com - Free AI Art Gallery',
-  description: 'Discover, search, and download amazing AI-generated art from across the internet. Browse thousands of images created by the best AI models.',
-  keywords: 'AI art, generated images, artificial intelligence, AI gallery, free images, AI models',
-  authors: [{ name: 'GeneratedGallery' }],
+  title: 'Generated Gallery — AI Art, Curated',
+  description: 'Browse, search, and download thousands of AI-generated images. Free, open, no account needed.',
+  keywords: 'AI art, AI images, generated images, stable diffusion, flux, midjourney, free AI art',
+  authors: [{ name: 'Generated Gallery' }],
   openGraph: {
-    title: 'GeneratedGallery.com - Free AI Art Gallery',
-    description: 'Discover, search, and download amazing AI-generated art from across the internet.',
+    title: 'Generated Gallery — AI Art, Curated',
+    description: 'Browse, search, and download thousands of AI-generated images. Free and open.',
     url: 'https://generatedgallery.com',
-    siteName: 'GeneratedGallery',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-      },
-    ],
+    siteName: 'Generated Gallery',
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GeneratedGallery.com - Free AI Art Gallery',
-    description: 'Discover, search, and download amazing AI-generated art from across the internet.',
+    title: 'Generated Gallery — AI Art, Curated',
+    description: 'Browse, search, and download thousands of AI-generated images.',
     images: ['/og-image.png'],
   },
 };
@@ -39,14 +44,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-          <Navbar />
-          <main className="container mx-auto px-4 py-8">
-            {children}
-          </main>
-        </div>
+    <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
+      <body className="font-body bg-surface-0 text-white antialiased">
+        <Navbar />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, Download, Eye, ExternalLink } from 'lucide-react';
 import type { Image as ImageType } from '@/types';
 
 interface ImageGridProps {
@@ -11,129 +10,77 @@ interface ImageGridProps {
 }
 
 export function ImageGrid({ images }: ImageGridProps) {
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [loaded, setLoaded] = useState<Set<string>>(new Set());
 
-  const handleImageLoad = (imageId: string) => {
-    setLoadedImages(prev => new Set(prev).add(imageId));
-  };
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
-    }
-    return num.toString();
-  };
+  const fmt = (n: number) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
 
   return (
-    <div className="masonry">
+    <div className="masonry stagger-children">
       {images.map((image) => (
-        <div
+        <Link
           key={image.id}
-          className="masonry-item group relative bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          href={`/image/${image.id}`}
+          className="masonry-item group block relative bg-surface-2 rounded-xl overflow-hidden cursor-pointer"
         >
-          <Link href={`/image/${image.id}`}>
-            <div className="relative">
-              {/* Image */}
-              <div className="relative overflow-hidden">
-                <Image
-                  src={image.thumbnail_url || image.image_url}
-                  alt={image.title || image.prompt || 'AI Generated Image'}
-                  width={image.width || 400}
-                  height={image.height || 600}
-                  className={`w-full h-auto object-cover transition-all duration-300 group-hover:scale-105 ${
-                    loadedImages.has(image.id) ? 'opacity-100' : 'opacity-0'
-                  }`}
-                  onLoad={() => handleImageLoad(image.id)}
-                  unoptimized
-                />
-                
-                {/* Loading placeholder */}
-                {!loadedImages.has(image.id) && (
-                  <div className="absolute inset-0 bg-slate-700 animate-pulse flex items-center justify-center">
-                    <div className="w-12 h-12 border-4 border-slate-600 border-t-blue-500 rounded-full animate-spin"></div>
-                  </div>
-                )}
-                
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
-                    <ExternalLink className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
+          {/* Image */}
+          <div className="relative overflow-hidden">
+            <Image
+              src={image.thumbnail_url || image.image_url}
+              alt={image.title || image.prompt || 'AI Generated Image'}
+              width={image.width || 400}
+              height={image.height || 600}
+              className={`w-full h-auto transition-all duration-500 group-hover:scale-[1.03] ${
+                loaded.has(image.id) ? 'opacity-100' : 'opacity-0'
+              }`}
+              onLoad={() => setLoaded(prev => new Set(prev).add(image.id))}
+              unoptimized
+            />
 
-          {/* Content */}
-          <div className="p-4 space-y-3">
-            {/* Title */}
-            {image.title && (
-              <h3 className="font-semibold text-white text-sm line-clamp-2">
-                {image.title}
-              </h3>
+            {/* Loading shimmer */}
+            {!loaded.has(image.id) && (
+              <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }} />
             )}
 
-            {/* Prompt */}
-            {image.prompt && (
-              <p className="text-slate-300 text-xs line-clamp-3 leading-relaxed">
-                {image.prompt}
-              </p>
-            )}
+            {/* Hover overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-            {/* Model */}
-            {image.model && (
-              <div className="flex items-center">
-                <span className="text-xs bg-slate-700 text-slate-300 px-2 py-1 rounded-full">
-                  {image.model}
-                </span>
-              </div>
-            )}
-
-            {/* Tags */}
-            {image.tags && image.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {image.tags.slice(0, 3).map((tag, index) => (
-                  <span
-                    key={index}
-                    className="text-xs bg-blue-900/50 text-blue-300 px-2 py-1 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {image.tags.length > 3 && (
-                  <span className="text-xs text-slate-500">
-                    +{image.tags.length - 3} more
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Stats */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-700">
-              <div className="flex items-center space-x-4 text-slate-400">
-                <div className="flex items-center space-x-1">
-                  <Heart className="w-4 h-4" />
-                  <span className="text-xs">{formatNumber(image.upvotes)}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Download className="w-4 h-4" />
-                  <span className="text-xs">{formatNumber(image.downloads)}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
-                  <span className="text-xs">{formatNumber(image.views)}</span>
-                </div>
-              </div>
-              
-              {/* Source */}
-              {image.source_site && (
-                <div className="text-xs text-slate-500">
-                  {image.source_site}
-                </div>
+            {/* Bottom info on hover */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+              {image.title && (
+                <h3 className="text-sm font-medium text-white line-clamp-1 mb-1">
+                  {image.title}
+                </h3>
               )}
+              <div className="flex items-center gap-4 text-[11px] text-white/60">
+                <span className="flex items-center gap-1">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 2L7.2 4.5L10 4.9L8 6.8L8.4 9.6L6 8.3L3.6 9.6L4 6.8L2 4.9L4.8 4.5L6 2Z" fill="currentColor" />
+                  </svg>
+                  {fmt(image.upvotes)}
+                </span>
+                <span className="flex items-center gap-1">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 2V8M6 8L3.5 5.5M6 8L8.5 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M2 9.5H10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                  </svg>
+                  {fmt(image.downloads)}
+                </span>
+                {image.model && (
+                  <span className="ml-auto px-2 py-0.5 rounded-full bg-white/10 text-white/50 text-[10px]">
+                    {image.model}
+                  </span>
+                )}
+              </div>
             </div>
+
+            {/* NSFW badge */}
+            {image.is_nsfw && (
+              <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-red-500/80 text-[10px] font-medium text-white uppercase tracking-wider">
+                NSFW
+              </div>
+            )}
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
