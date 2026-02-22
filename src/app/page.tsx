@@ -96,14 +96,14 @@ export default function HomePage() {
             AI art,<br />
             <span className="text-accent/60">curated.</span>
           </h1>
-          <p className="text-lg text-white/45 max-w-lg mx-auto leading-relaxed">
+          <p className="text-lg text-white/55 max-w-lg mx-auto leading-relaxed">
             Thousands of AI-generated images from across the internet. Browse, search, download — no account needed.
           </p>
           <SearchBar onSearch={handleSearch} />
         </div>
 
         {/* Filters row */}
-        <div className="space-y-4">
+        <div className="space-y-5 pt-4">
           {/* View toggle + NSFW */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1 bg-surface-2 rounded-full p-1 border border-white/[0.04]">
