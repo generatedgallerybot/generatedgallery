@@ -339,12 +339,18 @@ function HomePageInner() {
           <>
             <ImageGrid images={images} />
             {loadingMore && (
-              <div className="flex justify-center py-8">
+              <div className="flex flex-col items-center gap-3 py-10">
                 <div className="flex gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/20 animate-pulse" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/20 animate-pulse" style={{ animationDelay: '150ms' }} />
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/20 animate-pulse" style={{ animationDelay: '300ms' }} />
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent/30 animate-pulse" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent/30 animate-pulse" style={{ animationDelay: '150ms' }} />
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent/30 animate-pulse" style={{ animationDelay: '300ms' }} />
                 </div>
+                <span className="text-[12px] text-white/25 tracking-wide uppercase">Loading more</span>
+              </div>
+            )}
+            {!loadingMore && hasMore && (
+              <div className="flex justify-center py-8">
+                <span className="text-[11px] text-white/15 tracking-wide">Scroll for more</span>
               </div>
             )}
             <div ref={observerRef} className="h-1" />

@@ -85,7 +85,7 @@ export function CategoryFilter({ selectedCategory, onCategorySelect }: CategoryF
               : 'bg-white/[0.03] text-white/40 hover:text-white/60 hover:bg-white/[0.07] border-white/[0.04]'
           }`}
         >
-          {cat.name}
+          {cat.name}{cat.count > 0 && <span className="ml-1.5 text-[11px] opacity-50">{cat.count}</span>}
         </button>
       ))}
     </div>

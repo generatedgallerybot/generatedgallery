@@ -25,7 +25,7 @@ Free AI art gallery — "Unsplash for AI art." Browse, search, download AI-gener
 
 ---
 
-## 2026 Design Direction (Updated Feb 23, 2026)
+## 2026 Design Direction (Updated Feb 23, 2026 — Research Pass #2)
 
 ### Typography Upgrade
 2026 is "Imperfect by Design" — the industry is rejecting algorithmic sterility. Ultra-thin fonts and blanding are dead. Variable fonts are infrastructure, not optional. Kinetic type is mainstream.
@@ -125,11 +125,16 @@ Big in 2026. Use sparingly:
 - **Pinterest**: "Visual search" — click a region of an image to find similar. We could do this with CLIP embeddings later.
 
 ### 2026 Macro Trends to Apply
-1. **Expressive minimalism** — big type, breathing room, but with one bold move per section (not sterile emptiness)
-2. **Perfectly imperfect** — subtle grain overlay on hero (CSS `background-image: url(noise.svg)` at 3-5% opacity), slight border irregularity on featured cards
-3. **Scroll storytelling** — parallax image strips between content sections, not just a static grid page
-4. **Variable fonts as interaction** — font weight responds to hover/scroll, feels alive
-5. **Glassmorphism evolved** — frosted glass is standard now, but layer it: navbar blur + search blur + modal blur at different intensities (12px/20px/40px)
+1. **Presence over perfection** — the 2026 ethos: intentional > ornamental. Design should feel authored, not generated. Every element has a reason.
+2. **Expressive minimalism** — big type, breathing room, but with one bold move per section (not sterile emptiness)
+3. **Perfectly imperfect** — subtle grain overlay on hero (CSS `background-image: url(noise.svg)` at 3-5% opacity), slight border irregularity on featured cards
+4. **Scroll storytelling** — parallax image strips between content sections, not just a static grid page
+5. **Variable fonts as interaction** — font weight responds to hover/scroll, feels alive
+6. **Glassmorphism evolved** — frosted glass is standard now, but layer it: navbar blur + search blur + modal blur at different intensities (12px/20px/40px)
+7. **CSS scroll-driven animations (native)** — `animation-timeline: scroll()` is shipping in Chrome/Edge. Replace JS IntersectionObserver scroll animations with pure CSS where possible. Zero JS overhead for fade-in/parallax grid items.
+8. **View Transitions API** — use `document.startViewTransition()` for page-to-page navigation (grid → image detail). Crossfade the clicked image into the detail hero with `view-transition-name`. Feels like a native app.
+9. **Vertical photography bias** — mobile-first means tall images perform better. Consider a "portrait priority" layout mode where tall images get 2-row spans in the masonry grid.
+10. **GSAP ScrollTrigger + Framer Motion** — GSAP 3.12 ScrollTrigger for pinned horizontal scroll sections (e.g., "Featured This Week" strip). Framer Motion for React component enter/exit animations with `layout` prop for shared layout transitions between grid and lightbox.
 
 ### Quick Wins (Ship This Week)
 1. Swap DM Sans → Geist for body text (free, dark-optimized)
@@ -142,15 +147,19 @@ Big in 2026. Use sparingly:
 8. Uppercase category labels with 0.06em tracking (museum wall label style)
 
 ### Stretch Goals
-1. Lightbox/modal with frosted glass backdrop (blur 40px)
+1. Lightbox/modal with frosted glass backdrop (blur 40px) + View Transitions API crossfade from grid thumbnail
 2. Blurhash dominant-color placeholders per image
 3. Bento grid category browser with representative images
-4. Kinetic hero headline — variable font weight animates on scroll
+4. Kinetic hero headline — variable font weight animates on scroll via `animation-timeline: scroll()`
 5. CSS native masonry (`grid-template-rows: masonry`) with JS fallback
-6. Color-based search/filtering
+6. Color-based search/filtering (extract dominant palette per image, store in DB, filter by hex)
 7. Terracotta (#c4816c) "Trending" badges on hot images
 8. Subtle grain/noise on all surface layers (not just hero)
-9. Parallax image strip between hero and grid ("Featured this week" horizontal scroll)
+9. GSAP ScrollTrigger horizontal scroll strip — "Featured This Week" pinned section between hero and grid
+10. **Prompt-first display** (steal from Lexica) — show truncated prompt under each image in grid, expandable on click. Prompt is the content for AI art, not just metadata.
+11. **"Visual search" stub** — click a region of an image to find similar (CLIP embedding similarity). Even a simple "More like this" button per image would be a differentiator.
+12. **Micro-interaction: appreciate** — heart button with CSS particle burst on click (Behance-style). Store in localStorage for anonymous users. `@keyframes particle { 0% { transform: translate(0) scale(1); opacity: 1 } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0 } }` with 6-8 pseudo-elements.
+13. **Cursor morphing (desktop)** — custom cursor changes to "View ↗" text on image hover, "Download ↓" on download button. CSS `cursor: none` + JS follower div. High-end portfolio feel.
 
 ---
 
