@@ -163,14 +163,14 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
             height={image.height || 600}
             className={`w-full h-auto transition-opacity duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : 'opacity-0'}`}
             style={{ transition: 'opacity 0.5s, transform 0.3s' }}
-            loading="lazy"
+            loading={isVisible ? 'eager' : 'lazy'}
             onLoad={onLoad}
             onError={onError}
             unoptimized
           />
         )}
 
-        {!loaded && isVisible && (
+        {!loaded && (
           <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }} />
         )}
 
@@ -399,7 +399,7 @@ export function ImageGrid({ images }: ImageGridProps) {
   }, [layoutItems]);
 
   const visibleImages = useMemo(() => images.filter(img => !errored.has(img.id)), [images, errored]);
-  const visibleIds = useVisibleIds(layoutItems, 800);
+  const visibleIds = useVisibleIds(layoutItems, 2500);
 
   const handlePrev = useCallback(() => {
     setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i);

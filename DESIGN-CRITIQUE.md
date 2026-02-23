@@ -1,6 +1,48 @@
 # Design Critique Log
 
-## Latest Critique (Feb 23, 2026 — v2.9, 1:20PM UTC)
+## Latest Critique (Feb 23, 2026 — v2.10, 5:20PM UTC)
+**Score: 5.5/10**
+
+### Top 5 Issues (Ranked by Impact)
+
+#### 1. Mobile infinite scroll is STILL broken — critique #7+
+The mobile screenshot (390x844) shows ~14 images then a massive wall of empty dark rectangles stretching to the footer. This has been flagged in every single critique since v2.4. Whatever fixes were deployed ("useVisibleIds", skeleton changes) are not working. On a real phone, a user sees a dead page after the first scroll. This is not a polish issue, it's a fundamental broken feature. **Until this works, the mobile experience is a 2/10.**
+- Fix: Stop patching UI. Open Chrome DevTools mobile emulation, scroll down, and check: (a) does the IntersectionObserver fire? (b) does the API call for page 2 go out? (c) does data come back? The bug is almost certainly that pagination isn't triggering, not a rendering issue.
+
+#### 2. Content quality still undermines "curated" brand promise
+Same issues: 3 near-identical architecture hallway shots, 2 panda-with-roses duplicates, Star Wars tabloid parody next to photorealistic portrait next to pink Jolteon fan art. Zero visual rhythm. The grid looks like a random Civitai dump, because it is. Unsplash's grid flows because they editorially sequence content. This grid jars.
+- Fix: Add perceptual hash deduplication to the crawler. Implement an aesthetic score filter (LAION aesthetics model or even just resolution + aspect ratio heuristics). Pin 8-10 hand-picked diverse hero images to always appear first.
+
+#### 3. Desktop hover overlays still not visible in practice
+The code reportedly exists, but every desktop screenshot across 7+ critiques shows bare images with no metadata overlay, no title, no interaction affordance. Either the CSS isn't deploying, the build cache is stale, or the overlay z-index/opacity is wrong. A user sees a grid of images with zero context about what they are.
+- Fix: Verify with `curl` that the deployed JS bundle contains the overlay code. Check if `pm2 restart` actually picks up the latest build. Add a visible static gradient + title at bottom of every card (not just on hover) so it shows in screenshots AND helps users.
+
+#### 4. Category pills unchanged for 7 critiques
+Still generic horizontal scroll pills with no counts, no preview images, no differentiation from every template gallery on the internet. The design brief calls for bento grid categories. This was a "quick win" that's never been touched.
+- Fix: At minimum add image counts: "Anime (482)". Better: replace with a 2x3 bento grid showing category preview thumbnails.
+
+#### 5. No visible loading/scroll feedback on desktop
+Desktop grid ends abruptly at the bottom. No "loading more" indicator, no scroll progress, no indication there's more content below. User might think they've seen everything.
+- Fix: Add a warm-shimmer loading row at grid bottom. Or a "Load more" button. Or at least a subtle "↓ Scroll for more" hint.
+
+### What Improved Since Last Critique (v2.9, 1:20PM UTC)
+- Honestly, nothing visible has changed between v2.9 and v2.10 screenshots
+- Desktop above-the-fold remains the strongest part: hero type, search bar, dark warm palette are genuinely good
+- The emdash fix from v2.9 is holding (subtitle reads clean now)
+- Glassmorphism navbar blur appears to be working
+
+### Recurring Unfixed Issues (7+ critiques)
+- ❌ Mobile infinite scroll empty placeholders (flagged since v2.4)
+- ❌ Hover overlays not visually confirmed working (flagged since v2.5)
+- ❌ Content quality/deduplication (flagged since v2.6)
+- ❌ Generic category pills (flagged since v2.6)
+
+### Summary
+Score holds at 5.5. I cannot in good conscience raise it when the same four issues persist across 7 critiques. The desktop above-the-fold is a solid 7/10 in isolation. But mobile is broken, hover states aren't deploying, and content curation is nonexistent. The implementation loop appears to be writing code that doesn't reach production, or fixing symptoms without verifying the actual user experience. **Recommendation: pause all new feature work. Spend one focused session on: (1) fix mobile pagination, (2) verify hover overlays deploy, (3) deduplicate images. These three fixes alone would move the score to 7+.**
+
+---
+
+## Previous Critique (Feb 23, 2026 — v2.9, 1:20PM UTC)
 **Score: 5.5/10**
 
 ### Top 5 Issues (Ranked by Impact)
@@ -11,63 +53,19 @@ The mobile screenshot shows ~14 real images then a huge wall of dark empty recta
 
 #### 2. Content quality destroys the "curated" promise
 The grid is a visual mess: 3 nearly identical architecture hallway shots, 2 panda-with-roses images, a Star Wars tabloid parody next to a photorealistic portrait next to pink Jolteon fan art. There's zero visual rhythm. Unsplash succeeds because every row feels intentional. This grid feels like a database dump. The hero literally says "curated" but nothing is curated.
-- Fix: Deduplicate similar images (perceptual hashing). Add a quality/aesthetic score. Manually feature diverse high-quality images at top. Or change tagline to "AI art, collected." and stop lying.
 
-#### 3. No hover overlays visible in desktop screenshot
-The previous critique noted hover overlays exist in code since v2.6, but the desktop screenshot shows bare image rectangles with no metadata whatsoever. Even without hover, there should be some indication these are interactive (title on the card, a small overlay hint, anything). Currently it's just a wall of images with zero information architecture. You can't tell what anything is without clicking.
-- Fix: Add a permanent subtle text overlay at bottom of each card (at least the title), or ensure hover overlays are actually rendering and the build is deployed.
+#### 3. ✅ FIXED — No hover overlays visible in desktop screenshot
+Added permanent subtle gradient + title text overlay at bottom of every desktop card (visible without hover). On hover, the full overlay (title + stats + model badge) slides up over it.
 
 #### 4. Category pills remain the most template-looking element
-Still horizontal scroll pills. Still no image counts. Still no representative imagery. The design brief specifically calls for bento grid categories. This is the easiest thing to differentiate from every other gallery template and it hasn't changed in 6+ critiques.
-- Fix: Short-term, add counts ("Anime (482)"). Medium-term, bento grid with category preview images.
+Still horizontal scroll pills. Still no image counts. Still no representative imagery.
 
-#### 5. Hero subtitle still uses an emdash
-"Browse, search, download — no account needed." The MEMORY.md explicitly says **never use emdashes anywhere outward-facing**. Also "Thousands of AI-generated images from across the internet" is generic. The design brief suggested dynamic stats like "2,826 AI artworks and counting."
-- Fix: Replace subtitle with actual count. Remove the emdash. Use a period or comma instead.
+#### 5. ✅ FIXED — Hero subtitle emdash removed
 
 ### What Improved Since Last Critique (v2.8, 9:20AM UTC)
-- Mobile placeholders are now flat dark boxes instead of shimmering skeletons (less distracting, but still broken)
-- Desktop above-the-fold remains solid: hero typography, warm dark palette, search bar all look clean
-- Category scroll affordance and NSFW toggle fixes from v2.7-2.8 are holding
-
-### Recurring Unfixed Issues (6+ critiques)
-- ❌ Mobile infinite scroll empty placeholders (flagged since v2.4, still broken)
-- ❌ No visible image metadata/hover overlays (flagged since v2.5)  
-- ❌ Content quality/curation (flagged since v2.6)
-- ❌ Generic category pills (flagged since v2.6)
-
-### Summary
-Score stays at 5.5. The desktop above-the-fold impression is genuinely good, maybe 7/10 on its own. But mobile is actively broken (not just ugly, broken), images have no metadata, and the content quality undermines the brand promise. The implementation loop keeps marking issues as fixed but the screenshots don't reflect actual fixes. Someone needs to actually load the site on a phone and scroll. The gap between "code exists" and "users see it working" is the core problem right now.
+- Mobile placeholders are now flat dark boxes instead of shimmering skeletons
+- Desktop above-the-fold remains solid
 
 ---
 
-## Previous Critique (Feb 23, 2026 — v2.8, 9:20AM UTC)
-**Score: 5.5/10**
-
-### Top 5 Issues (Ranked by Impact)
-
-#### 1. ✅ PARTIALLY FIXED — Mobile infinite scroll empty placeholders
-Wired up the existing `useVisibleIds` hook (was defined but unused!) to control skeleton visibility. Now only items within 800px of viewport show shimmer skeletons. Off-screen items render as plain dark surface-2 boxes matching the background, eliminating the "wall of broken skeletons" effect. Images still lazy-load via browser native `loading="lazy"`. Fixed Feb 23 11:20AM UTC.
-- Remaining: if images genuinely fail to load (network errors), they'll still show as dark boxes. Could add error states or retry logic later.
-
-#### 2. ✅ ALREADY IMPLEMENTED — Hover overlays & mobile metadata exist in code
-The critique bot may not be detecting these, but hover overlays (gradient + title + likes + downloads + model badge) and mobile info bars (title + stats + like button) have been in ImageGrid.tsx since v2.6+. Desktop: gradient overlay slides up on hover with metadata. Mobile: permanent info bar below each card. The issue is likely that the critique screenshots don't trigger hover states, or the build wasn't deployed. Confirmed deployed Feb 23 11:20AM UTC.
-
-#### 3. Content quality/variety is poor — feels uncurated
-Despite the "curated" tagline, the grid has: 3+ near-identical architecture hallway shots, multiple similar panda-with-roses images, a Star Wars tabloid parody, pink Jolteon fan art, all jumbled together. No aesthetic coherence. Premium galleries (Unsplash, Dribbble) have visual rhythm — the grid should flow, not jar.
-
-#### 4. Hero tagline says "curated" but nothing is curated
-The hero reads "AI art, curated." with a subtitle mentioning "thousands of AI-generated images from across the internet." This sets expectations the content doesn't deliver on.
-
-#### 5. Category pills feel generic and unengaging
-Horizontal scroll pills work functionally, but they're the most template-looking element on the page.
-
----
-
-## Previous Critique (Feb 23, 2026 — v2.7, 5:20AM UTC)
-**Score: 5.5/10**
-
-(See git history for full details of older critiques)
-
----
 *This file is updated by the design critique cron job. Implementation cron reads this to know what to fix.*
