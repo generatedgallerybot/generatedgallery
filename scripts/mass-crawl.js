@@ -74,6 +74,8 @@ async function crawlPage(cursor, sort, nsfw) {
     sort,
     nsfw: nsfw ? 'true' : 'false',
   });
+  const period = process.argv[4] || 'AllTime';
+  if (period !== 'AllTime') params.set('period', period);
   if (cursor) params.set('cursor', cursor);
   
   const url = `https://civitai.com/api/v1/images?${params}`;

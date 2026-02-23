@@ -25,35 +25,42 @@ Free AI art gallery — "Unsplash for AI art." Browse, search, download AI-gener
 
 ---
 
-## 2026 Design Direction (Updated Feb 22, 2026)
+## 2026 Design Direction (Updated Feb 23, 2026)
 
 ### Typography Upgrade
-Current Space Grotesk + DM Sans is solid but common. Consider these swaps for more premium feel:
+2026 is "Imperfect by Design" — the industry is rejecting algorithmic sterility. Ultra-thin fonts and blanding are dead. Variable fonts are infrastructure, not optional. Kinetic type is mainstream.
 
-**Display (hero/headings):**
-- **GT America** (Grilli Type) — bridges American Gothic and European Neo-Grotesk, 84 styles. Used by top editorial sites. Feels authoritative without being cold.
-- **Söhne** (Klim) — the "memory of Akzidenz-Grotesk." What Vercel/Stripe use. Premium tech-meets-editorial.
-- If staying free: **General Sans** (Fontshare) at 56-72px hero, -0.03em tracking, weight 600
+**Display (hero/headings) — pick ONE:**
+- **Satoshi Variable** (Fontshare, free) — geometric sans with personality, 9 weights. Use at 64px hero, weight 700, -0.03em tracking. The sweet spot between Space Grotesk and something more distinctive.
+- **General Sans Variable** (Fontshare, free) — slightly warmer, pairs beautifully with dark themes. 56-72px, weight 600, -0.02em tracking.
+- **Upgrade path**: Die Grotesk (Klim) or GT America (Grilli Type) if we ever license fonts. Both are the "Mutant Heritage" trend — classic forms with tech-tuned edges.
 
 **Body:**
-- **Inter Variable** — still the king for UI body text, but bump to 15px/1.6 line-height for readability on dark
-- **Geist** (Vercel) — clean, modern, designed for dark interfaces. Free.
+- **Geist** (Vercel, free) — designed for dark interfaces, replaces DM Sans. 15px/1.65 line-height on dark backgrounds (dark needs more line-height than light).
+- **Fallback**: Inter Variable at 15px/1.6
+
+**Kinetic type opportunity (hero only):**
+- Animate the hero headline weight on scroll using variable font axis: weight 300→700 as user scrolls past. CSS `font-variation-settings` + `IntersectionObserver`. Subtle but very 2026.
+- Or: stagger letter reveal on load with `clip-path: inset(0 100% 0 0)` per character, 30ms delay each
 
 **Specific settings:**
-- Hero headline: 56px mobile / 72px desktop, weight 500-600, -0.03em tracking
-- Section headers: 24px, weight 500, -0.01em tracking
-- Body/metadata: 14-15px, weight 400, 1.6 line-height
-- Image captions: 12px, weight 400, letter-spacing 0.02em, opacity 0.6
+- Hero headline: 56px mobile / 72px desktop, weight 600-700, -0.03em tracking
+- Section headers: 22px, weight 600, -0.01em tracking, uppercase with 0.08em spacing (editorial feel)
+- Body/metadata: 15px, weight 400, 1.65 line-height
+- Image captions: 12px, weight 500, letter-spacing 0.04em, uppercase, opacity 0.5
+- Category labels: 11px, weight 600, uppercase, 0.06em tracking (like museum wall labels)
 
 ### Color Evolution
-The warm gold (#e8d5b7) accent is on-trend. 2026 is moving toward "calm and breathable" palettes. Refine:
+2026 trend: "calm and breathable" palettes. Softer, more restorative. Reduce visual fatigue. Our warm gold is perfectly on-trend.
 
-- **Base black**: Keep #050505 but add a subtle warm tint → #080706
+- **Base black**: #080706 (warm-tinted, not pure black)
 - **Surface layers**: #0f0e0d (cards), #1a1918 (elevated), #242220 (hover)
-- **Warm accent**: #e8d5b7 (keep) — use for active states, selected categories, CTA hover
-- **Secondary accent**: #b8a088 (muted gold for borders, dividers)
+- **Warm accent**: #e8d5b7 (keep) — active states, selected categories, CTA hover
+- **Secondary accent**: #b8a088 (muted gold for borders, dividers, inactive icons)
 - **Text hierarchy**: #f5f0eb (primary), #a89e94 (secondary), #6b6259 (tertiary/muted)
-- **Avoid**: Pure white (#fff) anywhere. Warmest white should be #f5f0eb
+- **NEW — Signal color**: #c4816c (muted terracotta) for "new" badges, trending indicators. Warm but distinct from gold.
+- **Avoid**: Pure white (#fff) anywhere. Warmest white = #f5f0eb. No blue or purple tints.
+- **Gradient accent**: subtle radial gradient from #e8d5b7 at 10% opacity behind hero text, fading to transparent. Gives warmth without being a visible gradient.
 
 ### Layout Patterns
 
@@ -110,27 +117,40 @@ Big in 2026. Use sparingly:
 - Add "Remix" or "Similar" button — links to search by style/model
 
 ### What Competitors Do Well (Steal These)
-- **Unsplash**: Blurhash placeholders, clean search, collections concept
-- **Lexica.art**: Prompt-first display, dark theme, simple grid
-- **ArtStation**: Full-bleed image viewing, strong artist attribution
-- **Dribbble**: Color-based search, bento category layout
-- **Behance**: "Appreciate" interaction (heart with particle burst), project grouping
+- **Unsplash**: Blurhash placeholders, clean search, collections concept, dominant-color page tinting
+- **Lexica.art**: Prompt-first display, dark theme, copy-prompt button front and center
+- **ArtStation**: Full-bleed image viewing, "Staff Picks" curation layer, strong artist attribution
+- **Dribbble**: Color-based search, bento category layout, "Made with Figma" filter tags
+- **Behance**: "Appreciate" interaction (heart with particle burst), project grouping, blue accent on black
+- **Pinterest**: "Visual search" — click a region of an image to find similar. We could do this with CLIP embeddings later.
+
+### 2026 Macro Trends to Apply
+1. **Expressive minimalism** — big type, breathing room, but with one bold move per section (not sterile emptiness)
+2. **Perfectly imperfect** — subtle grain overlay on hero (CSS `background-image: url(noise.svg)` at 3-5% opacity), slight border irregularity on featured cards
+3. **Scroll storytelling** — parallax image strips between content sections, not just a static grid page
+4. **Variable fonts as interaction** — font weight responds to hover/scroll, feels alive
+5. **Glassmorphism evolved** — frosted glass is standard now, but layer it: navbar blur + search blur + modal blur at different intensities (12px/20px/40px)
 
 ### Quick Wins (Ship This Week)
-1. Glassmorphism navbar with blur
-2. Tighter grid gap (12px) + 4px border-radius on images
-3. Warm shimmer loading skeletons
-4. Hover overlay slide-up (title + download)
-5. Staggered scroll-in animation for grid items
+1. Swap DM Sans → Geist for body text (free, dark-optimized)
+2. Glassmorphism navbar with blur (12px)
+3. Tighter grid gap (12px) + 4px border-radius on images
+4. Warm shimmer loading skeletons (#1a1918 → #242220)
+5. Hover overlay slide-up (title + download) with `translateY(100%)→0` transition
 6. Replace subtitle with dynamic stat ("2,826 AI artworks and counting")
+7. Add subtle noise texture overlay to hero section (3% opacity SVG)
+8. Uppercase category labels with 0.06em tracking (museum wall label style)
 
 ### Stretch Goals
-1. Lightbox/modal with frosted glass backdrop
-2. Blurhash dominant-color placeholders
-3. Bento grid category browser
-4. Custom cursor on desktop
-5. CSS native masonry (with JS fallback)
+1. Lightbox/modal with frosted glass backdrop (blur 40px)
+2. Blurhash dominant-color placeholders per image
+3. Bento grid category browser with representative images
+4. Kinetic hero headline — variable font weight animates on scroll
+5. CSS native masonry (`grid-template-rows: masonry`) with JS fallback
 6. Color-based search/filtering
+7. Terracotta (#c4816c) "Trending" badges on hot images
+8. Subtle grain/noise on all surface layers (not just hero)
+9. Parallax image strip between hero and grid ("Featured this week" horizontal scroll)
 
 ---
 

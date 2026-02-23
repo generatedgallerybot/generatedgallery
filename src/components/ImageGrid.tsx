@@ -170,7 +170,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
           />
         )}
 
-        {!loaded && (
+        {!loaded && isVisible && (
           <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }} />
         )}
 
@@ -391,8 +391,7 @@ export function ImageGrid({ images }: ImageGridProps) {
   }, [layoutItems]);
 
   const visibleImages = useMemo(() => images.filter(img => !errored.has(img.id)), [images, errored]);
-  // Removed virtualization — render all items. With 24-48 images per page,
-  // the perf cost is negligible and virtualization caused empty black placeholders on mobile.
+  const visibleIds = useVisibleIds(layoutItems, 800);
 
   const handlePrev = useCallback(() => {
     setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i);
@@ -420,7 +419,7 @@ export function ImageGrid({ images }: ImageGridProps) {
               fmt={fmt}
               onClick={() => setLightboxIndex(index)}
               isNew={index >= newItemStart.current && newItemStart.current > 0}
-              isVisible={true}
+              isVisible={visibleIds.has(image.id)}
               isLiked={likedIds.has(image.id)}
               onLike={(e) => handleLike(e, image.id)}
             />

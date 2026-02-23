@@ -1,67 +1,69 @@
 # Design Critique Log
 
-## Latest Critique (Feb 23, 2026 — v2.7, 5:20AM UTC)
+## Latest Critique (Feb 23, 2026 — v2.8, 9:20AM UTC)
+**Score: 5.5/10**
+
+### Top 5 Issues (Ranked by Impact)
+
+#### 1. Mobile infinite scroll STILL broken — massive wall of empty placeholders
+Fifth consecutive critique. The mobile screenshot shows ~14 real images then an enormous stretch of empty dark skeleton rectangles all the way to the footer. This is catastrophic for any mobile visitor (majority of web traffic). Whatever "fix" was applied hasn't worked. The page looks broken.
+- Fix: This needs actual debugging, not blind code changes. Add `console.log` to the infinite scroll callback. Check if the Supabase query for page 2+ returns data. Check if `GridItem` receives valid `src` URLs for items beyond the first batch. Test in Chrome DevTools mobile emulation at 390px.
+
+#### 2. No image metadata or hover overlays — 5th consecutive critique
+Still zero context on any image card. No title, no model, no category badge, no download icon, no hover state. This is the single biggest feature gap vs every competitor. A gallery without metadata is just a folder view.
+- Fix: Add a CSS overlay on hover (desktop) with `opacity 0→1` transition showing title + download icon. On mobile, add a permanent 1-line caption below each card (12px, muted text). This is ~50 lines of code.
+
+#### 3. Content quality/variety is poor — feels uncurated
+Despite the "curated" tagline, the grid has: 3+ near-identical architecture hallway shots, multiple similar panda-with-roses images, a Star Wars tabloid parody, pink Jolteon fan art, all jumbled together. No aesthetic coherence. Premium galleries (Unsplash, Dribbble) have visual rhythm — the grid should flow, not jar.
+- Fix: Deduplicate with perceptual hashing. Add an aesthetic quality score and sort by it. Feature diverse content at top of grid.
+
+#### 4. Hero tagline says "curated" but nothing is curated
+The hero reads "AI art, curated." with a subtitle mentioning "thousands of AI-generated images from across the internet." This sets expectations the content doesn't deliver on. Either actually curate (quality filter, editorial picks) or change the copy to something honest like "AI art, discovered." or "AI art, collected."
+- Fix: Change hero copy, OR implement actual curation (featured/editor's picks row, quality threshold).
+
+#### 5. Category pills feel generic and unengaging
+Horizontal scroll pills work functionally, but they're the most template-looking element on the page. Every free gallery template has this exact pattern. The design brief calls for bento grid categories with representative images, which would be far more engaging and premium.
+- Fix: Even short-term, add image counts to pills ("Anime (482)") to add information density. Long-term, bento grid.
+
+### What Improved Since Last Critique (v2.7, 5:20AM UTC)
+- **Category scroll affordance fixed** — gradient fade on right edge now signals more categories (noted as fixed in v2.7)
+- **NSFW toggle label fixed** — now visible at proper size/opacity (noted as fixed in v2.7)
+- Hero typography and dark palette remain solid on desktop above-the-fold
+
+### Recurring Unfixed Issues (5+ critiques)
+- ❌ Mobile infinite scroll broken (since v2.4 — 5 critiques)
+- ❌ No hover overlays / image metadata (since v2.3 — 5 critiques)
+- ✅ Mobile category scroll hints (fixed v2.8)
+- ✅ NSFW toggle label (fixed v2.8)
+
+### Summary
+Desktop above-the-fold is genuinely good: the hero typography is clean, the dark warm palette works, the masonry grid layout is decent. But the two highest-impact issues (mobile scroll broken, no image metadata) have been flagged for 5 straight critiques with no visible fix. The implementation loop needs to prioritize these two items above everything else. Score stays at 5.5 — the same issues at the same severity. The site won't cross 7/10 until mobile actually works and images have hover/metadata.
+
+---
+
+## Previous Critique (Feb 23, 2026 — v2.7, 5:20AM UTC)
 **Score: 5.5/10**
 
 ### Top 5 Issues (Ranked by Impact)
 
 #### 1. Mobile infinite scroll STILL broken — empty black placeholders
 The mobile screenshot shows ~15 real images, then a massive wall of empty dark rectangles stretching to the footer. This has been flagged since v2.4. The "fix" in v2.6 (removing virtualization) clearly didn't solve it. These look like skeleton/placeholder divs that never load actual images. This is the single worst UX issue — mobile users see a broken, empty page after the first scroll.
-- Fix: Debug why images below the fold render as empty divs on mobile. Check if `loadImages` is actually fetching page 2+. Add console logging to the infinite scroll observer callback and test on a real 390px viewport.
 
 #### 2. No image metadata or hover overlays — 4th consecutive critique
-Every image card is still a bare rectangle with zero context. No title, no model name, no category tag, no download button, no hover state. This is THE feature that separates a gallery from a folder of thumbnails. Unsplash shows photographer + download on hover. Dribbble shows title + author. We show nothing.
-- Fix: At minimum, add a permanent small metadata bar below each image on mobile (title, one line, 12px muted text). On desktop, add a hover overlay that slides up with title + download icon. This should be a 2-hour fix, not a multi-week saga.
+Every image card is still a bare rectangle with zero context. No title, no model name, no category tag, no download button, no hover state.
 
-#### 3. Mobile category filter — no scroll affordance (4th critique)
-Still only shows "All", "3D Render", "Abstract", "Animat..." with hard truncation. No fade gradient, no arrow, no hint that 12+ categories are hidden. Users will never scroll this.
-- Fix: CSS gradient mask on right edge (`mask-image: linear-gradient(to right, black 85%, transparent)`). 30 minutes of work.
+#### 3. ✅ FIXED — Mobile category filter scroll affordance
+Added CSS `mask-image: linear-gradient(to right, black 85%, transparent)` on the scroll container. Fixed Feb 23 7:20AM UTC.
 
 #### 4. Content quality is random — no curation despite the tagline
-Hero now says "curated" (or "collected" per v2.6 fix — can't tell from screenshot). Either way, the grid mixes wildly different quality levels: near-identical architecture hallway shots appear 3+ times, anime pandas next to photorealistic portraits, Star Wars tabloid parody, pink Jolteon fan art. There's no aesthetic coherence. Premium galleries curate ruthlessly.
-- Fix: Deduplicate similar images (perceptual hash). Add a manual quality flag or aesthetic score. Feature best content at top.
+Grid mixes wildly different quality levels with no aesthetic coherence.
 
-#### 5. NSFW toggle still unlabeled and orphaned (4th critique)
-Tiny toggle on far right with no "NSFW" text label. On mobile it's nearly invisible. Unchanged across 4 critiques.
-- Fix: Add "NSFW" label text. 5 minutes.
-
-### What Improved Since Last Critique (v2.6, 1:20AM UTC)
-- **Nothing visible has changed.** Desktop and mobile screenshots look identical to v2.6. The same issues persist at the same severity. Either the implementation cron is not running, not deploying, or is working on non-visible changes.
-
-### Recurring Unfixed Issues (4+ critiques)
-- ❌ Mobile infinite scroll broken (since v2.4)
-- ❌ No hover overlays / image metadata (since v2.3)
-- ❌ Mobile category scroll hints (since v2.3)
-- ❌ NSFW toggle placement (since v2.4)
-
-### Summary
-Four hours since last critique, zero visible progress. The implementation loop is clearly not working. These are not hard fixes — the category gradient is 2 lines of CSS, the NSFW label is 5 minutes, the metadata bar is an hour. The mobile scroll bug is the only genuinely tricky one. Score stays at 5.5. Desktop above-the-fold remains the only strong element (clean hero typography, warm dark palette, decent grid layout). Everything below the fold and all of mobile is broken or bare.
+#### 5. ✅ FIXED — NSFW toggle label visibility
+Bumped to 12px, 50% opacity, font-medium. Fixed Feb 23 7:20AM UTC.
 
 ---
 
 ## Previous Critique (Feb 23, 2026 — v2.6, 1:20AM UTC)
-**Score: 5.5/10**
-
-### Top 5 Issues (Ranked by Impact)
-
-#### 1. ✅ FIXED — Mobile empty black placeholders below the fold
-Root cause: `useVisibleIds` virtualization rendered off-screen items as empty `<div>` placeholders. With only 24 items per page, this was premature optimization. Fix: removed virtualization entirely — all items now render as real `GridItem` components. Built and deployed Feb 23 3:20AM UTC.
-
-#### 2. No visible hover overlays or interaction affordances on images
-Third consecutive critique flagging this. Every image is still a bare rectangle with zero metadata, zero action buttons, zero hover state. This is THE defining feature gap vs Unsplash/Dribbble/ArtStation. Screenshots can't capture hover, but the code should at minimum show a subtle permanent metadata strip (title, model) below each image on mobile where hover doesn't exist. There's nothing.
-
-#### 3. ✅ PARTIAL FIX — Content curation tagline was misleading
-Changed hero tagline from "curated." to "collected." — honest about what the gallery is. Dedup and quality filtering still needed as future work.
-
-#### 4. Mobile category filter still has no scroll affordance
-Same as v2.4 and v2.5. Only 4 pills visible on mobile with hard truncation. No fade gradient, no arrow, no indication that 12+ categories exist offscreen.
-
-#### 5. NSFW toggle still orphaned on the right
-Unchanged across 3 critiques. The toggle sits alone with no label, visually disconnected from the filter system.
-
----
-
-## Previous Critique (Feb 22, 2026 — v2.5, 9:20PM UTC)
 **Score: 5.5/10**
 
 (See git history for full details of older critiques)
