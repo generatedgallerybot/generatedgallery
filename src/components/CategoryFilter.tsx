@@ -60,11 +60,10 @@ export function CategoryFilter({ selectedCategory, onCategorySelect }: CategoryF
 
   return (
     <div className="relative">
-    {/* Right fade indicator */}
-    <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-surface-0 to-transparent z-10 pointer-events-none" />
     <div
       ref={scrollRef}
-      className="category-scroll flex gap-2 overflow-x-auto pb-1 -mx-6 px-6 lg:-mx-10 lg:px-10 pr-16"
+      className="category-scroll flex gap-2 overflow-x-auto pb-1 -mx-6 px-6 lg:-mx-10 lg:px-10 pr-6"
+      style={{ maskImage: 'linear-gradient(to right, black 85%, transparent)', WebkitMaskImage: 'linear-gradient(to right, black 85%, transparent)' }}
     >
       <button
         onClick={() => onCategorySelect('')}

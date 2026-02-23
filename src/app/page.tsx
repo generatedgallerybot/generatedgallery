@@ -276,7 +276,7 @@ function HomePageInner() {
                   showNsfw ? 'left-[14px]' : 'left-[2px]'
                 }`} />
               </div>
-              <span className="text-[11px] text-white/25 group-hover:text-white/40 transition-colors">NSFW</span>
+              <span className="text-xs text-white/50 group-hover:text-white/70 transition-colors font-medium">NSFW</span>
             </button>
           </div>
 
