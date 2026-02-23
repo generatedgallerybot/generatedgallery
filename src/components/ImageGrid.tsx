@@ -391,7 +391,8 @@ export function ImageGrid({ images }: ImageGridProps) {
   }, [layoutItems]);
 
   const visibleImages = useMemo(() => images.filter(img => !errored.has(img.id)), [images, errored]);
-  const visibleIds = useVisibleIds(layoutItems);
+  // Removed virtualization — render all items. With 24-48 images per page,
+  // the perf cost is negligible and virtualization caused empty black placeholders on mobile.
 
   const handlePrev = useCallback(() => {
     setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i);
@@ -407,10 +408,6 @@ export function ImageGrid({ images }: ImageGridProps) {
         {visibleImages.map((image, index) => {
           const layout = layoutMap.get(image.id);
           if (!layout) return null;
-          const isVisible = visibleIds.has(image.id);
-          if (!isVisible) {
-            return <div key={image.id} className="absolute bg-surface-2 rounded-2xl" style={{ left: layout.x, top: layout.y, width: layout.w, height: layout.h }} />;
-          }
           return (
             <GridItem
               key={image.id}

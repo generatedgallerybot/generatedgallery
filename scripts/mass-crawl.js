@@ -52,14 +52,20 @@ function extractTags(prompt) {
     .slice(0, 15);
 }
 
-// Batch check which URLs already exist
+// Batch check which URLs already exist (chunked to avoid URL length limits)
 async function filterExistingUrls(urls) {
   if (!urls.length) return new Set();
-  const { data } = await supabase
-    .from('images')
-    .select('source_url')
-    .in('source_url', urls);
-  return new Set((data || []).map(d => d.source_url));
+  const existing = new Set();
+  const chunkSize = 30;
+  for (let i = 0; i < urls.length; i += chunkSize) {
+    const chunk = urls.slice(i, i + chunkSize);
+    const { data } = await supabase
+      .from('images')
+      .select('source_url')
+      .in('source_url', chunk);
+    (data || []).forEach(d => existing.add(d.source_url));
+  }
+  return existing;
 }
 
 async function crawlPage(cursor, sort, nsfw) {
@@ -71,9 +77,12 @@ async function crawlPage(cursor, sort, nsfw) {
   if (cursor) params.set('cursor', cursor);
   
   const url = `https://civitai.com/api/v1/images?${params}`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
   const res = await fetch(url, {
-    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; GeneratedGallery/1.0)' }
-  });
+    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; GeneratedGallery/1.0)' },
+    signal: controller.signal
+  }).finally(() => clearTimeout(timeout));
   
   if (!res.ok) {
     console.error(`API error: ${res.status} ${res.statusText}`);

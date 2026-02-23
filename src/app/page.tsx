@@ -93,13 +93,17 @@ function HomePageInner() {
   const PAGE_SIZE = 24;
 
   const loadImages = useCallback(async (append = false) => {
+    if (append) {
+      if (loadingMoreRef.current) return; // prevent duplicate calls
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+    }
+    setError(null);
+
     const maxRetries = 3;
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        if (append) setLoadingMore(true);
-        else setLoading(true);
-        setError(null);
-
         const offset = append ? imagesRef.current.length : 0;
         let data: Image[];
 
@@ -115,6 +119,8 @@ function HomePageInner() {
 
         setHasMore(data.length === PAGE_SIZE);
         setImages(prev => append ? [...prev, ...data] : data);
+        if (append) setLoadingMore(false);
+        else setLoading(false);
         return; // success
       } catch (err) {
         console.error(`Failed to load images (attempt ${attempt + 1}/${maxRetries}):`, err);
@@ -123,11 +129,11 @@ function HomePageInner() {
           continue;
         }
         if (!append) setError('Something went wrong loading images.');
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
       }
     }
+    // All retries exhausted
+    setLoading(false);
+    setLoadingMore(false);
   }, [searchQuery, selectedCategory, currentView, showNsfw, mediaType]);
 
   // Refs for intersection observer to avoid stale closures
@@ -148,20 +154,36 @@ function HomePageInner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, selectedCategory, currentView, showNsfw, mediaType]);
 
-  // Infinite scroll - stable observer that reads refs
+  // Infinite scroll - dual approach: IntersectionObserver + scroll fallback
   useEffect(() => {
-    if (!observerRef.current) return;
+    const sentinel = observerRef.current;
+    if (!sentinel) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loadingRef.current && !loadingMoreRef.current && hasMoreRef.current) {
           loadImagesRef.current(true);
         }
       },
-      { rootMargin: '600px' }
+      { rootMargin: '2000px' }
     );
-    observer.observe(observerRef.current);
-    return () => observer.disconnect();
-  }, []);
+    observer.observe(sentinel);
+
+    // Scroll-based fallback — trigger when 40% from bottom
+    const handleScroll = () => {
+      if (loadingRef.current || loadingMoreRef.current || !hasMoreRef.current) return;
+      const scrollBottom = window.scrollY + window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      if (docHeight - scrollBottom < docHeight * 0.4) {
+        loadImagesRef.current(true);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [loading]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -183,7 +205,7 @@ function HomePageInner() {
         <div className="max-w-3xl mx-auto text-center space-y-6 mb-12 relative">
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.05]">
             AI art,<br />
-            <span className="text-accent/60">curated.</span>
+            <span className="text-accent/60">collected.</span>
           </h1>
           <p className="text-lg text-white/55 max-w-lg mx-auto leading-relaxed">
             {imageCount || '...'} AI-generated images and prompts from across the internet. Browse, search, download — no account needed.

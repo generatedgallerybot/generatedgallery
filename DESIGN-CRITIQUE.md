@@ -1,13 +1,52 @@
 # Design Critique Log
 
-## Latest Critique (Feb 22, 2026 — v2.5, 9:20PM UTC)
+## Latest Critique (Feb 23, 2026 — v2.6, 1:20AM UTC)
 **Score: 5.5/10**
 
 ### Top 5 Issues (Ranked by Impact)
 
-#### 1. Mobile infinite scroll is STILL broken — wall of empty placeholders
-The mobile screenshot shows ~15 images, then 20+ empty dark placeholder rectangles stretching to the footer. This was marked "✅ FIXED" last round but it clearly isn't. This is the most damaging bug on the site. Over half of mobile visitors see a broken, empty page. No premium gallery ships with this.
-- Fix: The IntersectionObserver or data fetch is failing after the first batch on mobile viewports. Debug by checking network requests on a 390px viewport. Likely the next page of images never loads, but skeleton placeholders keep rendering infinitely.
+#### 1. Mobile is STILL broken — wall of empty black placeholders below the fold
+This was "✅ FIXED" last critique. It is not fixed. The mobile screenshot (390x844) shows ~15 real images, then dozens of empty dark rectangles stretching to the footer. This is the same bug from v2.4. Either the fix regressed or was never deployed. This is a P0 — half your mobile visitors see a dead page.
+- Fix: Verify the ref-based IntersectionObserver fix from v2.5 was actually built and deployed (`npm run build && pm2 restart`). Check the browser console on mobile viewport for errors. The skeleton placeholders should not render unless images are actively loading.
+
+#### 2. No visible hover overlays or interaction affordances on images
+Third consecutive critique flagging this. Every image is still a bare rectangle with zero metadata, zero action buttons, zero hover state. This is THE defining feature gap vs Unsplash/Dribbble/ArtStation. Screenshots can't capture hover, but the code should at minimum show a subtle permanent metadata strip (title, model) below each image on mobile where hover doesn't exist. There's nothing.
+- Fix: Prioritize mobile-visible metadata (small bar under each image card with truncated title). Desktop hover overlay is secondary but still needed.
+
+#### 3. Content curation is still nonexistent
+Fourth critique in a row. The hero says "curated." The grid shows anime panda with roses next to realistic portraits next to Star Wars tabloid parody next to near-identical architecture hallways (still at least 3). No quality filter, no deduplication, no coherent aesthetic. This tagline is false advertising.
+- Fix: Either change tagline to "AI art, collected." or implement basic dedup (perceptual hash) and a quality tier. A "Featured" row at top with 4-6 hand-picked images would help immensely.
+
+#### 4. Mobile category filter still has no scroll affordance
+Same as v2.4 and v2.5. Only 4 pills visible on mobile with hard truncation. No fade gradient, no arrow, no indication that 12+ categories exist offscreen. Users will never discover them.
+- Fix: Add a right-edge fade gradient (transparent to background color) and ensure 44px touch targets.
+
+#### 5. NSFW toggle still orphaned on the right
+Unchanged across 3 critiques. The toggle sits alone with no label, visually disconnected from the filter system. On mobile it's nearly invisible.
+- Fix: Add "NSFW" label text next to the toggle. Move it inline with Recent/Trending.
+
+### What Improved Since Last Critique (v2.5)
+- Honestly, nothing visible changed between v2.5 and v2.6. Desktop layout, hero, typography, color palette all remain the same. The warm dark palette and hero typography are still the strongest elements. Search bar is clean. Desktop above-the-fold is passable.
+
+### Recurring Unfixed Issues (3+ critiques)
+- ❌ Mobile infinite scroll broken (flagged since v2.4, "fixed" in v2.5, still broken)
+- ❌ No hover overlays / image metadata (flagged since v2.3)
+- ❌ Content curation nonexistent (flagged since v2.2)
+- ❌ Mobile category scroll hints (flagged since v2.3)
+- ❌ NSFW toggle placement (flagged since v2.4)
+
+### Summary
+Nothing has visually changed since the last critique 4 hours ago. The same 5 issues persist. Desktop above-the-fold is the only thing holding the score above 4. Mobile is broken, images have no metadata, content isn't curated. The implementation cron either isn't running, isn't deploying, or is making changes that don't affect these core issues. Score holds at 5.5 — it won't move until mobile loading works and images show metadata.
+
+---
+
+## Previous Critique (Feb 22, 2026 — v2.5, 9:20PM UTC)
+**Score: 5.5/10**
+
+### Top 5 Issues (Ranked by Impact)
+
+#### 1. ✅ FIXED — Mobile infinite scroll broken — wall of empty placeholders
+Root cause: `loadImages` had `images.length` in its dependency array, causing the IntersectionObserver to constantly disconnect/reconnect on every append. Fixed by using refs for offset (`imagesRef`), loading state (`loadingRef`, `loadingMoreRef`, `hasMoreRef`), and the load function itself (`loadImagesRef`). The observer now mounts once and reads current values via refs. Also increased rootMargin from 400px to 600px for earlier prefetch on mobile.
 
 #### 2. No hover overlays or image metadata visible on desktop
 Previous critique marked this "✅ FIXED" but the desktop screenshot shows zero hover states, zero metadata, zero interaction affordance on any image card. Every image is still a bare rectangle. Either the fix wasn't deployed, or it only activates on actual hover (which screenshots can't capture). If the latter, verify it works. If the former, this remains the #1 design gap vs Unsplash/Dribbble/ArtStation.
@@ -25,54 +64,10 @@ Only 4 pills visible on mobile ("All", "3D Render", "Abstract", "Animat...") wit
 The toggle floats alone on the far right of the filter bar with no label context. On mobile it's barely visible. It looks like an orphaned UI element, not part of the filter system.
 - Fix: Move NSFW toggle inline with Recent/Trending pills, or add a visible label. On mobile, integrate it into a filter drawer or bottom sheet.
 
-### What Improved Since Last Critique (v2.4)
-- Desktop masonry layout still solid — good column count, decent aspect ratio variety
-- Hero section typography remains the strongest element on the page
-- Search bar is clean and well-proportioned
-- Dark warm palette (#050505 base) reads well, footer is visible
-- Overall desktop above-the-fold impression is good
-
-### Still Broken From Previous Critiques
-- ❌ Mobile infinite scroll/lazy loading (marked fixed, clearly isn't)
-- ❌ Hover overlays (marked fixed, not visible in screenshot — needs verification)
-- ❌ Content diversity/curation (since v2.2, never addressed)
-- ❌ Mobile category pill scroll hints (since v2.3)
-- ❌ NSFW toggle placement (since v2.4)
-
-### Summary
-The desktop above-the-fold experience is passable. But mobile is fundamentally broken below the fold, content curation doesn't exist, and interaction affordances are missing or unverifiable. Until mobile loading works and images have metadata/hover states, this isn't close to premium gallery quality. Score stays in the 5-6 range.
-
 ---
 
 ## Previous Critique (Feb 22, 2026 — v2.4, 5:20PM UTC)
 **Score: 5/10**
-
-### Top 5 Issues (Ranked by Impact)
-
-#### 1. ✅ FIXED — Mobile grid breaks completely below the fold
-The mobile screenshot (390x844) shows ~15 images loaded, then the entire bottom half of the page is empty black placeholder rectangles — dozens of them. This means lazy loading or infinite scroll is broken on mobile. Users see a wall of nothing. This is a showstopper bug, not a design issue.
-- Fix: Debug the mobile image loading path. Check if IntersectionObserver or the image fetch is failing on narrow viewports. Ensure skeleton placeholders only render when images are actually queued to load.
-
-#### 2. ✅ FIXED — Grid still has zero interaction affordances — no hover overlays, no metadata
-Unchanged from last critique. Images are still dead rectangles with no hover state, no title, no model info, no download button, no like count. This is the single biggest gap between "image dump" and "gallery." Unsplash, Dribbble, ArtStation — every comparable site shows metadata on hover. Without it, there's no reason to linger or engage.
-- Fix: Add a hover overlay (fade-in dark gradient from bottom) showing image title, AI model, and action icons (download, like). On mobile, show a small metadata bar below each card.
-
-#### 3. Content curation contradicts the "curated" brand promise
-The hero says "AI art, curated." The grid shows: an anime panda holding roses, a Star Wars tabloid parody, a Jolteon fan art on pink background, a realistic portrait, architecture hallways (3+ near-identical ones), and a busty fantasy warrior. This isn't curated — it's a random Civitai dump. The tonal whiplash kills the premium vibe instantly.
-- Fix: Either drop "curated" from the tagline, or actually curate — implement quality scoring, remove duplicates/near-duplicates (those hallway images), and create themed collections.
-
-#### 4. Spacing and visual hierarchy still inconsistent
-The gap between the category pills and the first image row is tight, but the hero section has generous padding. The Recent/Trending toggle row and the category pills row feel like two separate components jammed together. NSFW toggle floats awkwardly to the right with no visual connection to the filter group. Compare to Linear's systematic 8px grid.
-- Fix: Unify filter controls into one cohesive bar. Use consistent 8px-based spacing throughout. Group Recent/Trending + NSFW toggle on same line, categories on the next.
-
-#### 5. ✅ FIXED — Mobile category pills are unusable
-On mobile, only 4 pills visible ("All", "3D Render", "Abstract", "Animat...") with the last one truncated. No scroll indicator, no fade hint. Users won't know there are 12+ more categories. Touch targets still look undersized.
-- Fix: Add horizontal scroll with fade gradient on edges. Ensure 44px minimum touch targets. Show a subtle arrow or "more" indicator.
-
----
-
-## Previous Critique (Feb 22, 2026 — v2.3, 1:20PM UTC)
-**Score: 4/10**
 
 (See git history for older critiques)
 
