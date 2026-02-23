@@ -174,7 +174,9 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
           <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }} />
         )}
 
-        {/* Hover overlay - desktop */}
+        {/* Permanent subtle gradient - desktop (always visible for context) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent hidden md:block pointer-events-none" />
+        {/* Enhanced hover overlay - desktop */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block" />
 
         {/* Like button - always visible on hover (desktop), always on mobile */}
@@ -192,7 +194,13 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
           </svg>
         </button>
 
-        {/* Bottom info on hover - desktop */}
+        {/* Permanent title hint - desktop (always visible) */}
+        {image.title && (
+          <div className="absolute bottom-0 left-0 right-0 px-3 py-2 hidden md:block group-hover:opacity-0 transition-opacity duration-200 pointer-events-none">
+            <h3 className="text-[11px] font-medium text-white/50 line-clamp-1">{image.title}</h3>
+          </div>
+        )}
+        {/* Full info on hover - desktop */}
         <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hidden md:block">
           {image.title && (
             <h3 className="text-sm font-medium text-white line-clamp-1 mb-1">{image.title}</h3>

@@ -208,7 +208,7 @@ function HomePageInner() {
             <span className="text-accent/60">collected.</span>
           </h1>
           <p className="text-lg text-white/55 max-w-lg mx-auto leading-relaxed">
-            {imageCount || '...'} AI-generated images and prompts from across the internet. Browse, search, download — no account needed.
+            {imageCount || '...'} AI-generated images and prompts from across the internet. Browse, search, and download for free.
           </p>
           <SearchBar onSearch={handleSearch} />
           <a
@@ -324,7 +324,7 @@ function HomePageInner() {
                 ? `No ${mediaType === 'video' ? 'videos or GIFs' : 'images'} found. Try switching to "All".`
                 : searchQuery || selectedCategory
                   ? 'Try a different search or category.'
-                  : 'Check back soon — new content is added regularly.'}
+                  : 'Check back soon. New content is added regularly.'}
             </p>
             {mediaType !== 'all' && (
               <button
