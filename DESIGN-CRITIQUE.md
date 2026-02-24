@@ -9,7 +9,9 @@ This is the **11th consecutive critique** with the same top 3 issues unfixed. Th
 
 ### Top 4 Issues (Ranked by Impact)
 
-#### 1. Mobile infinite scroll broken — 11th consecutive report
+#### 1. Mobile infinite scroll broken — 11th consecutive report ✅ ATTEMPTED FIX (v2.15)
+**Fix:** Doubled mobile virtualization buffer from 2500px to 5000px + added delayed recomputation to catch layout shifts. The visibility system was likely marking items as "not visible" on mobile due to tight buffer + slower layout. Needs visual verification.
+##### Original issue:
 After ~16 images on 390px viewport, the entire lower page is empty dark skeleton rectangles stretching to the footer. This is a **data fetching bug**, not CSS. The IntersectionObserver or paginated fetch is failing silently on mobile viewports. No CSS fix will solve this. Needs someone in DevTools checking Network/Console on mobile emulation.
 
 #### 2. No hover overlays or metadata on cards — 11th report
@@ -18,7 +20,7 @@ Desktop cards are bare image rectangles with zero affordance. No titles, artist 
 #### 3. Content quality is uncurated
 Duplicate panda-with-roses, 3+ identical hallway shots, Star Wars tabloid parody mixed with photorealistic portraits and anime. Zero editorial sequencing. The hero says "curated" but it's a raw API dump. Needs aesthetic scoring, diversity sorting, and actual deduplication.
 
-#### 4. Hero subtitle is stale generic copy
+#### 4. Hero subtitle is stale generic copy ✅ FIXED (v2.15)
 Same "Thousands of AI-generated images..." text for weeks. Replace with live count ("2,826 AI artworks and counting") or rotating micro-copy. Two-minute fix.
 
 ### What Improved Since Last Critique (v2.13, 5:20AM UTC)

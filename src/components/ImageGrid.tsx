@@ -84,6 +84,26 @@ function computeLayout(
   return { items, totalHeight: Math.max(...colHeights) };
 }
 
+// Clean model name for display: "prefectIllustriousXL_40" → "Prefect Illustrious XL"
+function cleanModelName(raw: string): string {
+  // Remove version suffixes, file extensions, urn prefixes
+  let name = raw.replace(/^urn:air:[^:]+:[^:]+:[^:]+:/, '').replace(/\.safetensors$/, '');
+  // Remove trailing version numbers like _v70, _40, @2484701
+  name = name.replace(/[_@]v?\d+\w*$/i, '');
+  // Split camelCase and underscores
+  name = name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]/g, ' ');
+  // Capitalize first letter of each word, limit length
+  name = name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  return name.length > 28 ? name.slice(0, 26) + '…' : name;
+}
+
+// Get a display label for the card
+function getCardLabel(image: ImageType): string {
+  if (image.title) return image.title;
+  if (image.category) return image.category;
+  return 'AI Artwork';
+}
+
 // Heart SVG paths
 const HEART_OUTLINE = "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z";
 
@@ -200,16 +220,12 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
         </button>
 
         {/* Permanent title hint - desktop (always visible) */}
-        {image.title && (
-          <div className="absolute bottom-0 left-0 right-0 px-3 py-2 hidden md:block group-hover:opacity-0 transition-opacity duration-200 pointer-events-none">
-            <h3 className="text-[11px] font-medium text-white/50 line-clamp-1">{image.title}</h3>
-          </div>
-        )}
+        <div className="absolute bottom-0 left-0 right-0 px-3 py-2 hidden md:block group-hover:opacity-0 transition-opacity duration-200 pointer-events-none">
+          <h3 className="text-[11px] font-medium text-white/50 line-clamp-1">{getCardLabel(image)}</h3>
+        </div>
         {/* Full info on hover - desktop */}
         <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hidden md:block">
-          {image.title && (
-            <h3 className="text-sm font-medium text-white line-clamp-1 mb-1">{image.title}</h3>
-          )}
+          <h3 className="text-sm font-medium text-white line-clamp-1 mb-1">{getCardLabel(image)}</h3>
           <div className="flex items-center gap-4 text-[11px] text-white/60">
             <span className="flex items-center gap-1">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d={HEART_OUTLINE} /></svg>
@@ -220,7 +236,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
               {fmt(image.downloads)}
             </span>
             {image.model && (
-              <span className="ml-auto px-2 py-0.5 rounded-full bg-white/10 text-white/50 text-[10px]">{image.model}</span>
+              <span className="ml-auto px-2 py-0.5 rounded-full bg-white/10 text-white/50 text-[10px]">{cleanModelName(image.model)}</span>
             )}
           </div>
         </div>
@@ -238,9 +254,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
       <div className="md:hidden px-3 py-2 bg-surface-2">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            {image.title && (
-              <h3 className="text-xs font-medium text-white/80 line-clamp-1 mb-1">{image.title}</h3>
-            )}
+            <h3 className="text-xs font-medium text-white/80 line-clamp-1 mb-1">{getCardLabel(image)}</h3>
             <div className="flex items-center gap-3 text-[10px] text-white/45">
               <span className="flex items-center gap-1">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d={HEART_OUTLINE} /></svg>
@@ -251,7 +265,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
                 {fmt(image.downloads)}
               </span>
               {image.model && (
-                <span className="ml-auto px-1.5 py-0.5 rounded-full bg-white/[0.06] text-white/40 text-[9px]">{image.model}</span>
+                <span className="ml-auto px-1.5 py-0.5 rounded-full bg-white/[0.06] text-white/40 text-[9px]">{cleanModelName(image.model)}</span>
               )}
             </div>
           </div>
