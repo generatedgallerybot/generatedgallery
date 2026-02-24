@@ -208,7 +208,7 @@ function HomePageInner() {
             <span className="text-accent/60">collected.</span>
           </h1>
           <p className="text-lg text-white/55 max-w-lg mx-auto leading-relaxed">
-            {imageCount || '...'} AI-generated images and prompts from across the internet. Browse, search, and download for free.
+            {imageCount ? `${imageCount} AI artworks and counting.` : 'AI artworks, updated daily.'} Browse, discover, download. Always free.
           </p>
           <SearchBar onSearch={handleSearch} />
           <a

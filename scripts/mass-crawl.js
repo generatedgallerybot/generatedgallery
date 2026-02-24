@@ -172,11 +172,11 @@ async function run() {
         let pageInserted = 0;
         for (let i = 0; i < rows.length; i += 50) {
           const batch = rows.slice(i, i + 50);
-          const { data, error } = await supabase.from('images').insert(batch).select('id');
+          const { data, error } = await supabase.from('images').upsert(batch, { onConflict: 'source_url', ignoreDuplicates: true }).select('id');
           if (error) {
             // If batch fails, try one by one
             for (const row of batch) {
-              const { data: d2, error: e2 } = await supabase.from('images').insert(row).select('id');
+              const { data: d2, error: e2 } = await supabase.from('images').upsert(row, { onConflict: 'source_url', ignoreDuplicates: true }).select('id');
               if (d2?.length) pageInserted++;
             }
           } else {

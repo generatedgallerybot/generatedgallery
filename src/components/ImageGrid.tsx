@@ -274,7 +274,7 @@ function useVisibleIds(layoutItems: LayoutItem[], containerRef: React.RefObject<
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const handleScroll = () => {
+    const computeVisible = () => {
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
       // Account for container's offset from top of page
@@ -292,12 +292,15 @@ function useVisibleIds(layoutItems: LayoutItem[], containerRef: React.RefObject<
       setVisibleIds(ids);
     };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
+    // Run immediately and also after a short delay to catch layout shifts
+    computeVisible();
+    const timer = setTimeout(computeVisible, 100);
+    window.addEventListener('scroll', computeVisible, { passive: true });
+    window.addEventListener('resize', computeVisible, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
+      clearTimeout(timer);
+      window.removeEventListener('scroll', computeVisible);
+      window.removeEventListener('resize', computeVisible);
     };
   }, [layoutItems, buffer, containerRef]);
 
@@ -412,7 +415,9 @@ export function ImageGrid({ images }: ImageGridProps) {
   }, [layoutItems]);
 
   const visibleImages = useMemo(() => images.filter(img => !errored.has(img.id)), [images, errored]);
-  const visibleIds = useVisibleIds(layoutItems, containerRef, 2500);
+  // Use larger buffer on mobile to prevent blank skeleton issue
+  const isMobile = containerWidth > 0 && containerWidth < 768;
+  const visibleIds = useVisibleIds(layoutItems, containerRef, isMobile ? 5000 : 2500);
 
   const handlePrev = useCallback(() => {
     setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i);
