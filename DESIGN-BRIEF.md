@@ -25,7 +25,7 @@ Free AI art gallery — "Unsplash for AI art." Browse, search, download AI-gener
 
 ---
 
-## 2026 Design Direction (Updated Feb 24, 2026 — Research Pass #3)
+## 2026 Design Direction (Updated Feb 24, 2026 — Research Pass #4)
 
 ### Typography Upgrade
 2026 is "Imperfect by Design" — the industry is rejecting algorithmic sterility. Ultra-thin fonts and blanding are dead. Variable fonts are infrastructure, not optional. Kinetic type is mainstream.
@@ -141,6 +141,20 @@ Big in 2026. Use sparingly:
 12. **Decentralized brand systems** — Porto Rocha/Twitch approach: brand as toolkit, not rigid manual. For GG: let the AI art itself define the color palette per session (extract dominant color from hero image, tint the UI). Dynamic theming.
 13. **Experimental navigation** — Figma 2026 trend: radial menus, hidden drawers, nonlinear journeys. For GG: category filter as a full-screen overlay grid (like Apple TV+ genre picker) instead of horizontal pills. Triggered by a single "Browse" button.
 14. **Dark mode as system, not toggle** — 2026 dark mode has "contrast logic" (BBDirector): type sizes, weights, and spacing all adjust for dark. Our dark body text should be 15px/1.7 (more generous than light mode would need). Borders at 6% white opacity, not 10%.
+
+### Feb 2026 Fresh Intel (Research Pass #4)
+
+**Coalition Technologies (Feb 19, 2026):** Micro-animations are now "functional feedback, not decoration." Every hover, toggle, and scroll reveal should communicate state change. For GG: image download button should animate from ↓ arrow to ✓ checkmark on click (200ms, `clip-path` swap). Favorite heart should pulse once on tap (scale 1→1.3→1, 300ms ease-out). These aren't polish — they're expected.
+
+**Squarespace Circle (Jan 2026):** "Digital collecting turned editorial" — gallery sites should feel like curated magazines, not databases. Mix images with tiny labels, understated typography, and catalog information. For GG: add a "catalog number" style to images (e.g., "GG-00284" in 10px monospace at 30% opacity in the corner of each card). Museum inventory aesthetic.
+
+**Showit (Feb 2026):** Typography as personality signal — "before someone reads a word." Confirmed: variable fonts + playful scale shifts are mainstream. Our Satoshi/Switzer direction is right. New move: **mix a serif accent** into the otherwise sans-serif system. Try **Instrument Serif** (Google Fonts, free) for one element only — the "Editor's Pick" label or image detail page title. One serif moment in a sans world = instant editorial credibility.
+
+**Zumeirah (Feb 2026):** "Scrollytelling" is the named pattern — elements fade in, text slides into place, images expand as you scroll. For GG: between the hero and the grid, add a single "scrollytelling" moment: a large stat ("12,847 AI artworks") that counts up as it scrolls into view, with a subtle parallax image strip behind it. One moment, not a whole page of animations.
+
+**Divi-Pixel (Jan 2026):** Dynamic theming based on time-of-day is becoming standard. For GG: shift the warm gold accent slightly cooler at night (detect `prefers-color-scheme` + JS `Date` hour). Daytime: #e8d5b7. Night (22:00-06:00): #d4c5b0 (slightly desaturated). Subtle, but shows craft.
+
+**Codewave UX (Jan 2026):** "Emotion-based interfaces" using color and visual cues to evoke feeling. Confirmed our dynamic UI tinting idea (stretch goal #15) is on-trend. Prioritize it: extract dominant color from hero image → apply as 3% tinted `mix-blend-mode: color` overlay on the page background. Each visit feels different.
 
 ### Quick Wins (Ship This Week)
 1. Swap DM Sans → Geist for body text (free, dark-optimized)

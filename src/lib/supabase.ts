@@ -133,16 +133,17 @@ export const searchImages = async (
 // ---------------------------------------------------------------------------
 // Trending
 // Uses index: idx_images_nsfw_upvotes (is_nsfw, upvotes DESC, created_at DESC)
+// Supports pagination via offset for infinite scroll
 // ---------------------------------------------------------------------------
 export const getTrendingImages = async (
-  limit = 20, showNsfw = false, mediaType = 'all'
+  limit = 20, showNsfw = false, mediaType = 'all', offset = 0
 ) => {
   let query = supabase
     .from('images')
     .select('*')
     .order('upvotes', { ascending: false })
     .order('created_at', { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
   query = applyFilters(query, showNsfw, mediaType);
   const { data, error } = await query;
   if (error) throw error;
@@ -151,47 +152,39 @@ export const getTrendingImages = async (
 
 // ---------------------------------------------------------------------------
 // Shuffle: fetch random images for the shuffle page
-// Strategy: get estimated count for the current filter combo, then pick
-// 2 small batches at random offsets within that count.
-// This avoids overshooting offsets (which causes full scans + timeouts).
+// Strategy: use random UUID comparison on the `id` column (UUID v4).
+// Generate a random UUID and fetch images with id > randomUUID, sorted by id.
+// This gives true random sampling across the whole table without needing
+// counts or large offsets. Fast because it uses the primary key index.
 // ---------------------------------------------------------------------------
 export const getShuffleImages = async (
   showNsfw: boolean,
   mediaType: string,
   searchTerms?: string,
   preferredCategories?: string[],
-  batchSize = 15
+  batchSize = 20
 ): Promise<any[]> => {
-  // Step 1: get a realistic count for this filter combo (cached 30 min)
-  let estimatedCount: number;
-  if (searchTerms) {
-    // For search, we can't cache easily — just use a conservative estimate
-    estimatedCount = 2000;
-  } else if (preferredCategories && preferredCategories.length > 0) {
-    estimatedCount = 5000;
-  } else {
-    estimatedCount = await getCachedCount(showNsfw, mediaType);
-  }
+  // Generate random UUID pivot points for 2 batches
+  const randomUUID = () => {
+    const hex = () => Math.floor(Math.random() * 16).toString(16);
+    return `${Array(8).fill(0).map(hex).join('')}-${Array(4).fill(0).map(hex).join('')}-4${Array(3).fill(0).map(hex).join('')}-${['8','9','a','b'][Math.floor(Math.random()*4)]}${Array(3).fill(0).map(hex).join('')}-${Array(12).fill(0).map(hex).join('')}`;
+  };
 
-  if (estimatedCount === 0) return [];
+  const pivots = [randomUUID(), randomUUID()];
+  const halfBatch = Math.ceil(batchSize / 2);
 
-  // Step 2: pick 2 random offsets WITHIN the estimated count
-  const maxOffset = Math.max(0, estimatedCount - batchSize);
-  const offsets = [
-    Math.floor(Math.random() * Math.max(1, maxOffset)),
-    Math.floor(Math.random() * Math.max(1, maxOffset)),
-  ];
-  const sorts: Array<{ column: string; ascending: boolean }> = [
-    { column: 'created_at', ascending: false },
-    { column: 'id', ascending: true },
-  ];
-
-  const promises = offsets.map(async (offset, i) => {
+  const promises = pivots.map(async (pivot, i) => {
+    // Alternate between gt and lt to cover different parts of UUID space
     let query = supabase
       .from('images')
       .select('*')
-      .order(sorts[i].column, { ascending: sorts[i].ascending })
-      .range(offset, offset + batchSize - 1);
+      .order('id', { ascending: i === 0 });
+
+    if (i === 0) {
+      query = query.gt('id', pivot);
+    } else {
+      query = query.lt('id', pivot);
+    }
 
     query = applyFilters(query, showNsfw, mediaType);
 
@@ -202,6 +195,7 @@ export const getShuffleImages = async (
       query = query.in('category', preferredCategories);
     }
 
+    query = query.limit(halfBatch);
     const { data } = await query;
     return data || [];
   });
@@ -209,7 +203,7 @@ export const getShuffleImages = async (
   const batches = await Promise.all(promises);
   let results = batches.flat();
 
-  // If both queries returned nothing (count estimate was stale), grab from the top
+  // Fallback if somehow empty
   if (results.length === 0) {
     let fallback = supabase
       .from('images')

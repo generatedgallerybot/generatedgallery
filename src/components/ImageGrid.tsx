@@ -122,9 +122,11 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
   onLike: (e: React.MouseEvent) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [hasError, setHasError] = useState(false);
   const url = image.thumbnail_url || image.image_url;
   const videoUrl = isVideo(url, image.media_type);
   const gifUrl = isGif(url, image.media_type);
+  const handleError = () => { setHasError(true); onError(); };
 
   useEffect(() => {
     if (loaded && ref.current) {
@@ -158,7 +160,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
               className={`w-full h-auto transition-opacity duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : 'opacity-0'}`}
               style={{ transition: 'opacity 0.5s, transform 0.3s' }}
               onLoadedData={onLoad}
-              onError={onError}
+              onError={handleError}
             />
           ) : (
             <div className="w-full bg-surface-2" style={{ minHeight: '200px', aspectRatio: (image.width && image.height) ? `${image.width}/${image.height}` : '3/4' }} />
@@ -173,7 +175,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
             style={{ transition: 'opacity 0.5s, transform 0.3s' }}
             loading="lazy"
             onLoad={onLoad}
-            onError={onError}
+            onError={handleError}
           />
         ) : isVisible ? (
           <Image
@@ -185,7 +187,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
             style={{ transition: 'opacity 0.5s, transform 0.3s' }}
             loading="eager"
             onLoad={onLoad}
-            onError={onError}
+            onError={handleError}
             unoptimized
           />
         ) : (
@@ -195,8 +197,16 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
           />
         )}
 
-        {!loaded && (
+        {!loaded && !hasError && (
           <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }} />
+        )}
+        {hasError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#0f0e0d]" style={{ minHeight: '200px' }}>
+            <div className="text-center text-white/20">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto mb-1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <p className="text-[10px]">Failed to load</p>
+            </div>
+          </div>
         )}
 
         {/* Permanent subtle gradient - desktop (always visible for context) */}
@@ -285,14 +295,19 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
 
 // Track visible item IDs based on actual layout positions + container offset
 function useVisibleIds(layoutItems: LayoutItem[], containerRef: React.RefObject<HTMLDivElement | null>, buffer = 1500) {
-  const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set());
+  // Start with ALL items visible until first real computation succeeds
+  const [visibleIds, setVisibleIds] = useState<Set<string> | null>(null);
+  const hasComputed = useRef(false);
 
   useEffect(() => {
+    if (layoutItems.length === 0) return;
+
     const computeVisible = () => {
+      const el = containerRef.current;
+      if (!el) return;
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
-      // Account for container's offset from top of page
-      const containerTop = containerRef.current?.getBoundingClientRect().top ?? 0;
+      const containerTop = el.getBoundingClientRect().top;
       const containerOffset = scrollY + containerTop;
       const viewTop = scrollY - buffer;
       const viewBottom = scrollY + vh + buffer;
@@ -303,21 +318,31 @@ function useVisibleIds(layoutItems: LayoutItem[], containerRef: React.RefObject<
           ids.add(item.id);
         }
       }
-      setVisibleIds(ids);
+      // Only apply if we found visible items (guards against bad measurements)
+      if (ids.size > 0 || hasComputed.current) {
+        hasComputed.current = true;
+        setVisibleIds(ids);
+      }
     };
 
-    // Run immediately and also after a short delay to catch layout shifts
+    // Run immediately, after short delay, and after longer delay for layout settle
     computeVisible();
-    const timer = setTimeout(computeVisible, 100);
+    const t1 = setTimeout(computeVisible, 100);
+    const t2 = setTimeout(computeVisible, 500);
     window.addEventListener('scroll', computeVisible, { passive: true });
     window.addEventListener('resize', computeVisible, { passive: true });
     return () => {
-      clearTimeout(timer);
+      clearTimeout(t1);
+      clearTimeout(t2);
       window.removeEventListener('scroll', computeVisible);
       window.removeEventListener('resize', computeVisible);
     };
   }, [layoutItems, buffer, containerRef]);
 
+  // If visibility hasn't been computed yet, treat ALL items as visible
+  if (visibleIds === null) {
+    return new Set(layoutItems.map(i => i.id));
+  }
   return visibleIds;
 }
 

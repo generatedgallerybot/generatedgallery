@@ -112,7 +112,7 @@ function HomePageInner() {
         } else if (selectedCategory) {
           data = await getImagesByCategory(selectedCategory, PAGE_SIZE, offset, showNsfw, mediaType);
         } else if (currentView === 'trending') {
-          data = await getTrendingImages(PAGE_SIZE, showNsfw, mediaType);
+          data = await getTrendingImages(PAGE_SIZE, showNsfw, mediaType, offset);
         } else {
           data = await getImages(PAGE_SIZE, offset, showNsfw, mediaType);
         }
@@ -196,7 +196,7 @@ function HomePageInner() {
   };
 
   return (
-    <div className="pt-16 overflow-x-hidden">
+    <div className="pt-16">
       {/* Hero */}
       <section className="px-4 sm:px-6 lg:px-10 pt-16 pb-10 max-w-[1800px] mx-auto relative overflow-hidden">
         {/* Hero glow */}

@@ -1,5 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: '../.env.local' });
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env.local') });
 const fetch = (...args) => import('node-fetch').then(({default: f}) => f(...args));
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -184,15 +185,15 @@ async function crawlLexica(limit = 50) {
 }
 
 // Civitai crawler
-async function crawlCivitai(limit = 50) {
+async function crawlCivitai(limit = 50, forceSort = null) {
   console.log('🔍 Crawling Civitai...');
   
   try {
     // Civitai API endpoint
     const sorts = ['Most Reactions', 'Most Comments', 'Newest'];
     const periods = ['Day', 'Week', 'Month', 'AllTime'];
-    const sort = sorts[Math.floor(Math.random() * sorts.length)];
-    const period = periods[Math.floor(Math.random() * periods.length)];
+    const sort = forceSort || sorts[Math.floor(Math.random() * sorts.length)];
+    const period = forceSort === 'Newest' ? 'Day' : periods[Math.floor(Math.random() * periods.length)];
     // Add random cursor offset for variety
     const cursor = Math.floor(Math.random() * 50000);
     const response = await fetch(`https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&cursor=${cursor}&nsfw=true`, {
@@ -418,10 +419,11 @@ async function runCrawler() {
   let totalInserted = 0;
   
   // Civitai is the primary working source — crawl multiple pages
-  for (let page = 0; page < 3; page++) {
-    const count = await crawlCivitai(100);
+  // Always include 'Newest' sort to get fresh content
+  for (let page = 0; page < 6; page++) {
+    const count = await crawlCivitai(100, page < 3 ? 'Newest' : undefined);
     totalInserted += count;
-    if (count === 0) break; // no new images, stop
+    if (count === 0 && page >= 3) break; // stop after newest pages if nothing found
     await new Promise(r => setTimeout(r, 2000));
   }
   
