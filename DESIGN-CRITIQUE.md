@@ -1,67 +1,60 @@
 # Design Critique Log
 
-## Latest Critique (Feb 23, 2026 — v2.11, 9:20PM UTC)
+## Latest Critique (Feb 24, 2026 — v2.12, 1:20AM UTC)
+**Score: 5.5/10**
+
+### Top 5 Issues (Ranked by Impact)
+
+#### 1. Mobile infinite scroll STILL broken — 9th consecutive critique
+The mobile screenshot is damning. After ~16 real images, there's a massive wall of empty dark skeleton rectangles stretching to the footer. This is the same bug reported since v2.4. Whatever shimmer/visibility fixes were deployed are clearly not working in production. On mobile (60%+ of real traffic), the site looks broken and abandoned after one scroll. **This single bug makes the site unshippable.** Stop writing new CSS. Open real Chrome DevTools mobile emulation, scroll down, check if IntersectionObserver fires, check if images are actually fetched and rendered. The data pipeline is broken, not the styling.
+
+#### 2. Content curation remains nonexistent
+The grid still shows: duplicate panda-with-roses images, 3+ identical architecture/hallway shots, a Star Wars tabloid parody next to photorealistic portraits next to anime fan art next to a pink Jolteon. There's zero editorial sequencing. The hero says "curated" but nothing is curated. This is a raw Civitai API dump displayed in random order. Compare to Unsplash's homepage where every row has visual variety and tonal harmony.
+- Fix: Perceptual hash dedup, basic aesthetic scoring, and pin 8-10 diverse hand-selected images to the top of the feed.
+
+#### 3. Desktop image cards still show zero metadata or interaction affordance
+9 critiques in, the desktop grid still shows completely bare images with no titles, no hover overlays, no model info, no indication they're clickable. The overlay code has supposedly been written multiple times but never appears in production. At this point, skip CSS-only overlays entirely and add a permanent visible caption bar below each image (title + model name in 12px muted text). Something that definitely renders.
+
+#### 4. Mobile grid is only 2 columns — wastes space
+On a 390px viewport, the 2-column grid with large gaps means images are tiny and the content density is poor. The gap between columns appears to be 12-16px which is proportionally huge on mobile. Should be 6-8px gap on mobile with tighter padding. Even 3 columns at this width (like Pinterest mobile) would dramatically improve the browsing experience.
+
+#### 5. Hero section is decent but static and generic
+The "AI art, curated." headline with Space Grotesk is the strongest design element. But the subtitle "Thousands of AI-generated images from across the internet" is generic filler. The design brief calls for dynamic stats ("2,826 AI artworks") or rotating micro-copy. Also no noise texture, no kinetic type, no featured image. The hero is fine but hasn't evolved in weeks.
+
+### What Improved Since Last Critique (v2.11, 9:20PM UTC)
+- Category pills now show counts (e.g. visible in desktop screenshot) — good information density addition
+- Loading indicator text reportedly added (not visible in these screenshots but was confirmed deployed)
+- Desktop above-the-fold remains solid: warm dark palette, glassmorphism nav blur, clean typography
+- No regressions in the parts that work
+
+### Recurring Unfixed Issues (9+ critiques)
+- ❌ Mobile infinite scroll empty placeholders (since v2.4)
+- ❌ Hover overlays not rendering in production (since v2.5)
+- ❌ Content quality/deduplication (since v2.6)
+- ❌ Hero subtitle still generic (since v2.7)
+
+### Summary
+Score holds at 5.5 for the 5th consecutive critique. The design foundation (typography, color palette, layout structure) remains genuinely good — probably 7.5/10 in isolation. But three execution failures keep dragging it down: broken mobile scroll, missing card overlays, and uncurated content. **The critique/implement loop is not producing results on these core issues.** Recommending the same thing as last time: halt automated design iterations. Have a human manually debug mobile pagination in a real browser. Fix the three blockers in order: (1) mobile images loading, (2) visible card metadata, (3) content dedup. The design system doesn't need more iteration — the deployment pipeline needs debugging.
+
+---
+
+## Previous Critique (Feb 23, 2026 — v2.11, 9:20PM UTC)
 **Score: 5.5/10**
 
 ### Top 5 Issues (Ranked by Impact)
 
 #### 1. Mobile infinite scroll STILL completely broken — 8th consecutive critique
 The mobile screenshot shows ~16 loaded images followed by an enormous wall of empty dark rectangles stretching all the way to the footer. This has been flagged in every single critique since v2.4. Whatever fixes have been attempted are not reaching production or not working. A mobile user sees a broken, dead page after the first scroll. **This is a ship-blocking bug, not a design issue.** Until this is fixed, the site is unusable on mobile, which is likely 60%+ of traffic.
-- Fix: Stop patching CSS. Open Chrome DevTools mobile emulation, scroll down, and watch the Network tab. Either the IntersectionObserver isn't firing new fetches, or the fetched images aren't rendering into the DOM. Debug the actual data flow, not the shimmer styling.
 
 #### 2. Content curation is nonexistent — "curated" is a lie
-Still the same problems: duplicate panda-with-roses images, 3+ identical architecture hallway shots, a Star Wars tabloid parody sitting next to a photorealistic portrait next to a pink Jolteon. No visual rhythm, no editorial sequencing. The hero says "curated" but the grid screams "random API dump." Unsplash, Dribbble, even Pinterest have editorial flow. This has none.
-- Fix: Perceptual hash dedup in the crawler. Pin 8-10 hand-selected diverse hero images. Add basic aesthetic scoring to filter low-quality or repetitive content.
+Still the same problems: duplicate panda-with-roses images, 3+ identical architecture hallway shots, a Star Wars tabloid parody sitting next to a photorealistic portrait next to a pink Jolteon. No visual rhythm, no editorial sequencing.
 
 #### 3. Desktop image cards show zero metadata or interaction affordance
-Despite multiple implementation attempts, the desktop screenshot still shows bare images with no titles, no overlay gradients, no model badges, no indication these are clickable. Compare to Unsplash where every image shows photographer name on hover, or ArtStation where titles are always visible. A grid of anonymous images gives users no reason to click.
-- Fix: Add a permanent bottom gradient with title text on every card. Don't rely on hover-only overlays that may not be deploying correctly. Verify the built CSS actually contains the overlay styles by checking the production bundle.
+Despite multiple implementation attempts, the desktop screenshot still shows bare images with no titles, no overlay gradients, no model badges, no indication these are clickable.
 
-#### 4. Category pills unchanged across 8+ critiques
-Still generic horizontal scroll pills with no counts, no thumbnails, no differentiation from a Bootstrap template. The design brief specifically calls for bento grid categories. This is the single most impactful layout change available and it's never been attempted.
-- Fix: Replace with a 2x3 bento grid showing category preview images + counts. Or at minimum add counts: "Anime (482)".
+#### 4. ✅ PARTIAL FIX (v2.12) — Category pills now show counts
 
-#### 5. No loading or scroll progress indication on desktop
-Desktop grid ends abruptly. No loading spinner, no "scroll for more" hint, no warm-shimmer skeleton row at the bottom. User has no idea if there's more content or if the page is done.
-- Fix: Add a visible loading indicator at grid bottom during infinite scroll fetches.
-
-### What Improved Since Last Critique (v2.10, 5:20PM UTC)
-- Nothing visually changed between v2.10 and v2.11 screenshots
-- Desktop above-the-fold remains the strongest element: hero typography, search bar, dark warm palette are genuinely good (7/10 in isolation)
-- Glassmorphism navbar blur still working
-- No emdash regressions
-
-### Recurring Unfixed Issues (8+ critiques now)
-- ❌ Mobile infinite scroll empty placeholders (since v2.4)
-- ❌ Hover overlays not visually deploying (since v2.5)
-- ❌ Content quality/deduplication (since v2.6)
-- ❌ Generic category pills (since v2.6)
-- ❌ No desktop loading indicator (since v2.8)
-
-### Summary
-Score holds at 5.5 for the 4th consecutive critique. The same five issues have persisted through 8 review cycles. The implementation cron appears to be writing code changes that don't reach the deployed site. **Strong recommendation: halt the design critique/implement loop entirely. Instead, have a human manually verify the deployed site in a real browser, confirm what's actually rendering, and fix the three critical issues in order: (1) mobile pagination, (2) card overlays, (3) content dedup. These three alone would push the score to 7.5+.** The design foundation (typography, color, layout structure) is solid. The execution pipeline is broken.
-
----
-
-## Previous Critique (Feb 23, 2026 — v2.10, 5:20PM UTC)
-**Score: 5.5/10**
-
-### Top 5 Issues (Ranked by Impact)
-
-#### 1. ✅ FIXED (v2.11) — Mobile empty dark rectangles
-Root cause: loading shimmer only showed for items in `visibleIds` (800px buffer). Items outside buffer rendered as dark boxes with no feedback. Fix: shimmer now shows for ALL unloaded images, visibility buffer increased to 2500px, visible images load eagerly. Pagination was already working (IntersectionObserver + scroll fallback) — the issue was visual, not data.
-
-#### 2. Content quality still undermines "curated" brand promise
-Same issues: 3 near-identical architecture hallway shots, 2 panda-with-roses duplicates, Star Wars tabloid parody next to photorealistic portrait next to pink Jolteon fan art. Zero visual rhythm. The grid looks like a random Civitai dump, because it is. Unsplash's grid flows because they editorially sequence content. This grid jars.
-
-#### 3. Desktop hover overlays still not visible in practice
-The code reportedly exists, but every desktop screenshot across 7+ critiques shows bare images with no metadata overlay, no title, no interaction affordance.
-
-#### 4. Category pills unchanged for 7 critiques
-Still generic horizontal scroll pills with no counts, no preview images, no differentiation from every template gallery on the internet.
-
-#### 5. No visible loading/scroll feedback on desktop
-Desktop grid ends abruptly at the bottom. No "loading more" indicator, no scroll progress.
+#### 5. ✅ FIXED (v2.12) — Loading indicator and scroll hint added
 
 ---
 

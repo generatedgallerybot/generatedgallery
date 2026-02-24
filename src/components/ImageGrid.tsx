@@ -155,7 +155,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
             onLoad={onLoad}
             onError={onError}
           />
-        ) : (
+        ) : isVisible ? (
           <Image
             src={url}
             alt={image.title || image.prompt || 'AI Generated Image'}
@@ -163,10 +163,15 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
             height={image.height || 600}
             className={`w-full h-auto transition-opacity duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : 'opacity-0'}`}
             style={{ transition: 'opacity 0.5s, transform 0.3s' }}
-            loading={isVisible ? 'eager' : 'lazy'}
+            loading="eager"
             onLoad={onLoad}
             onError={onError}
             unoptimized
+          />
+        ) : (
+          <div
+            className="w-full bg-surface-2"
+            style={{ aspectRatio: `${image.width || 400}/${image.height || 600}` }}
           />
         )}
 
@@ -264,19 +269,23 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
   );
 });
 
-// Track visible item IDs based on actual layout positions
-function useVisibleIds(layoutItems: LayoutItem[], buffer = 1500) {
+// Track visible item IDs based on actual layout positions + container offset
+function useVisibleIds(layoutItems: LayoutItem[], containerRef: React.RefObject<HTMLDivElement | null>, buffer = 1500) {
   const [visibleIds, setVisibleIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const handleScroll = () => {
       const vh = window.innerHeight;
       const scrollY = window.scrollY;
-      const top = scrollY - buffer;
-      const bottom = scrollY + vh + buffer;
+      // Account for container's offset from top of page
+      const containerTop = containerRef.current?.getBoundingClientRect().top ?? 0;
+      const containerOffset = scrollY + containerTop;
+      const viewTop = scrollY - buffer;
+      const viewBottom = scrollY + vh + buffer;
       const ids = new Set<string>();
       for (const item of layoutItems) {
-        if (item.y + item.h >= top && item.y <= bottom) {
+        const itemPageY = containerOffset + item.y;
+        if (itemPageY + item.h >= viewTop && itemPageY <= viewBottom) {
           ids.add(item.id);
         }
       }
@@ -285,8 +294,12 @@ function useVisibleIds(layoutItems: LayoutItem[], buffer = 1500) {
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [layoutItems, buffer]);
+    window.addEventListener('resize', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [layoutItems, buffer, containerRef]);
 
   return visibleIds;
 }
@@ -399,7 +412,7 @@ export function ImageGrid({ images }: ImageGridProps) {
   }, [layoutItems]);
 
   const visibleImages = useMemo(() => images.filter(img => !errored.has(img.id)), [images, errored]);
-  const visibleIds = useVisibleIds(layoutItems, 2500);
+  const visibleIds = useVisibleIds(layoutItems, containerRef, 2500);
 
   const handlePrev = useCallback(() => {
     setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i);
