@@ -33,17 +33,20 @@ Free AI art gallery — "Unsplash for AI art." Browse, search, download AI-gener
 **Display (hero/headings) — pick ONE:**
 - **Satoshi Variable** (Fontshare, free) — geometric sans with personality, 9 weights. Use at 64px hero, weight 700, -0.03em tracking. The sweet spot between Space Grotesk and something more distinctive.
 - **General Sans Variable** (Fontshare, free) — slightly warmer, pairs beautifully with dark themes. 56-72px, weight 600, -0.02em tracking.
-- **Upgrade path**: Die Grotesk (Klim) or GT America (Grilli Type) if we ever license fonts. Both are the "Mutant Heritage" trend — classic forms with tech-tuned edges.
+- **Switzer Variable** (Fontshare, free) — neo-grotesque with more warmth than Satoshi, 18 styles. Good for a gallery that wants to feel curated, not techy. Try at 80px hero, weight 500, -0.02em.
+- **Instrument Serif** (Google Fonts, free) — NEW. Use as accent only. "Editor's Pick" label or image detail page title. One serif moment in sans world = instant editorial credibility.
 
 **Body:**
 - **Geist** (Vercel, free) — designed for dark interfaces, replaces DM Sans. 15px/1.65 line-height on dark backgrounds (dark needs more line-height than light).
 - **Fallback**: Inter Variable at 15px/1.6
 
+**Monospace (catalog numbers, metadata):**
+- **JetBrains Mono** or **IBM Plex Mono** — for "GG-00284" style inventory numbers. 10px, 30% opacity, bottom-right corner of cards.
+
 **Kinetic type opportunity (hero only):**
 - Animate the hero headline weight on scroll using variable font axis: weight 300→700 as user scrolls past. CSS `font-variation-settings` + `animation-timeline: scroll()`. Pure CSS, no JS. Very 2026.
 - Or: stagger letter reveal on load with `clip-path: inset(0 100% 0 0)` per character, 30ms delay each
-- NEW: Fontfabric's "Typographic Maximalism" trend — type as hero image. Consider `background-clip: text` with featured artwork behind giant letterforms. The word "GENERATED" becomes the brand moment.
-- NEW font option: **Switzer Variable** (Fontshare, free) — neo-grotesque with more warmth than Satoshi, 18 styles. Good for a gallery that wants to feel curated, not techy. Try at 80px hero, weight 500, -0.02em.
+- **Typographic maximalism**: Consider `background-clip: text` with featured artwork behind giant letterforms. The word "GENERATED" becomes the brand moment.
 
 **Specific settings:**
 - Hero headline: 56px mobile / 72px desktop, weight 600-700, -0.03em tracking
@@ -51,6 +54,7 @@ Free AI art gallery — "Unsplash for AI art." Browse, search, download AI-gener
 - Body/metadata: 15px, weight 400, 1.65 line-height
 - Image captions: 12px, weight 500, letter-spacing 0.04em, uppercase, opacity 0.5
 - Category labels: 11px, weight 600, uppercase, 0.06em tracking (like museum wall labels)
+- Catalog numbers (GG-XXXX): 10px monospace, weight 400, 30% opacity, fixed position bottom-right of card
 
 ### Color Evolution
 2026 trend: "calm and breathable" palettes. Softer, more restorative. Reduce visual fatigue. Our warm gold is perfectly on-trend.
@@ -59,6 +63,7 @@ Free AI art gallery — "Unsplash for AI art." Browse, search, download AI-gener
 - **Surface layers**: #0f0e0d (cards), #1a1918 (elevated), #242220 (hover)
 - **Warm accent**: #e8d5b7 (keep) — active states, selected categories, CTA hover
 - **Secondary accent**: #b8a088 (muted gold for borders, dividers, inactive icons)
+- **Signal/CTA color**: #ff6b4a (warm coral) — NEW. Use for Download buttons, primary CTAs. Pops against dark, still warm family, higher contrast than gold for action elements.
 - **Text hierarchy**: #f5f0eb (primary), #a89e94 (secondary), #6b6259 (tertiary/muted)
 - **NEW — Signal color**: #c4816c (muted terracotta) for "new" badges, trending indicators. Warm but distinct from gold.
 - **Avoid**: Pure white (#fff) anywhere. Warmest white = #f5f0eb. No blue or purple tints.
@@ -156,6 +161,55 @@ Big in 2026. Use sparingly:
 
 **Codewave UX (Jan 2026):** "Emotion-based interfaces" using color and visual cues to evoke feeling. Confirmed our dynamic UI tinting idea (stretch goal #15) is on-trend. Prioritize it: extract dominant color from hero image → apply as 3% tinted `mix-blend-mode: color` overlay on the page background. Each visit feels different.
 
+---
+
+### Feb 25, 2026 — Research Pass #5 (Fresh Web Research)
+
+**Figma's 2026 Trends Confirmed:**
+- **3D & Immersive**: WebGL, scroll-triggered animations, AR previews. Not core to GG but: consider subtle parallax on hero image.
+- **Experimental Navigation**: Radial menus, hidden drawers. Our full-screen category overlay (stretch goal #16) aligns with this.
+- **Vibrant Colors**: Saturated palettes returning (Y2K, dopamine design). Our warm gold is a restrained counter-trend — elegant, not loud.
+- **Bold Typography**: Kinetic lettering, variable fonts responding to interaction. Our kinetic type direction is validated.
+- **Motion/Scrollytelling**: Scroll-triggered narratives. Already covered but worth emphasizing.
+- **Gamified Design**: Points, badges, micro-rewards. Consider: "Save to collection" with saved count, or "Remix this prompt" as a shareable action.
+
+**Gallery Competitor Pulse:**
+
+| Site | What They Do Well | GG's Edge |
+|------|-------------------|-----------|
+| **Unsplash** | Blurhash placeholders, dominant-color tinting, collections concept | We have better search + AI-specific metadata |
+| **Lexica.art** | Prompt-first display, dark theme, copy-prompt button front+center | We can have better curation + download UX |
+| **ArtStation** | Full-bleed viewing, Staff Picks, strong artist attribution | We can be faster + more discoverable |
+| **Dribbble** | Bento category layout, color-based search filters | We can have real content, not just mockups |
+| **Behance** | "Appreciate" interaction with particle burst, project grouping | We can have simpler, faster grid browsing |
+
+**Key 2026 Macro Trends — Updated:**
+
+1. **Presence over perfection** — intentional > ornamental
+2. **Expressive minimalism** — big type + breathing room + one bold move per section
+3. **Perfectly imperfect** — subtle grain, slight rotation randomness on cards (±0.3deg)
+4. **Scroll storytelling** — parallax strips between content sections
+5. **Variable fonts as interaction** — font weight responds to hover/scroll
+6. **Glassmorphism evolved** — layered blur at different intensities (12px/20px/40px)
+7. **CSS scroll-driven animations** — `animation-timeline: scroll()` stable in Chrome/Edge
+8. **View Transitions API** — crossfade clicked image into detail hero
+9. **Vertical photography bias** — tall images get 2-row spans in masonry
+10. **Typographic maximalism** — type AS the hero image
+11. **Decentralized brand systems** — UI tint based on current image's palette
+12. **Experimental navigation** — full-screen category overlay
+13. **Dark mode as system** — contrast logic: type sizes, weights, spacing adjust for dark
+
+**New for Research Pass #5:**
+
+- **Anti-grid layouts**: Soften edges, add fluid shapes within bento modules. Our bento category grid could have slightly rounded corners (8px vs 4px) and organic spacing.
+- **Neon accents as signals**: While our main palette stays warm, use neon-adjacent signals for CTAs. Try #ff6b4a (warm coral) for "Download" — pops against dark, still warm family.
+- **Micro-interaction density**: 2026 users expect feedback on EVERY interactive element. Every button, every card hover, every filter click should have state change animation. No dead pixels.
+- **"Collection" over "folder"**: Lexica/Unsplash use "collections" — GG should too. Frame saves as "curated collections" not "favorites."
+- **Prompt as content**: Lexica proved prompts ARE the content for AI art. GG should display truncated prompt (40 chars) under each image in grid, expand on hover. This is THE differentiator.
+- **Vertical video integration**: 2026 is video-first. Consider: if an image has an associated generation video (.mp4), show a small "▶" badge. Click expands to video loop. Future-proofing.
+
+---
+
 ### Quick Wins (Ship This Week)
 1. Swap DM Sans → Geist for body text (free, dark-optimized)
 2. Glassmorphism navbar with blur (12px)
@@ -165,6 +219,8 @@ Big in 2026. Use sparingly:
 6. Replace subtitle with dynamic stat ("2,826 AI artworks and counting")
 7. Add subtle noise texture overlay to hero section (3% opacity SVG)
 8. Uppercase category labels with 0.06em tracking (museum wall label style)
+9. **NEW: Prompt preview in grid** — show first 40 chars of prompt under each image, truncated with "...". On hover, expand to full prompt. This is GG's secret weapon vs competitors.
+10. **NEW: Catalog numbering** — add "GG-XXXX" in 10px monospace at 30% opacity bottom-right of each card. Museum inventory aesthetic.
 
 ### Stretch Goals
 1. Lightbox/modal with frosted glass backdrop (blur 40px) + View Transitions API crossfade from grid thumbnail
@@ -177,14 +233,16 @@ Big in 2026. Use sparingly:
 8. Subtle grain/noise on all surface layers (not just hero)
 9. GSAP ScrollTrigger horizontal scroll strip — "Featured This Week" pinned section between hero and grid
 10. **Prompt-first display** (steal from Lexica) — show truncated prompt under each image in grid, expandable on click. Prompt is the content for AI art, not just metadata.
-11. **"Visual search" stub** — click a region of an image to find similar (CLIP embedding similarity). Even a simple "More like this" button per image would be a differentiator.
-12. **Micro-interaction: appreciate** — heart button with CSS particle burst on click (Behance-style). Store in localStorage for anonymous users. `@keyframes particle { 0% { transform: translate(0) scale(1); opacity: 1 } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0 } }` with 6-8 pseudo-elements.
-13. **Cursor morphing (desktop)** — custom cursor changes to "View ↗" text on image hover, "Download ↓" on download button. CSS `cursor: none` + JS follower div. High-end portfolio feel.
-14. **Text-clip hero** — "GENERATED" in Satoshi 120px+ across full viewport width, `background-clip: text` with a rotating featured image behind the letterforms. High impact, zero extra images needed.
-15. **Dynamic UI tinting** — extract dominant color from the current hero/featured image, apply as 5% tinted overlay on surfaces. Each visit feels subtly different. Use `canvas` color extraction or pre-computed palette from crawler.
-16. **Full-screen category overlay** — replace horizontal pill filter with a full-screen grid overlay (6-8 categories with representative images). Triggered by "Browse" button. `position: fixed` with staggered fade-in. Close on selection or Escape.
-17. **Micro-rotation on grid cards** — each card gets `transform: rotate(calc(var(--seed) * 0.6deg - 0.3deg))` for subtle organic feel. `--seed` is a random 0-1 value set per card. Straightens on hover.
-18. **Scroll-driven grid fade** — pure CSS `animation-timeline: view()` on each grid item. Cards fade + slide up as they enter viewport. No JS, no IntersectionObserver. ~3 lines of CSS per item.
+11. **Prompt-first display** (steal from Lexica) — show truncated prompt under each image in grid, expandable on click. Prompt is the content for AI art, not just metadata.
+12. **"Visual search" stub** — click a region of an image to find similar (CLIP embedding similarity). Even a simple "More like this" button per image would be a differentiator.
+13. **Micro-interaction: appreciate** — heart button with CSS particle burst on click (Behance-style). Store in localStorage for anonymous users. `@keyframes particle { 0% { transform: translate(0) scale(1); opacity: 1 } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0 } }` with 6-8 pseudo-elements.
+14. **Cursor morphing (desktop)** — custom cursor changes to "View ↗" text on image hover, "Download ↓" on download button. CSS `cursor: none` + JS follower div. High-end portfolio feel.
+15. **Text-clip hero** — "GENERATED" in Satoshi 120px+ across full viewport width, `background-clip: text` with a rotating featured image behind the letterforms. High impact, zero extra images needed.
+16. **Dynamic UI tinting** — extract dominant color from the current hero/featured image, apply as 5% tinted overlay on surfaces. Each visit feels subtly different. Use `canvas` color extraction or pre-computed palette from crawler.
+17. **Full-screen category overlay** — replace horizontal pill filter with a full-screen grid overlay (6-8 categories with representative images). Triggered by "Browse" button. `position: fixed` with staggered fade-in. Close on selection or Escape.
+18. **Micro-rotation on grid cards** — each card gets `transform: rotate(calc(var(--seed) * 0.6deg - 0.3deg))` for subtle organic feel. `--seed` is a random 0-1 value set per card. Straightens on hover.
+19. **Scroll-driven grid fade** — pure CSS `animation-timeline: view()` on each grid item. Cards fade + slide up as they enter viewport. No JS, no IntersectionObserver. ~3 lines of CSS per item.
+20. **Video badge on generation clips** — if image has associated .mp4 generation video, show small "▶" badge (16px, top-right). Click expands to looping video. Future-proofing for 2026 video-first era.
 
 ---
 

@@ -37,6 +37,8 @@ export function SearchBar({ onSearch, initialQuery = '' }: SearchBarProps) {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
       <div className={`relative group transition-all duration-300 ${focused ? 'scale-[1.02]' : ''}`}>
+        {/* Focus glow ring */}
+        <div className={`absolute -inset-0.5 bg-gradient-to-r from-accent/0 via-accent/20 to-accent/0 rounded-2xl opacity-0 transition-opacity duration-300 ${focused ? 'opacity-100' : ''}`} />
         {/* Search icon */}
         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-white/30 group-hover:text-white/50 transition-colors">
@@ -53,7 +55,7 @@ export function SearchBar({ onSearch, initialQuery = '' }: SearchBarProps) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder="Search images..."
-          className="w-full pl-12 pr-20 py-4 bg-surface-2 border border-white/[0.06] rounded-2xl text-[15px] text-white placeholder-white/25 focus:outline-none focus:border-accent/30 focus:bg-surface-3 focus:shadow-[0_0_0_3px_rgba(232,213,183,0.05)] transition-all duration-300"
+          className="w-full pl-12 pr-20 py-4 bg-[#0f0d0b] border border-white/10 rounded-2xl text-[15px] text-white placeholder-white/25 focus:outline-none focus:border-accent/50 focus:bg-[#141210] focus:shadow-[0_0_20px_rgba(232,213,183,0.15)] transition-all duration-300"
         />
 
         {/* Right side: clear or shortcut hint */}

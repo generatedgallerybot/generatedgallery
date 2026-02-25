@@ -139,7 +139,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
     <div
       ref={ref}
       onClick={onClick}
-      className={`masonry-item group block bg-surface-2 rounded-2xl cursor-pointer border border-white/[0.04] hover:border-white/[0.08] hover:shadow-lg hover:shadow-black/20 ${isNew ? 'animate-fadeIn' : ''}`}
+      className={`masonry-item group block bg-gradient-to-br from-[#1a1815] via-[#141210] to-[#0f0d0b] rounded-2xl cursor-pointer border border-white/[0.04] hover:border-white/[0.08] hover:shadow-lg hover:shadow-black/20 ${isNew ? 'animate-fadeIn' : ''}`}
       style={{
         left: layout.x,
         top: layout.y,
@@ -163,7 +163,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
               onError={handleError}
             />
           ) : (
-            <div className="w-full bg-surface-2" style={{ minHeight: '200px', aspectRatio: (image.width && image.height) ? `${image.width}/${image.height}` : '3/4' }} />
+            <div className="w-full bg-gradient-to-br from-[#1a1815] via-[#141210] to-[#0f0d0b]" style={{ minHeight: '200px', aspectRatio: (image.width && image.height) ? `${image.width}/${image.height}` : '3/4' }} />
           )
         ) : gifUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -192,13 +192,15 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
           />
         ) : (
           <div
-            className="w-full bg-surface-2"
+            className="w-full bg-gradient-to-br from-[#1a1815] via-[#141210] to-[#0f0d0b]"
             style={{ aspectRatio: `${image.width || 400}/${image.height || 600}` }}
           />
         )}
 
         {!loaded && !hasError && (
-          <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }} />
+          <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1815] via-[#141210] to-[#0f0d0b]" />
+          </div>
         )}
         {hasError && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#0f0e0d]" style={{ minHeight: '200px' }}>
