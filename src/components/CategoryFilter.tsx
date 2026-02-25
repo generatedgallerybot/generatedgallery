@@ -62,15 +62,15 @@ export function CategoryFilter({ selectedCategory, onCategorySelect }: CategoryF
     <div className="relative">
     <div
       ref={scrollRef}
-      className="category-scroll flex gap-2 overflow-x-auto pb-1 -mx-6 px-6 lg:-mx-10 lg:px-10 pr-6"
-      style={{ maskImage: 'linear-gradient(to right, black 85%, transparent)', WebkitMaskImage: 'linear-gradient(to right, black 85%, transparent)' }}
+      className="category-scroll flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 lg:-mx-10 lg:px-10 pr-8"
+      style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 40px, black calc(100% - 40px), transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 40px, black calc(100% - 40px), transparent 100%)' }}
     >
       <button
         onClick={() => onCategorySelect('')}
-        className={`shrink-0 px-4 py-2.5 min-h-[44px] rounded-full text-[13px] font-medium transition-all duration-200 border ${
+        className={`shrink-0 px-5 py-2.5 min-h-[44px] rounded-full text-[14px] font-medium transition-all duration-200 border ${
           !selectedCategory
             ? 'bg-accent/20 text-accent border-accent/40 shadow-sm shadow-accent/10'
-            : 'bg-white/[0.03] text-white/40 hover:text-white/60 hover:bg-white/[0.07] border-white/[0.04]'
+            : 'bg-white/[0.03] text-white/50 hover:text-white/80 hover:bg-white/[0.07] border-white/[0.06]'
         }`}
       >
         All
@@ -79,13 +79,13 @@ export function CategoryFilter({ selectedCategory, onCategorySelect }: CategoryF
         <button
           key={cat.id}
           onClick={() => onCategorySelect(selectedCategory === cat.slug ? '' : cat.slug)}
-          className={`shrink-0 px-4 py-2.5 min-h-[44px] rounded-full text-[13px] font-medium transition-all duration-200 border ${
+          className={`shrink-0 px-5 py-2.5 min-h-[44px] rounded-full text-[14px] font-medium transition-all duration-200 border ${
             selectedCategory === cat.slug
               ? 'bg-accent/20 text-accent border-accent/40 shadow-sm shadow-accent/10'
-              : 'bg-white/[0.03] text-white/40 hover:text-white/60 hover:bg-white/[0.07] border-white/[0.04]'
+              : 'bg-white/[0.03] text-white/50 hover:text-white/80 hover:bg-white/[0.07] border-white/[0.06]'
           }`}
         >
-          {cat.name}{cat.count > 0 && <span className="ml-1.5 text-[11px] opacity-50">{cat.count}</span>}
+          {cat.name}{cat.count > 0 && <span className="ml-1.5 text-[12px] opacity-60">{cat.count}</span>}
         </button>
       ))}
     </div>

@@ -157,8 +157,8 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
               loop
               playsInline
               preload="none"
-              className={`w-full h-auto transition-opacity duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : 'opacity-0'}`}
-              style={{ transition: 'opacity 0.5s, transform 0.3s' }}
+              className={`w-full h-auto transition-all duration-500 group-hover:scale-[1.05] ${loaded ? 'opacity-100' : 'opacity-0'}`}
+              style={{ transition: 'opacity 0.5s, transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
               onLoadedData={onLoad}
               onError={handleError}
             />
@@ -171,8 +171,8 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
             src={isVisible ? url : undefined}
             data-src={url}
             alt={image.title || image.prompt || 'AI Generated Image'}
-            className={`w-full h-auto transition-opacity duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : 'opacity-0'}`}
-            style={{ transition: 'opacity 0.5s, transform 0.3s' }}
+            className={`w-full h-auto transition-all duration-500 group-hover:scale-[1.05] ${loaded ? 'opacity-100' : 'opacity-0'}`}
+            style={{ transition: 'opacity 0.5s, transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
             loading="lazy"
             onLoad={onLoad}
             onError={handleError}
@@ -183,8 +183,8 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
             alt={image.title || image.prompt || 'AI Generated Image'}
             width={image.width || 400}
             height={image.height || 600}
-            className={`w-full h-auto transition-opacity duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : 'opacity-0'}`}
-            style={{ transition: 'opacity 0.5s, transform 0.3s' }}
+            className={`w-full h-auto transition-all duration-500 group-hover:scale-[1.05] ${loaded ? 'opacity-100' : 'opacity-0'}`}
+            style={{ transition: 'opacity 0.5s, transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)' }}
             loading="eager"
             onLoad={onLoad}
             onError={handleError}
@@ -214,7 +214,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
         {/* Permanent subtle gradient - desktop (always visible for context) */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent hidden md:block pointer-events-none" />
         {/* Enhanced hover overlay - desktop */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:block" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 hidden md:block" />
 
         {/* Like button - always visible on hover (desktop), always on mobile */}
         <button

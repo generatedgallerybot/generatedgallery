@@ -5,6 +5,12 @@
 
 ---
 
+## ✅ FIXED (Feb 25, 2026 — v2.20)
+- **Issue #1: Empty/dark image placeholders** → Replaced dark void (#1a1a1a) with warm gradient placeholders (#1a1815 → #141210 → #0f0d0b)
+- **Issue #3: Search bar invisible** → Added visible border (white/10), gold focus glow, background tint on focus
+
+---
+
 ## ⭐ DESIGN CONVERGED — NOT YET
 
 The site is NOW FUNCTIONAL — images are rendering (massive improvement from v2.18). But execution gaps keep it from premium tier.
