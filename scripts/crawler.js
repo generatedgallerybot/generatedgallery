@@ -185,8 +185,8 @@ async function crawlLexica(limit = 50) {
 }
 
 // Civitai crawler
-async function crawlCivitai(limit = 50, forceSort = null) {
-  console.log('🔍 Crawling Civitai...');
+async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false) {
+  console.log(`🔍 Crawling Civitai (${includeNsfw ? 'NSFW' : 'SFW'})...`);
   
   try {
     // Civitai API endpoint
@@ -194,9 +194,10 @@ async function crawlCivitai(limit = 50, forceSort = null) {
     const periods = ['Day', 'Week', 'Month', 'AllTime'];
     const sort = forceSort || sorts[Math.floor(Math.random() * sorts.length)];
     const period = forceSort === 'Newest' ? 'Day' : periods[Math.floor(Math.random() * periods.length)];
-    // Add random cursor offset for variety
-    const cursor = Math.floor(Math.random() * 50000);
-    const response = await fetch(`https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&cursor=${cursor}&nsfw=true`, {
+    // Add random cursor offset for variety (smaller for Newest to get fresh content)
+    const cursor = forceSort === 'Newest' ? 0 : Math.floor(Math.random() * 50000);
+    const nsfwParam = includeNsfw ? 'true' : 'None';
+    const response = await fetch(`https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&cursor=${cursor}&nsfw=${nsfwParam}`, {
       method: 'GET',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; GeneratedGallery/1.0)'
@@ -419,11 +420,12 @@ async function runCrawler() {
   let totalInserted = 0;
   
   // Civitai is the primary working source — crawl multiple pages
-  // Always include 'Newest' sort to get fresh content
+  // Do SFW first (3 pages), then NSFW (3 pages)
   for (let page = 0; page < 6; page++) {
-    const count = await crawlCivitai(100, page < 3 ? 'Newest' : undefined);
+    const nsfw = page >= 3; // first 3 SFW, last 3 NSFW
+    const count = await crawlCivitai(100, page < 2 || page === 3 ? 'Newest' : undefined, nsfw);
     totalInserted += count;
-    if (count === 0 && page >= 3) break; // stop after newest pages if nothing found
+    if (count === 0 && page >= 4) break;
     await new Promise(r => setTimeout(r, 2000));
   }
   

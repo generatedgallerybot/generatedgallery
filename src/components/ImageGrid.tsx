@@ -454,9 +454,11 @@ export function ImageGrid({ images }: ImageGridProps) {
   }, [layoutItems]);
 
   const visibleImages = useMemo(() => images.filter(img => !errored.has(img.id)), [images, errored]);
-  // Use larger buffer on mobile to prevent blank skeleton issue
+  // On mobile, skip virtualization entirely — all items visible (only 24 per page, no perf issue)
   const isMobile = containerWidth > 0 && containerWidth < 768;
-  const visibleIds = useVisibleIds(layoutItems, containerRef, isMobile ? 5000 : 2500);
+  const desktopVisibleIds = useVisibleIds(layoutItems, containerRef, 2500);
+  const allIds = useMemo(() => new Set(layoutItems.map(i => i.id)), [layoutItems]);
+  const visibleIds = isMobile ? allIds : desktopVisibleIds;
 
   const handlePrev = useCallback(() => {
     setLightboxIndex(i => i !== null && i > 0 ? i - 1 : i);

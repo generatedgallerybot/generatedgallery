@@ -78,6 +78,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
       <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6SXZCQGVZ9" />
+        <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-6SXZCQGVZ9');` }} />
         <link rel="canonical" href="https://generatedgallery.com" />
         <meta name="theme-color" content="#050505" />
         <script

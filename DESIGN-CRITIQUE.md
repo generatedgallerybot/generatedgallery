@@ -9,14 +9,14 @@ This is no longer a design critique — it's a **triage report**. The entire ima
 
 ### Top 5 Issues (Ranked by Impact)
 
-#### 1. CRITICAL: Images not loading at all — desktop AND mobile
-Every single thumbnail in the grid is a dark empty rectangle. Not skeleton loaders, not shimmer placeholders — just void. This is either: (a) image URLs are broken/expired (Civitai CDN tokens?), (b) lazy-loading IntersectionObserver never fires, or (c) a build error stripped the `<img>` tags. **The site is functionally dead.** An art gallery with no art is a blank wall. Debug: open DevTools → Network tab → check if image requests fire and what status codes return. Check `src` attributes on image elements.
+#### 1. CRITICAL: Images not loading at all — desktop AND mobile ✅ FIXED (v2.18)
+**Root cause:** The `useVisibleIds` virtualization hook initialized with an empty `Set`, meaning ALL items started as `isVisible=false` (rendering empty placeholder divs instead of `<Image>` tags). If the first computation found 0 visible items (due to layout not settled), it never recovered. **Fix:** Changed `useVisibleIds` to return ALL items as visible until the first successful computation. Also verified image URLs are 200 OK (Civitai CDN is fine). Added error fallback UI for individual image load failures.
 
 #### 2. Mobile gallery completely missing — 12th consecutive report
 On 390px viewport, below the filter pills there's essentially ONE barely-visible card then straight to footer. The entire gallery content area is empty. This has been reported for 12 consecutive critiques. The virtualization/IntersectionObserver is fundamentally broken on mobile viewports. **This makes the site unusable for 60%+ of real traffic.**
 
-#### 3. No loading states or feedback
-When images fail (as they are now), users see: dark rectangles with tiny labels. No shimmer animation, no error state, no "failed to load" message, no retry button. Zero feedback. Compare to Unsplash's blur-up LQIP or even a basic CSS shimmer pulse. The user has no idea if the site is loading, broken, or empty.
+#### 3. No loading states or feedback — PARTIALLY FIXED (v2.18)
+Added error fallback UI showing a broken-image icon + "Failed to load" text when individual images error. Shimmer skeleton already exists (`img-loading` class). Still missing: blur-up LQIP, retry button. But silent dark rectangles are gone.
 
 #### 4. Content curation still nonexistent
 Category labels visible on cards show repetitive "AI Artwork" fallback on most items, with occasional "fantasy", "anime", "landscapes". Even when images DO load, previous critiques documented: duplicate panda-with-roses, identical hallway shots, Star Wars tabloid next to photorealistic portraits. Zero editorial sequencing.
