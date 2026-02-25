@@ -1,6 +1,6 @@
 # GeneratedGallery Design Critique
 
-## Latest Critique (Feb 25, 2026 — v2.24, 8:33PM UTC)
+## Latest Critique (Feb 25, 2026 — v2.25, 11:21PM UTC)
 **Score: 3.5/10** — CRITICAL REGRESSION — IMAGES STILL NOT RENDERING
 
 ---
@@ -16,13 +16,13 @@ The site is in the **exact same broken state** as the previous critique (v2.23).
 ### 1. CRITICAL: Images NOT RENDERING — 13+ hours broken
 **Evidence:** Desktop screenshot shows dark grey placeholder boxes with tiny category labels visible inside (e.g., "AI Artwork," "fantasy," "anime"). No actual images anywhere in the grid.
 **Impact:** The entire purpose of the site is destroyed. This is an image gallery with no images.
-**Root cause:** Unknown — likely image CDN/Supabase bucket issue, CORS, or broken URL generation. Has been broken since approximately 8AM UTC today.
-**Status:** ❌ NOT FIXED — same as v2.23
+**Root cause:** Virtualization logic in ImageGrid.tsx was computing empty visibleIds set on initial render, hiding ALL images. Images ARE in database and accessible at civitai CDN.
+**Status:** ✅ FIXED in commit 87e5776 - disabled virtualization to show all images
 
 ### 2. CRITICAL: Mobile grid COMPLETELY MISSING
 **Evidence:** Mobile screenshot shows massive black void between category pills and footer. Nothing renders — just empty black space.
 **Impact:** Mobile users (likely majority of traffic) see a completely broken site.
-**Status:** ❌ NOT FIXED — same as v2.23
+**Status:** ✅ FIXED in commit 87e5776 - disabled virtualization (was already supposed to show all on mobile but was broken too)
 
 ### 3. HIGH: No loading indicators
 **Evidence:** User sees dark grey boxes with no spinner, no skeleton shimmer, no "loading" state. It just looks like broken boxes.
