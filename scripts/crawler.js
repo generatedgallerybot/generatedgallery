@@ -80,21 +80,22 @@ async function imageExists(sourceUrl) {
   return false;
 }
 
-// Insert image into database (upsert to handle duplicates)
+// Insert image into database (simple insert, unique index handles dupes)
 async function insertImage(imageData) {
   try {
     const { data, error } = await supabase
       .from('images')
-      .upsert(imageData, { onConflict: 'source_url', ignoreDuplicates: true })
-      .select();
+      .insert(imageData);
     
     if (error) {
+      // Ignore duplicate key errors (unique constraint violation)
+      if (error.code === '23505') {
+        return true; // Treat as success - duplicate
+      }
       console.error('Failed to insert image:', error);
       return false;
     }
     
-    // Check if it was actually inserted (upsert returns data even on ignore)
-    // We'll assume success if no error
     console.log(`✅ Inserted image: ${imageData.title || imageData.prompt?.slice(0, 50) || 'Unknown'}`);
     return true;
   } catch (error) {
@@ -128,11 +129,7 @@ async function crawlLexica(limit = 50) {
     
     for (const item of data.images?.slice(0, limit) || []) {
       try {
-        // Check if already exists
-        if (await imageExists(item.srcURL || item.src)) {
-          continue;
-        }
-        
+        // Skip imageExists check - unique index on source_url handles dedup at DB level
         const tags = extractTags(item.prompt);
         const category = categorizeImage(item.prompt, tags);
         
@@ -162,7 +159,7 @@ async function crawlLexica(limit = 50) {
         }
         
         // Rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 500));
         
       } catch (error) {
         console.error('Error processing Lexica item:', error);
@@ -205,11 +202,7 @@ async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false, s
     
     for (const item of data.items || []) {
       try {
-        // Check if already exists
-        if (await imageExists(item.url)) {
-          continue;
-        }
-        
+        // Skip imageExists check - unique index on source_url handles dedup at DB level
         const meta = item.meta || {};
         const tags = extractTags(meta.prompt);
         const category = categorizeImage(meta.prompt, tags);
@@ -252,7 +245,7 @@ async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false, s
         }
         
         // Rate limiting
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         
       } catch (error) {
         console.error('Error processing Civitai item:', error);
@@ -431,7 +424,7 @@ async function runCrawler() {
     let consecutiveEmpty = 0;
     const maxPages = 20; // safety cap
     for (let page = 0; page < maxPages; page++) {
-      const { inserted, nextCursor } = await crawlCivitai(100, 'Newest', nsfw, cursor);
+      const { inserted, nextCursor } = await crawlCivitai(20, 'Newest', nsfw, cursor);
       totalInserted += inserted;
       if (inserted === 0) {
         consecutiveEmpty++;

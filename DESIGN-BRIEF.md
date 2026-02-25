@@ -210,6 +210,84 @@ Big in 2026. Use sparingly:
 
 ---
 
+### Feb 25, 2026 — Research Pass #6 (Live Web Research)
+
+**Fresh 2026 Trends from the Wild:**
+
+**1. Organic/Anti-Grid Layouts** (BBDirector)
+- Beyond rigid grids: asymmetry, curved shapes, softer transitions
+- "Controlled chaos" — still has hierarchy and rhythm, just doesn't look like a spreadsheet
+- GG opportunity: slightly randomized card sizes within masonry, curved category bento cells
+
+**2. Agentic & Conversational Interfaces**
+- Websites that actively help users complete tasks, not just display info
+- Guided flows for filtering/searching — "I want → cyberpunk → portraits → vertical"
+- GG opportunity: natural language search bar that interprets intent ("give me something dark and moody")
+
+**3. Performance-First UX (Critical for GG)**
+- Load times = design constraint, not dev problem
+- Animation, media choices, overlays all evaluated against performance cost
+- GG priority: blurhash placeholders + aggressive image optimization = must-ship this week
+
+**4. Atmospheric Gradients** (BBDirector)
+- 2026: subtle overlays that create depth, focus, hierarchy — not loud neon fog
+- Layered: stacked cards, blurred overlays, gentle texture for tactile depth
+- GG opportunity: our radial gold glow behind hero text is exactly right — keep it
+
+**5. Typography as Personality Signal** (LaunchNow)
+- "Before someone reads a word" — type communicates brand instantly
+- Satoshi confirmed as 2026 favorite: "blend of geometric and humanist qualities"
+- Geist specifically praised for dark interfaces: "slightly rounder curves, friendlier apertures"
+
+**6. Micro-Interaction Density (New 2026 Standard)**
+- Every hover, toggle, scroll reveal MUST communicate state change
+- No "dead pixels" — every interactive element has feedback
+- GG action: audit every button/card state. Download → checkmark animation. Heart → pulse.
+
+**Lexica.art Live Analysis:**
+- Ultra-minimal, terminal-like aesthetic
+- Prompt IS the content — displayed prominently
+- Dark theme, no distractions
+- Their strength = simplicity. GG can match simplicity while adding better curation + UX
+
+**Specific Font Recommendations (2026 Validated):**
+
+| Role | Font | Settings | Why |
+|------|------|----------|-----|
+| Display/Hero | **Satoshi Variable** | 64-80px, weight 600-700, -0.03em tracking | Geometric + humanist, 2026 favorite |
+| Body | **Geist** | 15px, weight 400, 1.65 line-height | Dark-optimized, Vercel-designed |
+| Serif Accent | **Instrument Serif** | 24-32px for labels only | One serif moment = editorial credibility |
+| Monospace | **JetBrains Mono** | 10px, 30% opacity | GG-00284 catalog numbers |
+
+**Actionable Micro-Interactions (Ship List):**
+
+1. **Download button**: arrow (↓) → checkmark (✓) on click — 200ms clip-path swap
+2. **Heart/favorite**: scale 1→1.3→1 pulse on tap — 300ms ease-out
+3. **Card hover**: scale 1.02x + parallax 2-3px opposite mouse + overlay slide-up
+4. **Filter pill**: background fill animation on select — 150ms ease
+5. **Search submit**: button morphs to spinner, then check — all in place
+6. **Image load**: blurhash → sharp transition, no layout shift
+
+**Competitor Feature Gap (What GG Needs):**
+
+| Feature | Unsplash | Lexica | ArtStation | GG Status |
+|---------|----------|--------|------------|-----------|
+| Blurhash placeholders | ✅ | ❌ | ❌ | ❌ Priority |
+| Collections/folders | ✅ | ✅ | ✅ | ❌ Priority |
+| Prompt display | ❌ | ✅ Hero | ✅ | ⚠️ Grid only |
+| Staff picks/curation | ✅ | ❌ | ✅ | ❌ Opportunity |
+| Color filtering | ✅ | ❌ | ❌ | ❌ Stretch |
+| Video generation clips | ❌ | ❌ | ❌ | ❌ Future |
+
+**What Makes GG Stand Out in 2026:**
+1. Prompt-first (steal Lexica's best idea) + better download UX
+2. Warm gold palette = instantly distinctive vs cold blue/purple AI sites
+3. Catalog numbering = museum-grade curation feel
+4. Performance-first = blurhash, aggressive optimization
+5. Expressive minimalism = big type, breathing room, hand-crafted feel
+
+---
+
 ### Quick Wins (Ship This Week)
 1. Swap DM Sans → Geist for body text (free, dark-optimized)
 2. Glassmorphism navbar with blur (12px)
