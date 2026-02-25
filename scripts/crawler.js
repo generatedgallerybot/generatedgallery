@@ -185,19 +185,16 @@ async function crawlLexica(limit = 50) {
 }
 
 // Civitai crawler
-async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false) {
-  console.log(`🔍 Crawling Civitai (${includeNsfw ? 'NSFW' : 'SFW'})...`);
+async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false, startCursor = undefined) {
+  console.log(`🔍 Crawling Civitai (${includeNsfw ? 'NSFW' : 'SFW'}${startCursor ? ', cursor=' + startCursor : ''})...`);
   
   try {
-    // Civitai API endpoint
-    const sorts = ['Most Reactions', 'Most Comments', 'Newest'];
-    const periods = ['Day', 'Week', 'Month', 'AllTime'];
-    const sort = forceSort || sorts[Math.floor(Math.random() * sorts.length)];
-    const period = forceSort === 'Newest' ? 'Day' : periods[Math.floor(Math.random() * periods.length)];
-    // Add random cursor offset for variety (smaller for Newest to get fresh content)
-    const cursor = forceSort === 'Newest' ? 0 : Math.floor(Math.random() * 50000);
+    const sort = forceSort || 'Newest';
+    const period = 'Day';
     const nsfwParam = includeNsfw ? 'true' : 'None';
-    const response = await fetch(`https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&cursor=${cursor}&nsfw=${nsfwParam}`, {
+    let url = `https://civitai.com/api/v1/images?limit=${limit}&sort=${encodeURIComponent(sort)}&period=${period}&nsfw=${nsfwParam}`;
+    if (startCursor) url += `&cursor=${startCursor}`;
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; GeneratedGallery/1.0)'
@@ -223,6 +220,17 @@ async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false) {
         const tags = extractTags(meta.prompt);
         const category = categorizeImage(meta.prompt, tags);
         
+        // Determine media type from Civitai's type field or URL extension
+        const mediaType = item.type === 'video' ? 'video' 
+          : /\.(mp4|webm|mov)(\?|$)/i.test(item.url) ? 'video'
+          : /\.gif(\?|$)/i.test(item.url) ? 'gif'
+          : 'image';
+
+        // Civitai nsfwLevel: "None", "Soft", "Mature", "X" (string, not number)
+        const nsfwLevels = { 'None': 0, 'Soft': 1, 'Mature': 2, 'X': 3 };
+        const nsfwScore = nsfwLevels[item.nsfwLevel] ?? 0;
+        const isNsfw = item.nsfw === true || nsfwScore >= 2;
+
         const imageData = {
           title: null,
           description: null,
@@ -237,10 +245,11 @@ async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false) {
           height: item.height || null,
           tags: tags,
           category: category,
+          media_type: mediaType,
           upvotes: 0,
           downloads: 0,
           views: 0,
-          is_nsfw: item.nsfw || (item.nsfwLevel && item.nsfwLevel >= 3) || false,
+          is_nsfw: isNsfw,
           crawled_at: new Date().toISOString(),
         };
         
@@ -256,12 +265,14 @@ async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false) {
       }
     }
     
-    console.log(`📊 Civitai: ${inserted} images inserted`);
-    return inserted;
+    // Get next cursor from metadata
+    const nextCursor = data.metadata?.nextCursor || null;
+    console.log(`📊 Civitai: ${inserted} new (${(data.items||[]).length} fetched, next: ${nextCursor || 'none'})`);
+    return { inserted, nextCursor };
     
   } catch (error) {
     console.error('Error crawling Civitai:', error);
-    return 0;
+    return { inserted: 0, nextCursor: null };
   }
 }
 
@@ -419,14 +430,26 @@ async function runCrawler() {
   const startTime = Date.now();
   let totalInserted = 0;
   
-  // Civitai is the primary working source — crawl multiple pages
-  // Do SFW first (3 pages), then NSFW (3 pages)
-  for (let page = 0; page < 6; page++) {
-    const nsfw = page >= 3; // first 3 SFW, last 3 NSFW
-    const count = await crawlCivitai(100, page < 2 || page === 3 ? 'Newest' : undefined, nsfw);
-    totalInserted += count;
-    if (count === 0 && page >= 4) break;
-    await new Promise(r => setTimeout(r, 2000));
+  // Civitai: paginate through ALL new content until we hit duplicates
+  // Do SFW and NSFW separately, keep going until a page returns 0 new inserts
+  for (const nsfw of [false, true]) {
+    let cursor = undefined;
+    let consecutiveEmpty = 0;
+    const maxPages = 20; // safety cap
+    for (let page = 0; page < maxPages; page++) {
+      const { inserted, nextCursor } = await crawlCivitai(100, 'Newest', nsfw, cursor);
+      totalInserted += inserted;
+      if (inserted === 0) {
+        consecutiveEmpty++;
+        if (consecutiveEmpty >= 2) break; // 2 empty pages = caught up
+      } else {
+        consecutiveEmpty = 0;
+      }
+      if (!nextCursor) break;
+      cursor = nextCursor;
+      await new Promise(r => setTimeout(r, 1500));
+    }
+    console.log(`📊 Civitai ${nsfw ? 'NSFW' : 'SFW'} total: ${totalInserted} new images`);
   }
   
   // PromptHero — HTML scrape
