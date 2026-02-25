@@ -350,7 +350,7 @@ function HomePageInner() {
             )}
             {!loadingMore && hasMore && (
               <div className="flex justify-center py-8">
-                <span className="text-[11px] text-white/15 tracking-wide">Scroll for more</span>
+                <span className="text-[11px] text-accent/60 tracking-wide">Scroll for more</span>
               </div>
             )}
             <div ref={observerRef} className="h-1" />

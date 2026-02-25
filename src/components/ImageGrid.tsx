@@ -300,6 +300,7 @@ function useVisibleIds(layoutItems: LayoutItem[], containerRef: React.RefObject<
   // Start with ALL items visible until first real computation succeeds
   const [visibleIds, setVisibleIds] = useState<Set<string> | null>(null);
   const hasComputed = useRef(false);
+  const prevLayoutLength = useRef(0);
 
   useEffect(() => {
     if (layoutItems.length === 0) return;
@@ -320,11 +321,10 @@ function useVisibleIds(layoutItems: LayoutItem[], containerRef: React.RefObject<
           ids.add(item.id);
         }
       }
-      // Only apply if we found visible items (guards against bad measurements)
-      if (ids.size > 0 || hasComputed.current) {
-        hasComputed.current = true;
-        setVisibleIds(ids);
-      }
+      // Always update visibility state - no guards that could prevent updates
+      // This ensures visibility updates when layoutItems grows from empty
+      hasComputed.current = true;
+      setVisibleIds(ids);
     };
 
     // Run immediately, after short delay, and after longer delay for layout settle

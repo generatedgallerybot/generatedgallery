@@ -1,69 +1,68 @@
 # GeneratedGallery Design Critique
 
-## Latest Critique (Feb 25, 2026 — v2.19+, 8:32AM UTC)
-**Score: 5.5/10**
+## Latest Critique (Feb 25, 2026 — v2.22, 4:33PM UTC)
+**Score: 3.5/10** — CRITICAL REGRESSION
 
 ---
 
-## ✅ FIXED (Feb 25, 2026 — v2.20)
-- **Issue #1: Empty/dark image placeholders** → Replaced dark void (#1a1a1a) with warm gradient placeholders (#1a1815 → #141210 → #0f0d0b)
-- **Issue #3: Search bar invisible** → Added visible border (white/10), gold focus glow, background tint on focus
+## 🚨 CRITICAL FAILURE: Images Not Rendering
 
----
+**Desktop:** ~70% of masonry grid shows dark grey placeholder boxes. Images failed to load — only faint category labels visible inside each box.
+**Mobile:** Image grid is COMPLETELY MISSING. Just black void from category pills down to footer.
 
-## ⭐ DESIGN CONVERGED — NOT YET
-
-The site is NOW FUNCTIONAL — images are rendering (massive improvement from v2.18). But execution gaps keep it from premium tier.
+**This is a regression from this morning's v2.21** which showed images actually rendering (~60% visible per previous critique). The site is now MORE broken than it was 8 hours ago.
 
 ---
 
 ## Top 5 Issues (Ranked by Impact)
 
-### 1. HIGH: Empty/dark image placeholders during load — 60% of grid shows void
-**Evidence:** Desktop screenshot shows ~40% of masonry grid as dark grey boxes with only metadata visible. The actual images (anime characters, 3D renders, landscape) load but leave massive gaps. Mobile shows similar pattern.
-**Impact:** User sees empty skeleton boxes for 2-3 seconds — feels broken, not loading. Unsplash uses blur-up + dominant color. We see dark void.
-**Fix:** Add `background-color` extraction from each image (dominant color) as placeholder. Use blur-up: load 20px wide preview → blur → swap to full. Or solid color from image palette.
+### 1. CRITICAL: Images not loading — gallery is non-functional
+**Evidence:** Desktop screenshot shows dark placeholder boxes with tiny category labels (e.g., "AI Artwork," "landscapes," "anime"). No actual images rendered. Mobile shows empty black void where grid should be.
+**Impact:** The entire purpose of the site is broken. Users see nothing but dark boxes. This is a content delivery failure, not a design issue.
+**Root cause likely:** Image CDN/URL issue, CORS blocking, or Supabase bucket problem. Previous v2.21 showed images working — something regressed.
+**Fix:** Debug image URL generation, check Supabase bucket permissions, verify CDN links are valid.
 
-### 2. HIGH: Typography scale broken — massive headline, microscopic tags
-**Evidence:** "AI art, collected." is huge (72px). Category pills below are ~11px. The scale jump is jarring.
-**Impact:** Tags are hard to read, especially on mobile. No visual breathing room between hero and content.
-**Fix:** Add an intermediate heading layer (e.g., "Browse by category" at 16px, uppercase). Increase category pills to 13px minimum.
+### 2. CRITICAL: Mobile image grid completely missing
+**Evidence:** After category pills, there's a tiny "Ad placeholder" text then BLACK VOID until footer. No images whatsoever.
+**Impact:** Mobile users (likely majority) see absolutely nothing. Site appears completely broken.
+**Fix:** Same as #1 — likely a responsive rendering issue compounded by the image loading failure.
 
-### 3. MEDIUM: Search bar invisible on dark background
-**Evidence:** The search input has almost no border/contrast in the screenshot. Hard to locate.
-**Impact:** Primary discovery tool is nearly invisible. Users won't find it.
-**Fix:** Add 1px border `rgba(255,255,255,0.1)` + focus state with gold accent glow.
+### 3. HIGH: Placeholder strategy is dark grey void, not warm/dynamic
+**Evidence:** Even the placeholders are dark (#1a1a1a style), creating a "black hole" effect. Previous critique noted "warm gradient placeholders (#1a1815 → #141210 → #0f0d0b)" were implemented — but they're not visible in this screenshot, suggesting images fail before placeholders even render.
+**Impact:** When images don't load, user sees cold, dead squares. Unsplash uses dominant color extraction + blur-up.
+**Fix:** Ensure warm placeholders render immediately, then swap to images.
 
-### 4. MEDIUM: Category pills squashed — no horizontal scroll indicator
-**Evidence:** Tags "3D Render," "Abstract," "Anime" crammed together with no spacing variation. No fade edges.
-**Impact:** Looks like a wall of text. Premium sites use scrolling with fade indicators.
-**Fix:** Add `overflow-x: auto` with fade gradient on edges. Increase pill padding to 8px 16px.
+### 4. MEDIUM: "Scroll for more" text nearly invisible
+**Evidence:** At bottom of desktop grid, faint "Scroll for more" text in dark grey, nearly blends into background.
+**Impact:** Users won't know more content exists. Dead end.
+**Fix:** Use gold accent color (#e8d5b7) for this CTA, or add subtle pulse animation.
 
-### 5. MEDIUM: No hover states on images
-**Evidence:** Static grid — no scale, no overlay, no info reveal on hover.
-**Impact:** Feels dead. No engagement. Compare to Dribbble/Unsplash where images scale + show metadata.
-**Fix:** Add `scale(1.02)` + overlay slide-up with title/download on hover.
-
----
-
-## What's Actually Good
-
-- **Images now render** — 🎉 This is huge. The 13-critique streak of broken images is FIXED.
-- **Hero typography** — "AI art, collected." is editorial and distinctive. Serif on "collected" works.
-- **Color identity** — Warm gold (#e8d5b7) on near-black is differentiated and premium-feeling.
-- **Masonry layout** — Works well when images load. Good column balance.
-- **Navigation** — Clean, minimal. Submit/Sign in links present.
-- **Mobile grid** — Shows 2 columns, images are visible and tappable.
-- **Category selection** — Active state (gold underline) is clear.
+### 5. LOW: Category labels inside image boxes are microscopic
+**Evidence:** Tiny text in bottom-left corner of each placeholder box (e.g., "AI Artwork"). Barely readable even on desktop.
+**Impact:** Negligible given images aren't showing — but when they do, this will be hard to read.
+**Fix:** Increase to 11px minimum, use monospace for catalog numbers per design brief.
 
 ---
 
-## What Improved Since Last Critique
+## What Actually Works (Despite Failure)
 
-1. **IMAGES NOW RENDER** — From 0% to ~60% visible. The pipeline is alive data.
-2. **Loading skeletons** — Warm shimmer (#1a1918 → #242220) is implemented (not visible in current screenshot but present in code).
-3. **Mobile grid works** — Shows images, scrollable.
-4. **Hero section intact** — Still premium, still the best part of the site.
+- **Hero section** — Clean, impactful, good typography. "AI art, collected." + "178,400+ AI artworks" is strong messaging.
+- **Navigation** — Clean header, utility links present (Browse, Trending, Shuffle, Submit, Sign in).
+- **Search bar** — Visible now (had visibility issues in earlier critiques), glassmorphism effect applied.
+- **Category pills** — Horizontal scroll with counts (e.g., "3D Render (892)"), better than squashed row.
+- **Sorting toggles** — Recent/Trending selector, aspect ratio icons, NSFW toggle all present.
+- **Mobile layout** — Header with hamburger, centered hero, stacked filters — good mobile structure.
+- **Footer** — Clean three-column, GitHub link present.
+
+---
+
+## What Improved Since Last Critique (v2.21, this morning)
+
+**NOTHING.** This is a regression:
+- v2.21 (8:32AM): Score 5.5/10 — images rendering ~60%
+- v2.22 (4:33PM): Score 3.5/10 — images NOT rendering at all
+
+Something broke between morning and afternoon. This is a **content delivery emergency**, not a design issue.
 
 ---
 
@@ -71,55 +70,45 @@ The site is NOW FUNCTIONAL — images are rendering (massive improvement from v2
 
 | Dimension | GG Score | Unsplash | Dribbble | Linear | Notes |
 |-----------|----------|----------|----------|--------|-------|
-| Content renders | 7/10 | 10/10 | 10/10 | 10/10 | Gap = placeholder strategy |
-| Mobile experience | 6/10 | 9/10 | 8/10 | 9/10 | Works but no hover states |
-| Loading/placeholders | 3/10 | 9/10 | 8/10 | 8/10 | Dark voids need dominant color |
-| Hero section | 7/10 | 8/10 | 7/10 | 9/10 | Excellent copy, needs breathing room |
-| Grid/hover states | 4/10 | 9/10 | 8/10 | 7/10 | Static — needs interaction |
-| Search/discovery | 4/10 | 9/10 | 7/10 | 9/10 | Search bar invisible |
-| Typography | 5/10 | 8/10 | 7/10 | 8/10 | Scale gap: hero → tags |
-| Color/brand | 7/10 | 7/10 | 8/10 | 8/10 | Gold is distinctive |
+| Content renders | 1/10 | 10/10 | 10/10 | 10/10 | **BROKEN** — major regression |
+| Mobile experience | 1/10 | 9/10 | 8/10 | 9/10 | Grid completely missing |
+| Loading/placeholders | 2/10 | 9/10 | 8/10 | 8/10 | Dark voids, no warm shimmer |
+| Hero section | 7/10 | 8/10 | 7/10 | 9/10 | Best part of the site |
+| Navigation | 6/10 | 8/10 | 7/10 | 9/10 | Clean, usable |
+| Search/discovery | 5/10 | 9/10 | 7/10 | 9/10 | Search visible now |
+| Typography | 5/10 | 8/10 | 7/10 | 8/10 | Hero good, labels tiny |
 
-**Current: 5.5/10** — Functionality improved dramatically. Polish gaps are next.
+**Current: 3.5/10** — Functionality collapsed. Not a design problem — deployment/CDN emergency.
 
 ---
 
-## Specific Actionable Fixes (Priority Order)
+## Specific Actionable Fixes (IMMEDIATE)
 
-### Week 1 — Quick Wins
-1. **Dominant color placeholders** — Extract primary color from each image on upload, store in DB, use as background until image loads.
-2. **Search bar visibility** — Add subtle border + focus state with gold glow.
-3. **Hover overlay** — CSS: `group-hover:translate-y-0 translate-y-full` for info card slide-up.
+### RIGHT NOW — Production Emergency
+1. **Debug image URLs** — Check browser console for 404/403 errors on image requests. Verify Supabase bucket is public.
+2. **Check CDN** — If using Cloudflare/R2, verify links haven't expired or been blocked.
+3. **Mobile-specific** — Check if mobile viewport triggers different code path that's failing silently.
 
-### Week 2 — Polish
-4. **Category pill scroll** — Add horizontal scroll with edge fade indicators.
-5. **Typography intermediate layer** — Add section headers between hero and grid.
-6. **Image scale on hover** — `transition-transform hover:scale-[1.02]`.
-
-### Week 3 — Premium Features
-7. **Blur-up loading** — Low-res preview → blur → sharp swap.
-8. **View Transitions API** — Grid → detail page crossfade.
-9. **Dynamic stat** — "178,400+ artworks" could animate the count on scroll into view.
+### AFTER IMAGES WORK — Design Polish
+4. **Warm placeholders** — Ensure dominant-color extraction renders BEFORE image load.
+5. **Scroll for more visibility** — Make CTA gold, not dark grey.
+6. **Hover states** — Add scale + overlay when images do render.
+7. **Category label size** — Increase to readable 11px.
 
 ---
 
 ## Verdict
 
-The site crossed the functionality threshold — images render, mobile works, core UX is alive. The gap to premium is now about **polish**, not survival. Unsplash/Dribbble feel "alive" because of hover states, loading strategies, and micro-interactions. GG has the bones; now add the flesh.
+**STOP DESIGN WORK. FIX IMAGES FIRST.**
 
-**Next milestone: 7/10** — achievable with placeholder colors + hover states + search visibility.
+The site was working this morning (v2.21, score 5.5/10 with visible images). Now it's completely broken. This is a deployment/backend issue, not a UI problem.
+
+**Priority:** Revert whatever changed since 8:32AM, or debug image delivery immediately. The gallery cannot exist without images.
+
+**Next milestone (after images work):** 6/10 — restore v2.21 functionality, then add hover states.
 
 ---
 
-## Scroll-Driven Animation Note
+## DESIGN CONVERGED
 
-Per 2026 design brief, consider implementing CSS scroll-driven animations for grid items:
-```css
-@property --index { syntax: '<integer>'; initial-value: 0; inherits: true; }
-.grid-item {
-  animation: fade-up 0.4s ease-out both;
-  animation-delay: calc(var(--index) * 60ms);
-  animation-timeline: view();
-}
-```
-This would add staggered reveal without JS overhead.
+NO. Not even close. The site is in crisis mode.

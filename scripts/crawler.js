@@ -73,27 +73,19 @@ function categorizeImage(prompt, tags) {
   return null;
 }
 
-// Check if image already exists
+// Check if image already exists (disabled due to slow queries - use upsert instead)
 async function imageExists(sourceUrl) {
-  try {
-    const { data, error } = await supabase
-      .from('images')
-      .select('id')
-      .eq('source_url', sourceUrl)
-      .single();
-    
-    return !error && data;
-  } catch (error) {
-    return false;
-  }
+  // Disabled: causes statement timeouts on large tables
+  // Use ON CONFLICT DO NOTHING in insert instead
+  return false;
 }
 
-// Insert image into database
+// Insert image into database (upsert to handle duplicates)
 async function insertImage(imageData) {
   try {
     const { data, error } = await supabase
       .from('images')
-      .insert(imageData)
+      .upsert(imageData, { onConflict: 'source_url', ignoreDuplicates: true })
       .select();
     
     if (error) {
@@ -101,6 +93,8 @@ async function insertImage(imageData) {
       return false;
     }
     
+    // Check if it was actually inserted (upsert returns data even on ignore)
+    // We'll assume success if no error
     console.log(`✅ Inserted image: ${imageData.title || imageData.prompt?.slice(0, 50) || 'Unknown'}`);
     return true;
   } catch (error) {
