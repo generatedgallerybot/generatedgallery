@@ -365,7 +365,8 @@ export function ImageGrid({ images }: ImageGridProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [prevCount, setPrevCount] = useState(0);
   const newItemStart = useRef(0);
-  const [containerWidth, setContainerWidth] = useState(0);
+  // Default to 1200px to ensure layout computes on first render before ResizeObserver fires
+  const [containerWidth, setContainerWidth] = useState(1200);
   const containerRef = useRef<HTMLDivElement>(null);
   const [measuredHeights, setMeasuredHeights] = useState<Map<string, number>>(new Map());
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
@@ -471,7 +472,7 @@ export function ImageGrid({ images }: ImageGridProps) {
 
   return (
     <>
-      <div ref={containerRef} className="masonry" style={{ height: totalHeight }}>
+      <div ref={containerRef} className="masonry" style={{ minHeight: '50vh', height: totalHeight || 'auto' }}>
         {visibleImages.map((image, index) => {
           const layout = layoutMap.get(image.id);
           if (!layout) return null;

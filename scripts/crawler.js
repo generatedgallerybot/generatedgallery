@@ -245,7 +245,7 @@ async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false, s
         }
         
         // Rate limiting
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise(resolve => setTimeout(resolve, 5000));
         
       } catch (error) {
         console.error('Error processing Civitai item:', error);
@@ -422,9 +422,12 @@ async function runCrawler() {
   for (const nsfw of [false, true]) {
     let cursor = undefined;
     let consecutiveEmpty = 0;
+    let nsfwInserted = 0;
     const maxPages = 20; // safety cap
+    console.log(`🚀 Starting ${nsfw ? 'NSFW' : 'SFW'} crawl...`);
     for (let page = 0; page < maxPages; page++) {
       const { inserted, nextCursor } = await crawlCivitai(20, 'Newest', nsfw, cursor);
+      nsfwInserted += inserted;
       totalInserted += inserted;
       if (inserted === 0) {
         consecutiveEmpty++;
@@ -436,7 +439,7 @@ async function runCrawler() {
       cursor = nextCursor;
       await new Promise(r => setTimeout(r, 1500));
     }
-    console.log(`📊 Civitai ${nsfw ? 'NSFW' : 'SFW'} total: ${totalInserted} new images`);
+    console.log(`📊 Civitai ${nsfw ? 'NSFW' : 'SFW'}: ${nsfwInserted} new images (cumulative: ${totalInserted})`);
   }
   
   // PromptHero — HTML scrape
