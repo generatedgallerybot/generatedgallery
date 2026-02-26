@@ -1,10 +1,15 @@
-# GG Daily Best Picks
+# GeneratedGallery Daily Picks
 
-## 2026-02-25 — Gothic Crimson Knight
-- **Image:** https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c6654a5d-e549-4482-b222-a9d8c043c2ab/original=true/c6654a5d-e549-4482-b222-a9d8c043c2ab.jpeg
-- **Source:** Civitai (user: amre92YH)
-- **Model:** Z-Image Turbo (zImageTurbo_turbo) + MoriimeZ LoRA
-- **Category:** Dark Fantasy / Anime
-- **Prompt:** "Young woman with short black bob haircut and blunt bangs, purple colored hair on edge hair, wind blown hair, intense dark eyes, stoic expression, multiple silver cross earrings, wearing elaborate gothic crimson armor with high collar, massive pauldrons adorned with large crosses and rivets, intricate black metal plating with red accents and cross motifs, long flowing red cape, gripping large ornate two-handed sword vertically, dramatic red lighting, dark fantasy anime style, highly detailed, epic atmosphere"
-- **Why:** Insane level of detail on the armor plating — the cross motifs, rivets, and red-black color scheme are chef's kiss. The dramatic red lighting + flowing cape give it that epic scroll-stopping energy. ComfyUI workflow with 4x-UltraSharp upscale + FaceDetailer pipeline = crispy clean output at 1328x2368.
-- **Note:** GG database had no standout SFW content in the last 24h (mostly NSFW portraits with 0 engagement). Civitai "Most Reactions / Day" also showed 0 reactions across the board — likely a slow day or API quirk.
+## February 26, 2026
+
+### Pick of the Day: A City on the Moon
+
+**Image URL:** https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/6b25ebe9-4aff-4649-a5f0-e5dd1112b135/original=true/6b25ebe9-4aff-4649-a5f0-e5dd1112b135.jpeg
+
+**Prompt:** A city on the moon.
+
+**Model:** Unknown (source: Civitai)
+
+**Category:** Sci-fi / Space Art
+
+**Reasoning:** This surreal night scene features a glowing golden road winding toward two massive moons, creating incredible visual drama with high contrast that stops the scroll. The warm light trail against deep cosmic blues is exactly the kind of "impossible realism" that performs well on Instagram's visual algorithm. Perfect for #SpaceArt, #Mood, and #Aesthetic niches. Excellent wallpaper potential.

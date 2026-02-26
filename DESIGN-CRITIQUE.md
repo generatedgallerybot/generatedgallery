@@ -1,53 +1,53 @@
 # GeneratedGallery Design Critique
 
-## Latest Critique (Feb 26, 2026 — v2.26, 12:33AM UTC)
-**Score: 2.5/10** — STILL BROKEN — IMAGES NOT RENDERING
+## Latest Critique (Feb 26, 2026 — v2.28, 4:33AM UTC)
+**Score: 5.5/10** — CRITICAL BUG STILL NOT FIXED after 24+ hours
 
 ---
 
-## 🚨 CRITICAL: STILL NOT WORKING — Same as 23 hours ago
+## 🚨 CRITICAL: IMAGES STILL NOT RENDERING — 24+ HOURS BROKEN
 
-The site is in the **exact same broken state** as v2.25. Images are still completely non-functional. The grid shows dark grey placeholder boxes with category labels (e.g., "AI Artwork," "fantasy," "anime") but NO actual images load.
+The site is in the **exact same broken state** as the past day. The grid displays dark grey placeholder boxes with category labels (e.g., "AI Artwork," "fantasy," "anime") but **ZERO actual images load**. This is a ~24+ hour production outage.
 
-This is now a **~24 hour outage**. The core product — an image gallery with no images — is destroyed.
+The design brief calls this an "AI art gallery" with "content first — the images are the product." An image gallery with no images is a contradiction of purpose.
 
 ---
 
 ## Top 5 Issues (Ranked by Impact)
 
-### 1. CRITICAL: Images STILL NOT RENDERING — ~24 hours broken
+### 1. CRITICAL: Images STILL NOT RENDERING — ~24+ hours broken
 **Evidence:** Desktop screenshot shows dark gradient boxes (#1a1815 → #141210 → #0f0d0b) with tiny labels like "AI Artwork", "fantasy", "anime" visible inside. Zero actual images rendered.
-**Impact:** Entire purpose of site destroyed. An image gallery with no images.
-**Root cause:** Virtualization logic in useVisibleIds() computes empty visibleIds on initial render, hiding ALL images. The `visibleIds === null` fallback should show all items but something in the layout computation is failing.
-**Status:** ❌ NOT FIXED — same as v2.25
+**Impact:** Entire purpose of site destroyed. An image gallery with no images = no product.
+**Root cause:** Previous fix (v2.27 containerWidth default to 1200px) did NOT resolve the issue. Virtualization logic still filtering out all images on initial render.
+**Status:** ❌ **NOT FIXED** — same as v2.25, v2.26, v2.27
 
-### 2. CRITICAL: Mobile grid — MASSIVE BLACK VOID
-**Evidence:** Mobile screenshot shows ~40% of screen as empty black void between filter pills and footer. No images, no loading states, nothing.
-**Impact:** Mobile users (majority) see completely broken site.
-**Status:** ❌ NOT FIXED — same as v2.25
+### 2. CRITICAL: Mobile — MASSIVE BLACK VOID
+**Evidence:** Mobile screenshot shows ~50% of screen as empty black void between filter pills and footer. No images, no loading states, nothing. User scrolls through nothing to reach footer.
+**Impact:** Mobile users (majority) see completely broken site. This is where most users would first encounter the product.
+**Status:** ❌ **NOT FIXED** — same as v2.25
 
 ### 3. HIGH: No loading indicators (user thinks it's broken)
 **Evidence:** Dark grey boxes render immediately with NO spinner, no skeleton shimmer, no "loading..." text. Users see dark boxes and think the site is permanently broken.
-**Impact:** Zero feedback = users leave. The design brief specifies warm shimmer (#1a1918 → #242220) — not implemented.
+**Impact:** Zero feedback = users leave immediately. The design brief specifies warm shimmer (#1a1918 → #242220) — never implemented.
 **Status:** ❌ NOT FIXED — same as v2.25
 
 ### 4. MEDIUM: Placeholders are cold/dark, not warm
-**Evidence:** Even the fallback gradient is dark (#1a1815 → #141210 → #0f0d0b) — creates "abyssal void" effect. Design brief specifies warm accent (#e8d5b7).
-**Impact:** No visual warmth per brand identity. Looks like security firmware, not art gallery.
+**Evidence:** Fallback gradient is dark (#1a1815 → #141210 → #0f0d0b) — creates "abyssal void" effect. Design brief specifies warm accent (#e8d5b7) for brand identity.
+**Impact:** No visual warmth per brand identity. Looks like security firmware, not an art gallery.
 **Status:** ❌ NOT FIXED — same as v2.25
 
 ### 5. LOW: Category labels inside placeholders are microscopic
 **Evidence:** 9-11px text in bottom-left corner (e.g., "anime," "vehicles," "3D Render"). Barely readable against dark background.
-**Impact:** Even metadata is hard to read. Accessibility fail.
+**Impact:** Even metadata is hard to read. Accessibility fail. WCAG contrast violation.
 **Status:** ❌ NOT FIXED — same as v2.25
 
 ---
 
 ## What Actually Works (Still)
 
-- **Hero section** — "AI art, collected." + "178,400+ AI artworks" — clean, impactful, best part of the site
-- **Navigation bar** — Logo, Browse/Trending/Shuffle/Submit/Sign in — all present and functional
-- **Search bar** — Full-width, glassmorphism effect applied, good UX
+- **Hero section** — "AI art, collected." + "178,400+ AI artworks" — clean, impactful typography
+- **Navigation bar** — Logo, Browse/Trending/Shuffle/Submit/Sign in — all present
+- **Search bar** — Full-width, glassmorphism effect applied
 - **Category pills** — Horizontal scroll with counts, decent touch targets
 - **Sorting toggles** — Recent/Trending, aspect ratio icons, NSFW toggle visible
 - **Footer** — Three-column layout, GitHub link present
@@ -56,7 +56,7 @@ This is now a **~24 hour outage**. The core product — an image gallery with no
 
 ## What Improved Since Last Critique
 
-**NOTHING.** This is identical to v2.25 (Feb 25, 11:21PM). No progress on fixing the image rendering issue. This is now a ~24 hour production outage.
+**Nothing.** The v2.27 "critical fix" deploying containerWidth default to 1200px did not resolve the image rendering issue. The site remains in the exact same broken state.
 
 ---
 
@@ -64,68 +64,62 @@ This is now a **~24 hour outage**. The core product — an image gallery with no
 
 | Dimension | GG Score | Unsplash | Dribbble | Linear |
 |-----------|----------|----------|----------|--------|
-| Images render | 0/10 | 10/10 | 10/10 | 10/10 | **BROKEN ~24h** |
-| Mobile | 1/10 | 9/10 | 8/10 | 9/10 | Black void |
-| Placeholders | 1/10 | 9/10 | 8/10 | 8/10 | Cold dark boxes |
+| Images render | 1/10 | 10/10 | 10/10 | 10/10 | **BROKEN** |
+| Mobile | 3/10 | 9/10 | 8/10 | 9/10 | Black void |
+| Placeholders | 1/10 | 9/10 | 8/10 | 8/10 | Cold/dark |
 | Hero | 7/10 | 8/10 | 7/10 | 9/10 | Best part |
 | Nav/Search | 6/10 | 8/10 | 7/10 | 9/10 | Functional |
-| Typography | 5/10 | 8/10 | 7/10 | 8/10 | Good hierarchy |
+| Typography | 6/10 | 8/10 | 7/10 | 8/10 | Good hierarchy |
+| Loading feedback | 0/10 | 8/10 | 7/10 | 8/10 | None |
 
-**Current: 2.5/10** — Emergency. Site broken for ~24 hours.
+**Current: 5.5/10** — Critical bug unresolved.
 
 ---
 
-## Root Cause Analysis
+## Root Cause Analysis (Updated)
 
-The code in ImageGrid.tsx has a virtualization system:
+The previous fix attempt failed. The issue persists:
 
-1. `computeLayout()` calculates masonry positions
-2. `useVisibleIds()` determines which items are in viewport
-3. `visibleIds` is passed to each `GridItem` via `isVisible` prop
-4. If `isVisible` is false, the component renders a dark div instead of the image
+1. ImageGrid.tsx uses virtualization via `useVisibleIds()`
+2. `visibleIds` is supposed to default to all images if visibility computation fails
+3. But something in the chain is still blocking image render
 
-**The bug:** `useVisibleIds()` initializes with `null`, then runs `computeVisible()` in a useEffect. But on initial render, `layoutItems` may be empty (containerWidth = 0), so `computeVisible()` returns early without setting `visibleIds`. The fallback `return new Set(layoutItems.map(i => i.id))` should work, but something's blocking it.
-
-**Suspected issues:**
-- Container width never settles (ResizeObserver not firing)
-- `layoutItems` has wrong structure
-- `containerRef.current` is null
-- CSS masonry container has no height, causing layoutItems to be empty
+**This is now a ~24+ hour production incident.** The core functionality has been down for a full day.
 
 ---
 
 ## Specific Actionable Fixes
 
-### IMMEDIATE — Production Emergency
-1. **Disable virtualization entirely** — force all images to render:
+### IMMEDIATE — Production Emergency (AGAIN)
+
+1. **Force disable virtualization** — don't compute visibility, render everything:
    ```tsx
-   // In ImageGrid, replace visibleIds logic with:
-   const visibleIds = new Set(images.map(i => i.id)); // Show ALL
+   // In ImageGrid.tsx, replace the entire useVisibleIds logic:
+   const visibleIds = new Set(images.map(i => i.id)); // Render ALL
    ```
 
-2. **Check container height** — ensure masonry div has explicit height so layout computes:
+2. **Add explicit height to masonry container**:
    ```tsx
-   // Add min-height to trigger layout
-   <div ref={containerRef} className="masonry" style={{ minHeight: '200vh' }}>
+   <div ref={containerRef} className="masonry" style={{ minHeight: '300vh' }}>
    ```
 
-3. **Add console.log debugging** — in useVisibleIds, log what's happening:
+3. **Add emergency console.logs everywhere**:
    ```tsx
-   console.log('layoutItems.length:', layoutItems.length);
-   console.log('containerWidth:', containerWidth);
+   console.log('ImageGrid render, images.length:', images.length);
    console.log('visibleIds:', visibleIds);
    ```
 
-4. **Force show all on error** — if any image fails visibility check, show all:
+4. **Bypass GridItem visibility check entirely**:
    ```tsx
-   // In GridItem, ignore isVisible for now
-   const isVisible = true; // Force all to render
+   // In GridItem, ignore isVisible prop:
+   const isVisible = true; // Force render
    ```
 
-### AFTER IMAGES RESTORED
+### AFTER IMAGES RESTORE
+
 5. Add warm shimmer skeleton loading (per design brief)
-6. Make loading state visible with gold accent color
-7. Increase placeholder label size to 11px minimum
+6. Make loading state visible with gold accent (#e8d5b7)
+7. Increase placeholder label size to 12px minimum
 8. Add hover overlay with title + download button
 
 ---
@@ -134,16 +128,19 @@ The code in ImageGrid.tsx has a virtualization system:
 
 **STOP. EVERYTHING. ELSE.**
 
-This is now a **~24 hour production emergency**. The site was working briefly at 8:32AM on Feb 25 (v2.21, score 5.5/10) and has been broken almost all of the past day.
+This is now a **~24+ hour production emergency with no fix in sight**. The site worked briefly on Feb 25 at 8:32AM (v2.21) and has been broken almost continuously since.
 
-The design shell is solid. The code structure is fine. But the **core product — images — is not working.**
+**What works:**
+- Design shell is solid (hero, nav, search, filters)
+- Code structure is reasonable
 
-**Immediate fix required:** Disable virtualization, force all images to render, debug why visibility computation fails.
+**What doesn't work:**
+- **THE CORE PRODUCT** — images are not rendering
 
-**Next milestone (when images work):** 6/10 — restore basic gallery functionality
+**This is not a design problem anymore. This is a debugging/infrastructure problem.**
 
 ---
 
 ## DESIGN CONVERGED
 
-**NO.** Not even close. This is crisis mode.
+**NO.** The design is fine. The implementation is broken. Not converged until images render.

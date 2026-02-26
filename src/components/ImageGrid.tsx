@@ -457,9 +457,16 @@ export function ImageGrid({ images }: ImageGridProps) {
   }, [layoutItems]);
 
   const visibleImages = useMemo(() => images.filter(img => !errored.has(img.id)), [images, errored]);
-  // Disable virtualization - show all images. With only 24 per page, performance is fine
-  // and this avoids visibility computation bugs that can hide all images
-  const allIds = useMemo(() => new Set(layoutItems.map(i => i.id)), [layoutItems]);
+  
+  // CRITICAL FIX: Force all images visible if layoutItems is empty (prevents all-placeholders bug)
+  // The virtualization was hiding all images when layoutItems hadn't computed yet
+  const allIds = useMemo(() => {
+    if (layoutItems.length === 0 && images.length > 0) {
+      // Layout not computed yet but we have images - show all
+      return new Set(images.map(i => i.id));
+    }
+    return new Set(layoutItems.map(i => i.id));
+  }, [layoutItems, images]);
   const visibleIds = allIds;
 
   const handlePrev = useCallback(() => {
