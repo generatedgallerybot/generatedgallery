@@ -87,11 +87,11 @@ body > * {
   outline-offset: 2px;
 }
 
-/* Smooth image loading */
+/* Smooth image loading — warm shimmer per design brief */
 .img-loading {
-  background: linear-gradient(110deg, #111 8%, #1a1a1a 18%, #111 33%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s linear infinite;
+  background: linear-gradient(110deg, #1a1815 8%, #2e2924 22%, #1f1c18 38%, #1a1815 55%);
+  background-size: 300% 100%;
+  animation: shimmer 2s ease-in-out infinite;
 }
 
 @keyframes shimmer {

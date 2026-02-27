@@ -163,7 +163,7 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
               onError={handleError}
             />
           ) : (
-            <div className="w-full bg-gradient-to-br from-[#1a1815] via-[#141210] to-[#0f0d0b]" style={{ minHeight: '200px', aspectRatio: (image.width && image.height) ? `${image.width}/${image.height}` : '3/4' }} />
+            <div className="w-full img-loading" style={{ minHeight: '200px', aspectRatio: (image.width && image.height) ? `${image.width}/${image.height}` : '3/4' }} />
           )
         ) : gifUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -192,15 +192,13 @@ const GridItem = memo(function GridItem({ image, layout, loaded, onLoad, onError
           />
         ) : (
           <div
-            className="w-full bg-gradient-to-br from-[#1a1815] via-[#141210] to-[#0f0d0b]"
+            className="w-full img-loading"
             style={{ aspectRatio: `${image.width || 400}/${image.height || 600}` }}
           />
         )}
 
         {!loaded && !hasError && (
-          <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }}>
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1a1815] via-[#141210] to-[#0f0d0b]" />
-          </div>
+          <div className="absolute inset-0 img-loading" style={{ minHeight: '200px' }} />
         )}
         {hasError && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#0f0e0d]" style={{ minHeight: '200px' }}>
@@ -385,7 +383,11 @@ export function ImageGrid({ images }: ImageGridProps) {
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const measure = () => setContainerWidth(el.offsetWidth);
+    const measure = () => {
+      const w = el.offsetWidth;
+      // Guard: ignore zero-width measurements (can happen on mobile before layout)
+      if (w > 0) setContainerWidth(w);
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);

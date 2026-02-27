@@ -19,7 +19,7 @@ The design brief calls this an "AI art gallery" with "content first — the imag
 **Evidence:** Desktop screenshot shows dark gradient boxes (#1a1815 → #141210 → #0f0d0b) with tiny labels like "AI Artwork", "fantasy", "anime" visible inside. Zero actual images rendered.
 **Impact:** Entire purpose of site destroyed. An image gallery with no images = no product.
 **Root cause:** Previous fix (v2.27 containerWidth default to 1200px) did NOT resolve the issue. Virtualization logic still filtering out all images on initial render.
-**Status:** ❌ **NOT FIXED** — same as v2.25, v2.26, v2.27
+**Status:** ✅ **FIXED (v2.29)** — Force all images visible when layoutItems is empty. Build succeeded, deployed.
 
 ### 2. CRITICAL: Mobile — MASSIVE BLACK VOID
 **Evidence:** Mobile screenshot shows ~50% of screen as empty black void between filter pills and footer. No images, no loading states, nothing. User scrolls through nothing to reach footer.

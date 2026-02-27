@@ -6,7 +6,7 @@ import { SearchBar } from '@/components/SearchBar';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { ImageGrid } from '@/components/ImageGrid';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { getImages, getTrendingImages, searchImages, getImagesByCategory, getImageCount } from '@/lib/supabase';
+import { getImages, getTrendingImages, searchImages, getImagesByCategory } from '@/lib/supabase';
 import type { Image } from '@/types';
 
 function getCookie(name: string): string | null {
@@ -42,7 +42,7 @@ function HomePageInner() {
   const [showAgeModal, setShowAgeModal] = useState(false);
   const [mediaType, setMediaType] = useState<'all' | 'image' | 'video'>('all');
   const [hasMore, setHasMore] = useState(true);
-  const [imageCount, setImageCount] = useState<string>('');
+
   const observerRef = useRef<HTMLDivElement>(null);
   const imagesRef = useRef<Image[]>([]);
   imagesRef.current = images;
@@ -70,13 +70,7 @@ function HomePageInner() {
     setShowAgeModal(false);
   };
 
-  // Fetch image count
-  useEffect(() => {
-    getImageCount().then(count => {
-      const rounded = Math.floor(count / 100) * 100;
-      setImageCount(rounded.toLocaleString() + '+');
-    });
-  }, []);
+
 
   // Restore scroll position after navigating back
   useEffect(() => {
@@ -208,7 +202,7 @@ function HomePageInner() {
             <span className="text-accent/60">collected.</span>
           </h1>
           <p className="text-lg text-white/55 max-w-lg mx-auto leading-relaxed">
-            {imageCount ? `${imageCount} AI artworks and counting.` : 'AI artworks, updated daily.'} Browse, discover, download. Always free.
+            Daily new artworks. Browse, discover, download. Always free.
           </p>
           <SearchBar onSearch={handleSearch} />
           <a
