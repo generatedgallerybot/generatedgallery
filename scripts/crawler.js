@@ -80,28 +80,42 @@ async function imageExists(sourceUrl) {
   return false;
 }
 
-// Insert image into database (simple insert, unique index handles dupes)
-async function insertImage(imageData) {
-  try {
-    const { data, error } = await supabase
-      .from('images')
-      .insert(imageData);
-    
-    if (error) {
-      // Ignore duplicate key errors (unique constraint violation)
-      if (error.code === '23505') {
-        return true; // Treat as success - duplicate
+// Insert image into database with retry logic for timeouts
+async function insertImage(imageData, retries = 3) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const { data, error } = await supabase
+        .from('images')
+        .insert(imageData);
+      
+      if (error) {
+        // Ignore duplicate key errors (unique constraint violation)
+        if (error.code === '23505') {
+          return true; // Treat as success - duplicate
+        }
+        // Retry on statement timeout
+        if (error.code === '57014' && attempt < retries) {
+          await new Promise(r => setTimeout(r, 500 * attempt));
+          continue;
+        }
+        if (attempt === retries) {
+          console.error('Failed to insert image after retries:', error.message || error.code);
+        }
+        return false;
       }
-      console.error('Failed to insert image:', error);
-      return false;
+      
+      console.log(`✅ Inserted image: ${imageData.title || imageData.prompt?.slice(0, 50) || 'Unknown'}`);
+      return true;
+    } catch (error) {
+      if (attempt === retries) {
+        console.error('Failed to insert image:', error.message || error);
+      }
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, 500 * attempt));
+      }
     }
-    
-    console.log(`✅ Inserted image: ${imageData.title || imageData.prompt?.slice(0, 50) || 'Unknown'}`);
-    return true;
-  } catch (error) {
-    console.error('Failed to insert image:', error);
-    return false;
   }
+  return false;
 }
 
 // Lexica.art crawler
@@ -244,8 +258,8 @@ async function crawlCivitai(limit = 50, forceSort = null, includeNsfw = false, s
           inserted++;
         }
         
-        // Rate limiting
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        // Rate limiting - gentle, but not glacial
+        await new Promise(resolve => setTimeout(resolve, 300));
         
       } catch (error) {
         console.error('Error processing Civitai item:', error);
