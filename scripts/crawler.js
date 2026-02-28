@@ -464,8 +464,13 @@ async function runCrawler() {
     console.error('PromptHero error:', e.message);
   }
   
-  // Update category counts
-  await updateCategoryCounts();
+  // Update category counts only every 6 hours (not every hourly run — too slow on 178k rows)
+  const hour = new Date().getUTCHours();
+  if (hour % 6 === 0) {
+    await updateCategoryCounts();
+  } else {
+    console.log('⏭️  Skipping category count update (runs every 6h)');
+  }
   
   const endTime = Date.now();
   const duration = Math.round((endTime - startTime) / 1000);
