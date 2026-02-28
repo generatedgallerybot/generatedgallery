@@ -437,7 +437,7 @@ async function runCrawler() {
     let cursor = undefined;
     let consecutiveEmpty = 0;
     let nsfwInserted = 0;
-    const maxPages = 20; // safety cap
+    const maxPages = 8; // safety cap — keep runtime under 20min for hourly cron
     console.log(`🚀 Starting ${nsfw ? 'NSFW' : 'SFW'} crawl...`);
     for (let page = 0; page < maxPages; page++) {
       const { inserted, nextCursor } = await crawlCivitai(20, 'Newest', nsfw, cursor);
