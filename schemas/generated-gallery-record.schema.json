@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://generatedgallery.com/schemas/generated-gallery-record.schema.json",
+  "title": "Generated Gallery Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "url", "source", "media", "generation", "taxonomy", "safety", "indexedAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "url": { "type": "string", "format": "uri" },
+    "thumbnailUrl": { "type": ["string", "null"], "format": "uri" },
+    "title": { "type": ["string", "null"] },
+    "description": { "type": ["string", "null"] },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["site"],
+      "properties": {
+        "site": { "type": "string", "minLength": 1 },
+        "url": { "type": ["string", "null"], "format": "uri" },
+        "externalId": { "type": ["string", "null"] },
+        "creator": { "type": ["string", "null"] }
+      }
+    },
+    "media": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["image", "video", "gif", "unknown"] },
+        "width": { "type": ["integer", "null"], "minimum": 1 },
+        "height": { "type": ["integer", "null"], "minimum": 1 },
+        "mimeType": { "type": ["string", "null"] }
+      }
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "prompt": { "type": ["string", "null"] },
+        "negativePrompt": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "seed": { "type": ["string", "number", "null"] },
+        "steps": { "type": ["integer", "null"], "minimum": 1 },
+        "sampler": { "type": ["string", "null"] }
+      }
+    },
+    "taxonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "category": { "type": ["string", "null"] },
+        "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nsfw"],
+      "properties": {
+        "nsfw": { "type": "boolean" },
+        "rating": { "enum": ["sfw", "mature", "nsfw", "unknown"] }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "views": { "type": "integer", "minimum": 0 },
+        "downloads": { "type": "integer", "minimum": 0 },
+        "upvotes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "createdAt": { "type": ["string", "null"], "format": "date-time" },
+    "indexedAt": { "type": "string", "format": "date-time" }
+  }
+}

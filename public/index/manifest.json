@@ -1,0 +1,38 @@
+{
+  "name": "Generated Gallery public SFW index",
+  "protocolVersion": "0.1.0",
+  "updatedAt": "2026-05-07T02:20:29.725Z",
+  "generatedAt": "2026-05-07T02:20:25.270Z",
+  "itemsUrl": "https://generatedgallery.com/index/generated-gallery.jsonl",
+  "apiUrl": "https://generatedgallery.com/api/index?safety=sfw",
+  "schemaUrl": "https://generatedgallery.com/schemas/generated-gallery-record.schema.json",
+  "license": "metadata: CC0 where possible, media: upstream terms apply",
+  "defaultSafety": "sfw",
+  "format": "jsonl",
+  "recordCount": 10000,
+  "byteSize": 16472410,
+  "sha256": "212fb12fb34a2e823ffc3495e307c1f8db178cea36c8d6838a6a66a355155430",
+  "sourceCounts": {
+    "civitai.com": 9921,
+    "prompthero": 79
+  },
+  "categoryCounts": {
+    "unknown": 5224,
+    "anime": 1380,
+    "vehicles": 756,
+    "portraits": 536,
+    "fantasy": 333,
+    "3d-render": 311,
+    "animals": 295,
+    "landscapes": 263,
+    "photorealistic": 211,
+    "abstract": 153,
+    "architecture": 131,
+    "interior-design": 128,
+    "fashion": 125,
+    "food": 111,
+    "sci-fi": 27,
+    "digital-art": 16
+  },
+  "sampleRecordsUrl": "https://generatedgallery.com/index/generated-gallery.sample.json"
+}

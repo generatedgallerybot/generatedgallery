@@ -93,7 +93,7 @@ A protocol record looks like this:
 ### Setup
 
 ```bash
-git clone https://github.com/justacatbot/generatedgallery.git
+git clone https://github.com/generatedgallerybot/generatedgallery.git
 cd generatedgallery
 npm install
 ```
