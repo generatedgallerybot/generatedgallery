@@ -1,0 +1,14 @@
+{
+  "name": "Your AI Image Pack Name",
+  "protocolVersion": "0.1",
+  "homepage": "https://example.com/gallery/your-pack",
+  "itemsUrl": "./items.jsonl",
+  "sampleRecordsUrl": "./sample.json",
+  "recordCount": 0,
+  "license": "source-specific",
+  "defaultSafety": "sfw",
+  "format": "jsonl",
+  "updatedAt": "2026-05-23T00:00:00Z",
+  "sourceCounts": {},
+  "categoryCounts": {}
+}

@@ -1,255 +1,189 @@
-# GeneratedGallery.com
+# Generated Gallery
 
-A free AI-generated art gallery where users can upload, search, upvote, and download AI-generated images crawled from across the internet.
+**Open source AI media indexer, protocol, and viewer.**
 
-## 🎨 Features
+Browse the live viewer at [generatedgallery.com](https://generatedgallery.com). No account needed.
 
-- **Browse AI Art**: Explore thousands of AI-generated images
-- **Smart Search**: Search by title, description, or prompt
-- **Category Filtering**: Browse by art style and subject matter
-- **Upvote System**: Community-driven image ranking
-- **Download Images**: Free downloads of all images
-- **Upload Interface**: Share your own AI-generated art
-- **Mobile Responsive**: Works perfectly on all devices
-- **Dark Theme**: Modern, eye-friendly design
+Useful links:
 
-## 🛠️ Tech Stack
+- [Live gallery](https://generatedgallery.com/)
+- [Open protocol](https://generatedgallery.com/protocol)
+- [Creator kit](https://generatedgallery.com/protocol/creator-kit)
+- [Machine Dream Finds](https://generatedgallery.com/machine-dream-finds)
+- [Public manifest](https://generatedgallery.com/index/manifest.json)
+- [Public JSONL feed](https://generatedgallery.com/index/generated-gallery.jsonl)
 
-- **Frontend**: Next.js 14 (App Router), React, TypeScript
-- **Styling**: Tailwind CSS
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **Storage**: Supabase Storage (for uploads)
-- **Deployment**: Vercel
+![Generated Gallery Screenshot](https://generatedgallery.com/og-image.png)
 
-## 🚀 Getting Started
+## What it is
+
+Generated Gallery started as a searchable gallery of AI generated images and prompts. It is now moving toward an open stack for AI media discovery:
+
+- **Protocol**: portable JSON records for generated media, prompts, safety flags, and provenance
+- **Indexer**: source adapters that crawl public AI media sources and normalize metadata
+- **Registry**: a Supabase/Postgres store with dedupe, filtering, and search
+- **Viewer**: a Next.js app for browsing any compatible index
+
+The goal is to make AI image discovery portable. Anyone should be able to crawl a source, publish a JSONL feed, and point a viewer at it.
+
+## Machine Dream Finds
+
+Machine Dream Finds are small, themed AI image packs built on top of the protocol. Each pack is meant to be useful as a moodboard, prompt notebook, model test set, or agent-readable collection.
+
+A good pack has:
+
+- One memorable theme
+- 5 to 12 images
+- Prompt fragments where available
+- Source URLs and provenance
+- Safety labels
+- A manifest so another viewer or crawler can inspect it
+
+See the live hub at [generatedgallery.com/machine-dream-finds](https://generatedgallery.com/machine-dream-finds) and the publishing guide at [generatedgallery.com/protocol/creator-kit](https://generatedgallery.com/protocol/creator-kit).
+
+## Current viewer features
+
+- Browse thousands of AI images across categories like fantasy, portraits, sci-fi, anime, architecture, and more
+- See the full prompt where available
+- Search by title, description, or prompt text
+- Download images from their upstream URLs
+- NSFW toggle, off by default
+- Upvote and save images
+- Infinite scroll with masonry grid layout
+- Mobile friendly
+
+## Protocol
+
+The v0.1 protocol spec lives in [`docs/protocol/README.md`](docs/protocol/README.md).
+
+The canonical record schema lives in [`schemas/generated-gallery-record.schema.json`](schemas/generated-gallery-record.schema.json).
+
+A protocol record looks like this:
+
+```json
+{
+  "id": "civitai:123456",
+  "url": "https://example.com/image.jpeg",
+  "source": { "site": "civitai.com", "url": "https://civitai.com/images/123456" },
+  "media": { "type": "image", "width": 1024, "height": 1024 },
+  "generation": { "prompt": "cinematic portrait", "model": "Flux" },
+  "taxonomy": { "category": "portraits", "tags": ["portrait"] },
+  "safety": { "nsfw": false, "rating": "sfw" },
+  "indexedAt": "2026-05-06T00:00:00.000Z"
+}
+```
+
+## Tech stack
+
+| Layer | Tech |
+|-------|------|
+| Frontend | Next.js 14, TypeScript, Tailwind CSS |
+| Database | Supabase, PostgreSQL |
+| Indexer | Node.js crawlers |
+| Feed format | JSONL plus JSON Schema |
+| Hosting | PM2 or Vercel compatible |
+
+## Running it yourself
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- Supabase account and project
+- Node.js 18+
+- Supabase project, free tier is enough for development
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/generatedgallery.git
-   cd generatedgallery
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   
-   Create a `.env.local` file:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-   ```
-
-4. **Set up the database**
-   
-   Run the database schema setup:
-   ```bash
-   npm run setup-db
-   ```
-   
-   Or manually execute the SQL in `schema.sql` through the Supabase dashboard.
-
-5. **Seed the database**
-   
-   Run the crawler to populate with initial images:
-   ```bash
-   npm run crawl
-   ```
-
-6. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-7. **Open the application**
-   
-   Visit [http://localhost:3000](http://localhost:3000)
-
-## 📊 Database Schema
-
-### Images Table
-```sql
-CREATE TABLE images (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  title TEXT,
-  description TEXT,
-  prompt TEXT,
-  negative_prompt TEXT,
-  model TEXT,
-  source_url TEXT,
-  source_site TEXT,
-  image_url TEXT NOT NULL,
-  thumbnail_url TEXT,
-  width INT,
-  height INT,
-  tags TEXT[] DEFAULT '{}',
-  category TEXT,
-  upvotes INT DEFAULT 0,
-  downloads INT DEFAULT 0,
-  views INT DEFAULT 0,
-  is_nsfw BOOLEAN DEFAULT FALSE,
-  uploaded_by TEXT,
-  crawled_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
-
-### Categories Table
-```sql
-CREATE TABLE categories (
-  id SERIAL PRIMARY KEY,
-  name TEXT UNIQUE NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  icon TEXT,
-  count INT DEFAULT 0
-);
-```
-
-### Votes Table
-```sql
-CREATE TABLE votes (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  image_id UUID REFERENCES images(id) ON DELETE CASCADE,
-  voter_ip TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(image_id, voter_ip)
-);
-```
-
-## 🤖 Image Crawler
-
-The crawler automatically fetches AI-generated images from various sources:
-
-- **Lexica.art**: Public API for Stable Diffusion images
-- **Civitai.com**: Community-generated AI art
-- **Auto-categorization**: Automatically categorizes images based on prompts
-- **Tag extraction**: Extracts relevant tags from image prompts
-- **Duplicate prevention**: Checks for existing images before insertion
-
-### Running the Crawler
+### Setup
 
 ```bash
-# Run once to seed the database
-npm run crawl
-
-# Or run the crawler programmatically
-node scripts/crawler.js
+git clone https://github.com/justacatbot/generatedgallery.git
+cd generatedgallery
+npm install
 ```
 
-## 📁 Project Structure
-
-```
-generatedgallery/
-├── src/
-│   ├── app/                    # Next.js app router pages
-│   │   ├── image/[id]/        # Individual image page
-│   │   ├── upload/            # Image upload page
-│   │   ├── layout.tsx         # Root layout
-│   │   └── page.tsx           # Homepage
-│   ├── components/            # Reusable React components
-│   │   ├── ImageGrid.tsx      # Masonry image grid
-│   │   ├── SearchBar.tsx      # Search functionality
-│   │   ├── CategoryFilter.tsx # Category filtering
-│   │   └── Navbar.tsx         # Navigation bar
-│   ├── lib/                   # Utility functions
-│   │   ├── supabase.ts        # Supabase client and helpers
-│   │   └── database.types.ts  # TypeScript types for database
-│   └── types/                 # TypeScript type definitions
-├── scripts/
-│   └── crawler.js             # Image crawler script
-├── schema.sql                 # Database schema
-└── setup-db.js               # Database setup script
-```
-
-## 🔧 Configuration
-
-### Categories
-
-The system includes 16 predefined categories:
-- Product Photography
-- Portraits
-- Landscapes
-- Architecture
-- Abstract
-- Animals
-- Food
-- Fashion
-- Interior Design
-- Vehicles
-- Fantasy
-- Sci-Fi
-- Anime
-- Photorealistic
-- Digital Art
-- 3D Render
-
-### Auto-tagging
-
-The crawler automatically extracts tags from image prompts using keyword matching for common AI art terms.
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Connect your GitHub repo to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy automatically with each push
-
-### Environment Variables for Production
+Create `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your-production-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-production-service-key
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-## 📈 Scaling Considerations
+Run the database schema:
 
-- **Database**: Supabase handles scaling automatically
-- **Images**: Consider CDN for image delivery at scale
-- **Search**: Implement full-text search with PostgreSQL or Elasticsearch
-- **Caching**: Add Redis for frequently accessed data
-- **Rate Limiting**: Implement API rate limiting for public endpoints
+```bash
+npm run setup-db
+```
 
-## 🔒 Security
+Start the dev server:
 
-- Row Level Security (RLS) enabled on all tables
-- Public read access, controlled write access
-- IP-based voting to prevent spam
-- NSFW content filtering
+```bash
+npm run dev
+```
 
-## 🤝 Contributing
+Open [localhost:3000](http://localhost:3000).
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Running the indexer
 
-## 📄 License
+```bash
+npm run crawl
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The current crawler pulls from Civitai and writes normalized rows into Supabase. Source adapters will be split out as the open indexer matures.
 
-## 🙏 Acknowledgments
+### Exporting a JSONL feed
 
-- [Lexica.art](https://lexica.art) for providing accessible AI art
-- [Civitai](https://civitai.com) for their amazing AI art community
-- [Supabase](https://supabase.com) for the excellent backend platform
-- [Next.js](https://nextjs.org) for the fantastic React framework
-- [Tailwind CSS](https://tailwindcss.com) for the utility-first CSS framework
+```bash
+npm run export:index
+```
 
----
+By default this writes SFW records to `public/index/generated-gallery.jsonl`, plus:
 
-Built with ❤️ for the AI art community
+- `public/index/manifest.json` — feed metadata, record count, checksum, source/category counts
+- `public/index/generated-gallery.sample.json` — first 3 sample records for quick inspection
+
+You can pass a path and limit:
+
+```bash
+npm run export:index -- ./exports/sfw.jsonl 5000
+```
+
+Or use explicit flags:
+
+```bash
+npm run export:index -- --out ./exports/all.jsonl --limit 5000 --safety all
+npm run validate:index -- ./exports/all.jsonl
+```
+
+## Project structure
+
+```text
+docs/protocol/   protocol spec and feed notes
+schemas/         JSON Schema for portable records
+scripts/         crawlers, dedupe, and export tools
+src/app/         Next.js App Router pages
+src/components/  viewer UI components
+src/lib/         Supabase client, protocol mapping, utilities
+migrations/      database migrations
+```
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adapter contracts, JSONL import/export workflows, verification commands, and safety/provenance rules.
+
+Useful contributions:
+
+- Source adapters for new AI media sites
+- Better prompt and model metadata extraction
+- Deduplication improvements
+- Search improvements, including embeddings or hybrid search
+- Static JSONL feed support in the viewer
+- Moderation and provenance tooling
+- Docs for running a mirror
+
+Open an issue before large changes so we can keep the protocol small and useful.
+
+## License
+
+MIT
+
+Media rights and licenses remain with the upstream creators and source platforms. Generated Gallery records provenance instead of erasing it.
+
+**Live:** [generatedgallery.com](https://generatedgallery.com)

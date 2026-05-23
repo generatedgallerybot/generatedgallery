@@ -1,0 +1,32 @@
+{
+  "id": "source:unique-id",
+  "url": "https://example.com/image.webp",
+  "thumbnailUrl": "https://example.com/thumb.webp",
+  "title": "short human-readable title",
+  "source": {
+    "site": "example.com",
+    "url": "https://example.com/original-post",
+    "creator": "creator name if known",
+    "externalId": "unique upstream id if known"
+  },
+  "media": {
+    "type": "image",
+    "width": 1024,
+    "height": 1024,
+    "mimeType": "image/webp"
+  },
+  "generation": {
+    "prompt": "prompt text when available",
+    "negativePrompt": "negative prompt when available",
+    "model": "model name when available"
+  },
+  "taxonomy": {
+    "category": "portraits",
+    "tags": ["portrait", "cinematic"]
+  },
+  "safety": {
+    "nsfw": false,
+    "rating": "sfw"
+  },
+  "indexedAt": "2026-05-23T00:00:00.000Z"
+}
