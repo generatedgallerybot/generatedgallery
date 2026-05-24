@@ -187,6 +187,8 @@ Useful contributions:
 - Better prompt and model metadata extraction
 - Label audits and taxonomy improvements
 - Dataset loaders/notebooks for Python, DuckDB, Polars, and JS
+
+Dataset examples now include a plain Python streaming loader and a DuckDB label-count recipe. See [`examples/`](examples/) and [`docs/dataset/DUCKDB_RECIPE.md`](docs/dataset/DUCKDB_RECIPE.md).
 - Deduplication improvements
 - Search improvements, including embeddings or hybrid search
 - Static JSONL feed support in the viewer
