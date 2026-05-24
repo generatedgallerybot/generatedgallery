@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { getBearerUser } from '@/lib/server-auth';
 import { getServerSupabase } from '@/lib/server-db';
 import { sanitizePrompt } from '@/lib/generation';
+import { attachProfiles, ensureUserProfile, getPublicProfiles } from '@/lib/profiles';
 
 export const dynamic = 'force-dynamic';
 
@@ -96,7 +97,8 @@ async function readFromSupabase(searchParams: URLSearchParams) {
     const { data, error } = await supabase.from('model_assets').select('*').eq('id', id).eq('status', 'published').single();
     if (error) return { error };
     if (data?.is_nsfw && !includeNsfw) return { hidden: true };
-    return { asset: data };
+    const profiles = await getPublicProfiles([data.user_id]);
+    return { asset: attachProfiles([data], profiles)[0] };
   }
 
   const orderField = sort === 'popular' ? 'likes' : sort === 'used' ? 'uses' : sort === 'downloaded' ? 'downloads' : 'created_at';
@@ -106,7 +108,9 @@ async function readFromSupabase(searchParams: URLSearchParams) {
   if (baseModel) query = query.eq('base_model', baseModel);
   const { data, error } = await query;
   if (error) return { error };
-  return { assets: (data || []).filter(asset => matchesSearch(asset, q)) };
+  const filtered = (data || []).filter(asset => matchesSearch(asset, q));
+  const profiles = await getPublicProfiles(filtered.map((asset: any) => asset.user_id));
+  return { assets: attachProfiles(filtered, profiles) };
 }
 
 async function readFromLocal(searchParams: URLSearchParams) {
@@ -121,7 +125,8 @@ async function readFromLocal(searchParams: URLSearchParams) {
     const asset = allAssets.find(row => row.id === id && row.status === 'published');
     if (!asset) return { notFound: true };
     if (asset.is_nsfw && !includeNsfw) return { hidden: true };
-    return { asset };
+    const profiles = await getPublicProfiles([asset.user_id]);
+    return { asset: attachProfiles([asset], profiles)[0] };
   }
   const scoreField = sort === 'popular' ? 'likes' : sort === 'used' ? 'uses' : sort === 'downloaded' ? 'downloads' : 'created_at';
   const assets = allAssets
@@ -132,7 +137,8 @@ async function readFromLocal(searchParams: URLSearchParams) {
     .filter(asset => matchesSearch(asset, q))
     .sort((a, b) => scoreField === 'created_at' ? Date.parse(b.created_at) - Date.parse(a.created_at) : Number((b as any)[scoreField] || 0) - Number((a as any)[scoreField] || 0) || Date.parse(b.created_at) - Date.parse(a.created_at))
     .slice(0, 120);
-  return { assets };
+  const profiles = await getPublicProfiles(assets.map((asset: any) => asset.user_id));
+  return { assets: attachProfiles(assets, profiles) };
 }
 
 export async function GET(request: NextRequest) {
@@ -165,10 +171,11 @@ export async function POST(request: NextRequest) {
   if (!name) return NextResponse.json({ error: 'Name is required' }, { status: 400 });
   if (!fileUrl) return NextResponse.json({ error: 'A valid file URL, IPFS URL, Arweave URL, or Replicate owner/model slug is required' }, { status: 400 });
 
+  await ensureUserProfile(user);
   const record: AssetRecord = {
     id: crypto.randomUUID(),
     user_id: user.id,
-    user_email: user.email || null,
+    user_email: null,
     name,
     description: sanitizePrompt(String(body.description || '')).slice(0, 1200) || null,
     asset_type: assetType,
@@ -186,10 +193,14 @@ export async function POST(request: NextRequest) {
 
   const supabase = getServerSupabase();
   const { data, error: insertError } = await supabase.from('model_assets').insert(record).select('*').single();
-  if (!insertError) return NextResponse.json({ ok: true, asset: data, storage: 'supabase' });
+  if (!insertError) {
+    const profiles = await getPublicProfiles([user.id]);
+    return NextResponse.json({ ok: true, asset: attachProfiles([data], profiles)[0], storage: 'supabase' });
+  }
   if (!isMissingTable(insertError)) return NextResponse.json({ error: insertError.message }, { status: 500 });
 
   await mkdir(ASSETS_DIR, { recursive: true });
   await appendFile(ASSETS_FILE, JSON.stringify(record) + '\n', 'utf8');
-  return NextResponse.json({ ok: true, asset: record, storage: 'local_jsonl_missing_table' });
+  const profiles = await getPublicProfiles([user.id]);
+  return NextResponse.json({ ok: true, asset: attachProfiles([record], profiles)[0], storage: 'local_jsonl_missing_table' });
 }

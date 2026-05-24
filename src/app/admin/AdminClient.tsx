@@ -80,7 +80,7 @@ export default function AdminClient() {
   }
 
   async function updateUserBan(target: any, action: 'ban' | 'unban') {
-    const label = target.email || target.id;
+    const label = maskEmail(target.email) || target.id;
     if (action === 'ban' && !window.confirm(`Ban ${label}? They will be blocked from signing in.`)) return;
     setUserBusy(target.id); setMessage('');
     try {
@@ -149,7 +149,7 @@ export default function AdminClient() {
           <div className="admin-list">{recentUsers.length ? recentUsers.map(target => {
             const banned = Boolean(target.banned_until && new Date(target.banned_until).getTime() > Date.now());
             return <div className="admin-row admin-user-row" key={target.id}>
-              <b>{target.email || target.id} {banned ? '· banned' : ''}</b>
+              <b>{maskEmail(target.email) || target.id} {banned ? '· banned' : ''}</b>
               <span>{target.providers?.length ? `Providers: ${target.providers.join(', ')}` : 'Provider: email'} · Jobs: {target.jobCount || 0} · Outputs: {target.outputCount || 0}</span>
               <span>Created {new Date(target.created_at).toLocaleString()} · Last sign-in {target.last_sign_in_at ? new Date(target.last_sign_in_at).toLocaleString() : 'never'}</span>
               {target.banned_until && <em>Banned until {new Date(target.banned_until).toLocaleString()}</em>}
@@ -199,6 +199,12 @@ export default function AdminClient() {
   </main>;
 }
 
+function maskEmail(email?: string | null) {
+  if (!email || !email.includes('@')) return email || '';
+  const [name, domain] = email.split('@');
+  return `${name.slice(0, 2)}***@${domain.slice(0, 1)}***`;
+}
+
 function Panel({ children }: { children: React.ReactNode }) {
   return <div className="admin-panel">{children}</div>;
 }
@@ -215,7 +221,7 @@ function ModerationRow({ kind, item, busy, onModerate }: { kind: 'comment' | 'mo
   const isBusy = busy === `${kind}:${item.id}`;
   const status = item.status || (kind === 'model_asset' ? 'published' : 'visible');
   const title = kind === 'model_asset' ? item.name : `${item.target_type || 'target'} · ${item.target_id || ''}`;
-  const body = kind === 'model_asset' ? [item.asset_type, item.base_model, item.user_email].filter(Boolean).join(' · ') : item.body;
+  const body = kind === 'model_asset' ? [item.asset_type, item.base_model, item.display_name || item.username].filter(Boolean).join(' · ') : item.body;
   return <div className="admin-row">
     <b>{title} · {status}</b>
     <span>{body}</span>
@@ -233,7 +239,7 @@ function JobRow({ job, user, userBusy, onBan }: { job: any; user?: any; userBusy
   return <div className="admin-row">
     <b>{job.status} · {job.workflow_key} · {job.credit_cost} credits</b>
     <span>{job.prompt}</span>
-    <span>User {user?.email || job.user_id} · {job.outputs?.length || 0} output(s){banned ? ' · banned' : ''}</span>
+    <span>User {maskEmail(user?.email) || job.user_id} · {job.outputs?.length || 0} output(s){banned ? ' · banned' : ''}</span>
     {user && onBan && <button className={banned ? 'admin-secondary' : 'admin-danger'} disabled={userBusy === user.id} onClick={() => onBan(user, banned ? 'unban' : 'ban')}>
       {userBusy === user.id ? 'Saving...' : banned ? 'Unban user' : 'Ban user'}
     </button>}
@@ -248,7 +254,7 @@ function OutputThumb({ output, compact = false, user, userBusy, onBan }: { outpu
   return <div className={compact ? 'admin-thumb compact' : 'admin-thumb'}>
     <a href={output.image_url} target="_blank" rel="noopener noreferrer"><img src={output.image_url} alt="Generated result" loading="lazy" /></a>
     {!compact && <span>{output.width || '?'}×{output.height || '?'} · {new Date(output.created_at).toLocaleString()}</span>}
-    {!compact && <span>User {user?.email || output.user_id}{banned ? ' · banned' : ''}</span>}
+    {!compact && <span>User {maskEmail(user?.email) || output.user_id}{banned ? ' · banned' : ''}</span>}
     {!compact && user && onBan && <button className={banned ? 'admin-secondary' : 'admin-danger'} disabled={userBusy === user.id} onClick={() => onBan(user, banned ? 'unban' : 'ban')}>
       {userBusy === user.id ? 'Saving...' : banned ? 'Unban user' : 'Ban user'}
     </button>}

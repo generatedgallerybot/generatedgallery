@@ -21,10 +21,12 @@ type Asset = {
   uses?: number;
   downloads?: number;
   user_email?: string | null;
+  username?: string;
+  displayName?: string;
   created_at: string;
 };
 
-type Comment = { id: string; body: string; userEmail?: string | null; createdAt: string };
+type Comment = { id: string; body: string; username?: string; displayName?: string; createdAt: string };
 
 export default function AssetDetailClient({ id }: { id: string }) {
   const { user, session, setShowAuthModal } = useAuth();
@@ -109,7 +111,7 @@ export default function AssetDetailClient({ id }: { id: string }) {
         <p><b>Trigger words:</b> {asset.trigger_words?.join(', ') || 'none listed'}</p>
         <p><b>Tags:</b> {asset.tags?.join(', ') || 'none listed'}</p>
         <p><b>License:</b> {asset.license || 'not specified'}</p>
-        <p><b>Shared by:</b> {asset.user_email || 'gallery creature'}</p>
+        <p><b>Shared by:</b> @{asset.username || asset.displayName || 'gallery-creature'}</p>
         <p><b>Stats:</b> {asset.likes || 0} likes · {asset.uses || 0} uses · {asset.downloads || 0} downloads</p>
       </div>
 
@@ -117,7 +119,7 @@ export default function AssetDetailClient({ id }: { id: string }) {
         <span className="eyebrow">Comments</span>
         <h2>Notes from the pit</h2>
         <div className="space-y-3">
-          {comments.length ? comments.map(comment => <div className="saved-lora-row" key={comment.id}><b>{comment.userEmail || 'gallery creature'}</b><span>{comment.body}</span></div>) : <p>No comments yet.</p>}
+          {comments.length ? comments.map(comment => <div className="saved-lora-row" key={comment.id}><b>@{comment.username || comment.displayName || 'gallery-creature'}</b><span>{comment.body}</span></div>) : <p>No comments yet.</p>}
         </div>
         <form onSubmit={submitComment} className="space-y-3">
           <textarea value={commentBody} onChange={e => setCommentBody(e.target.value)} placeholder={user ? 'Add settings, examples, warnings...' : 'Sign in to comment'} disabled={!user || busy} />

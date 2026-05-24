@@ -4,6 +4,7 @@ import path from 'path';
 import { requireAdmin } from '@/lib/admin-auth';
 import { getServerSupabase } from '@/lib/server-db';
 import { isMissingGenerationSchema, listAllLocalGenerationJobs, listLocalLedgerEntries } from '@/lib/local-generation-store';
+import { attachProfiles, getPublicProfiles } from '@/lib/profiles';
 
 export const dynamic = 'force-dynamic';
 
@@ -100,6 +101,13 @@ export async function GET(request: Request) {
     comments = commentsResult.data || [];
     modelAssets = assetsResult.data || [];
   }
+
+  const socialProfiles = await getPublicProfiles([
+    ...comments.map((item: any) => item.user_id),
+    ...modelAssets.map((item: any) => item.user_id),
+  ]);
+  comments = attachProfiles(comments, socialProfiles);
+  modelAssets = attachProfiles(modelAssets, socialProfiles);
 
   const { data: usersData } = await supabase.auth.admin.listUsers({ page: 1, perPage: 100 }).catch(() => ({ data: null } as any));
 

@@ -483,7 +483,7 @@ export function ImageDetailClient({ initialImage, initialRelated }: { initialIma
               {comments.length ? comments.map(comment => (
                 <div key={comment.id} className="rounded-xl border border-white/[0.05] bg-black/20 p-3">
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-[12px] text-white/55">{comment.userEmail || 'gallery creature'}</span>
+                    <span className="text-[12px] text-white/55">@{comment.username || comment.displayName || 'gallery-creature'}</span>
                     <span className="text-[11px] text-white/20">{new Date(comment.createdAt).toLocaleDateString()}</span>
                   </div>
                   <p className="text-sm text-white/55 leading-6">{comment.body}</p>

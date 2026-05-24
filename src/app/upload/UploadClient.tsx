@@ -21,6 +21,8 @@ type Asset = {
   uses?: number;
   downloads?: number;
   user_email?: string | null;
+  username?: string;
+  displayName?: string;
   created_at: string;
 };
 

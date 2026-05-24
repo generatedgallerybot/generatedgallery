@@ -4,6 +4,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { getBearerUser } from '@/lib/server-auth';
 import { getServerSupabase } from '@/lib/server-db';
+import { attachProfiles, ensureUserProfile, getPublicProfiles } from '@/lib/profiles';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,8 +45,10 @@ function publicComment(comment: any) {
   return {
     id: comment.id,
     body: comment.body,
-    userEmail: comment.user_email,
     userId: comment.user_id,
+    username: comment.username || comment.profile?.username,
+    displayName: comment.displayName || comment.display_name || comment.profile?.displayName || 'anonymous gallery creature',
+    profile: comment.profile,
     createdAt: comment.created_at,
     upvotes: comment.upvotes || 0,
   };
@@ -80,16 +83,21 @@ export async function GET(request: NextRequest) {
     .order('created_at', { ascending: true })
     .limit(100);
 
-  if (!error) return NextResponse.json({ ok: true, comments: (data || []).map(publicComment), storage: 'supabase' });
+  if (!error) {
+    const profiles = await getPublicProfiles((data || []).map((item: any) => item.user_id));
+    return NextResponse.json({ ok: true, comments: attachProfiles(data || [], profiles).map(publicComment), storage: 'supabase' });
+  }
   if (!isMissingTable(error)) return NextResponse.json({ ok: false, comments: [], storage: 'supabase_error', error: error.message }, { status: 500 });
 
   const comments = (await readLocalComments())
     .filter(comment => comment.status === 'visible' && comment.target_type === targetType && comment.target_id === targetId)
     .sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))
     .slice(-100)
-    .map(publicComment);
+;
+  const profiles = await getPublicProfiles(comments.map((item: any) => item.user_id));
+  const publicComments = attachProfiles(comments, profiles).map(publicComment);
 
-  return NextResponse.json({ ok: true, comments, storage: 'local_jsonl_missing_table' });
+  return NextResponse.json({ ok: true, comments: publicComments, storage: 'local_jsonl_missing_table' });
 }
 
 export async function POST(request: NextRequest) {
@@ -106,12 +114,13 @@ export async function POST(request: NextRequest) {
   }
   if (commentBody.length < 2) return NextResponse.json({ error: 'Comment is too short' }, { status: 400 });
 
+  await ensureUserProfile(user);
   const record: CommentRecord = {
     id: crypto.randomUUID(),
     target_type: targetType,
     target_id: targetId,
     user_id: user.id,
-    user_email: user.email || null,
+    user_email: null,
     body: commentBody,
     status: 'visible',
     created_at: new Date().toISOString(),
@@ -119,10 +128,14 @@ export async function POST(request: NextRequest) {
 
   const supabase = getServerSupabase();
   const { data, error: insertError } = await supabase.from('comments').insert(record).select('*').single();
-  if (!insertError) return NextResponse.json({ ok: true, comment: publicComment(data), storage: 'supabase' });
+  if (!insertError) {
+    const profiles = await getPublicProfiles([user.id]);
+    return NextResponse.json({ ok: true, comment: publicComment(attachProfiles([data], profiles)[0]), storage: 'supabase' });
+  }
   if (!isMissingTable(insertError)) return NextResponse.json({ error: insertError.message }, { status: 500 });
 
   await mkdir(COMMENTS_DIR, { recursive: true });
   await appendFile(COMMENTS_FILE, JSON.stringify(record) + '\n', 'utf8');
-  return NextResponse.json({ ok: true, comment: publicComment(record), storage: 'local_jsonl_missing_table' });
+  const profiles = await getPublicProfiles([user.id]);
+  return NextResponse.json({ ok: true, comment: publicComment(attachProfiles([record], profiles)[0]), storage: 'local_jsonl_missing_table' });
 }
