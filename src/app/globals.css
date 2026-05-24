@@ -339,14 +339,16 @@ body > * {
 .admin-row b { font-size:13px; color:rgba(255,255,255,.86); }
 .admin-row span { font-size:12px; color:rgba(255,255,255,.5); line-height:1.45; overflow-wrap:anywhere; }
 .admin-row em { font-size:11px; color:rgba(255,255,255,.28); font-style:normal; }
-.admin-user-row button { justify-self:start; margin-top:4px; }
+.admin-user-row button, .admin-row > button { justify-self:start; align-self:start; margin-top:4px; padding:7px 11px; font-size:11px; max-width:max-content; }
 .admin-thumbs { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
 .admin-output-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-.admin-thumb { display:grid; gap:6px; color:rgba(255,255,255,.48); text-decoration:none; font-size:11px; border:1px solid rgba(255,255,255,.06); background:rgba(0,0,0,.18); border-radius:14px; padding:8px; overflow:hidden; }
+.admin-thumb { display:grid; gap:6px; color:rgba(255,255,255,.48); text-decoration:none; font-size:11px; border:1px solid rgba(255,255,255,.06); background:rgba(0,0,0,.18); border-radius:14px; padding:8px; overflow:hidden; min-width:0; }
 .admin-thumb img { width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:10px; background:rgba(255,255,255,.04); }
+.admin-thumb button { justify-self:start; max-width:100%; padding:6px 9px; font-size:10px; white-space:nowrap; }
 .admin-thumb.compact { width:84px; padding:4px; }
 .admin-thumb.compact img { border-radius:9px; }
-@media (max-width: 900px) { .admin-hero { display:block; } .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .admin-grid { grid-template-columns:1fr; } }
+@media (max-width: 900px) { .admin-hero { display:block; } .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .admin-grid { grid-template-columns:1fr; } .admin-output-list { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); } }
+@media (max-width: 520px) { .admin-page { padding-left:14px; padding-right:14px; } .admin-output-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .admin-thumb button, .admin-row > button { width:100%; max-width:none; } }
 
 /* LoRA explorer */
 .lora-explorer-page { max-width: 1380px; margin:0 auto; padding:112px 24px 96px; color:#f6efe3; }
