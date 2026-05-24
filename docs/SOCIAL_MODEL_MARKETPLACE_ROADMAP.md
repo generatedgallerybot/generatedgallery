@@ -112,7 +112,7 @@ Social/model records should export through the protocol:
 
 ### Phase 0, now
 
-- Social auth: Google + GitHub buttons, Supabase provider config needed.
+- Social auth: Google button, Supabase provider config needed.
 - Admin moderation: user ban/unban, generation outputs visible.
 - Existing LoRA URL save/share page is the seed.
 
