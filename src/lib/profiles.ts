@@ -19,12 +19,13 @@ export function fallbackUsername(userId?: string | null) {
 
 export function publicProfileFromRow(row: any, userId?: string | null): PublicProfile {
   const id = row?.user_id || userId || '';
-  const username = row?.username || fallbackUsername(id);
+  const isPrivate = Boolean(row?.is_private);
+  const username = isPrivate ? fallbackUsername(id) : (row?.username || fallbackUsername(id));
   return {
     userId: id,
     username,
-    displayName: row?.is_private ? 'anonymous gallery creature' : (row?.display_name || username),
-    isPrivate: Boolean(row?.is_private),
+    displayName: isPrivate ? 'anonymous gallery creature' : (row?.display_name || username),
+    isPrivate,
   };
 }
 

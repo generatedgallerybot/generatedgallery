@@ -23,10 +23,11 @@ type Asset = {
   user_email?: string | null;
   username?: string;
   displayName?: string;
+  profile?: { username?: string; displayName?: string; isPrivate?: boolean };
   created_at: string;
 };
 
-type Comment = { id: string; body: string; username?: string; displayName?: string; createdAt: string };
+type Comment = { id: string; body: string; username?: string; displayName?: string; profile?: { isPrivate?: boolean }; createdAt: string };
 
 export default function AssetDetailClient({ id }: { id: string }) {
   const { user, session, setShowAuthModal } = useAuth();
@@ -86,6 +87,8 @@ export default function AssetDetailClient({ id }: { id: string }) {
   }
 
   if (!asset) return <main className="lora-explorer-page"><div className="empty-generations"><b>Loading asset...</b><span>Summoning model goblin.</span></div></main>;
+  const creatorLabel = asset.displayName || asset.username || 'gallery-creature';
+  const creator = asset.profile?.isPrivate || !asset.username ? <span>@{creatorLabel}</span> : <Link href={`/u/${asset.username}`}>@{creatorLabel}</Link>;
 
   return <main className="lora-explorer-page">
     <Link href="/upload" className="text-[13px] text-white/35 hover:text-accent">← Back to asset board</Link>
@@ -111,7 +114,7 @@ export default function AssetDetailClient({ id }: { id: string }) {
         <p><b>Trigger words:</b> {asset.trigger_words?.join(', ') || 'none listed'}</p>
         <p><b>Tags:</b> {asset.tags?.join(', ') || 'none listed'}</p>
         <p><b>License:</b> {asset.license || 'not specified'}</p>
-        <p><b>Shared by:</b> @{asset.username || asset.displayName || 'gallery-creature'}</p>
+        <p><b>Shared by:</b> {creator}</p>
         <p><b>Stats:</b> {asset.likes || 0} likes · {asset.uses || 0} uses · {asset.downloads || 0} downloads</p>
       </div>
 
@@ -119,7 +122,11 @@ export default function AssetDetailClient({ id }: { id: string }) {
         <span className="eyebrow">Comments</span>
         <h2>Notes from the pit</h2>
         <div className="space-y-3">
-          {comments.length ? comments.map(comment => <div className="saved-lora-row" key={comment.id}><b>@{comment.username || comment.displayName || 'gallery-creature'}</b><span>{comment.body}</span></div>) : <p>No comments yet.</p>}
+          {comments.length ? comments.map(comment => {
+            const label = comment.displayName || comment.username || 'gallery-creature';
+            const author = comment.profile?.isPrivate || !comment.username ? <b>@{label}</b> : <Link href={`/u/${comment.username}`}><b>@{label}</b></Link>;
+            return <div className="saved-lora-row" key={comment.id}>{author}<span>{comment.body}</span></div>;
+          }) : <p>No comments yet.</p>}
         </div>
         <form onSubmit={submitComment} className="space-y-3">
           <textarea value={commentBody} onChange={e => setCommentBody(e.target.value)} placeholder={user ? 'Add settings, examples, warnings...' : 'Sign in to comment'} disabled={!user || busy} />

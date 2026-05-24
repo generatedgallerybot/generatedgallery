@@ -23,6 +23,7 @@ type Asset = {
   user_email?: string | null;
   username?: string;
   displayName?: string;
+  profile?: { username?: string; displayName?: string; isPrivate?: boolean };
   created_at: string;
 };
 
@@ -191,6 +192,7 @@ export default function UploadClient() {
           <h2><Link href={`/asset/${asset.id}`}>{asset.name}</Link></h2>
           <p>{asset.description || asset.trigger_words?.join(', ') || 'No notes yet.'}</p>
           <small>{asset.trigger_words?.join(', ') || asset.tags?.join(', ') || asset.file_url}</small>
+          <small>{asset.profile?.isPrivate || !asset.username ? 'anonymous gallery creature' : <Link href={`/u/${asset.username}`}>@{asset.displayName || asset.username}</Link>}</small>
           <small>{asset.likes || 0} likes · {asset.uses || 0} uses · {asset.downloads || 0} downloads</small>
         </div>
         <div className="lora-card-actions three">
