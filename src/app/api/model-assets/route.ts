@@ -87,6 +87,8 @@ async function readFromSupabase(searchParams: URLSearchParams) {
   const includeNsfw = searchParams.get('nsfw') === 'true';
   const q = (searchParams.get('q') || '').toLowerCase().trim();
   const type = searchParams.get('type') || '';
+  const baseModel = searchParams.get('baseModel') || '';
+  const sort = searchParams.get('sort') || 'recent';
   const id = searchParams.get('id') || '';
   const supabase = getServerSupabase();
 
@@ -97,9 +99,11 @@ async function readFromSupabase(searchParams: URLSearchParams) {
     return { asset: data };
   }
 
-  let query = supabase.from('model_assets').select('*').eq('status', 'published').order('created_at', { ascending: false }).limit(120);
+  const orderField = sort === 'popular' ? 'likes' : sort === 'used' ? 'uses' : sort === 'downloaded' ? 'downloads' : 'created_at';
+  let query = supabase.from('model_assets').select('*').eq('status', 'published').order(orderField, { ascending: false }).order('created_at', { ascending: false }).limit(120);
   if (!includeNsfw) query = query.eq('is_nsfw', false);
   if (type) query = query.eq('asset_type', type);
+  if (baseModel) query = query.eq('base_model', baseModel);
   const { data, error } = await query;
   if (error) return { error };
   return { assets: (data || []).filter(asset => matchesSearch(asset, q)) };
@@ -109,6 +113,8 @@ async function readFromLocal(searchParams: URLSearchParams) {
   const includeNsfw = searchParams.get('nsfw') === 'true';
   const q = (searchParams.get('q') || '').toLowerCase().trim();
   const type = searchParams.get('type') || '';
+  const baseModel = searchParams.get('baseModel') || '';
+  const sort = searchParams.get('sort') || 'recent';
   const id = searchParams.get('id') || '';
   const allAssets = await readAssets();
   if (id) {
@@ -117,11 +123,14 @@ async function readFromLocal(searchParams: URLSearchParams) {
     if (asset.is_nsfw && !includeNsfw) return { hidden: true };
     return { asset };
   }
-  const assets = sortRecent(allAssets)
+  const scoreField = sort === 'popular' ? 'likes' : sort === 'used' ? 'uses' : sort === 'downloaded' ? 'downloads' : 'created_at';
+  const assets = allAssets
     .filter(asset => asset.status === 'published')
     .filter(asset => includeNsfw || !asset.is_nsfw)
     .filter(asset => !type || asset.asset_type === type)
+    .filter(asset => !baseModel || asset.base_model === baseModel)
     .filter(asset => matchesSearch(asset, q))
+    .sort((a, b) => scoreField === 'created_at' ? Date.parse(b.created_at) - Date.parse(a.created_at) : Number((b as any)[scoreField] || 0) - Number((a as any)[scoreField] || 0) || Date.parse(b.created_at) - Date.parse(a.created_at))
     .slice(0, 120);
   return { assets };
 }

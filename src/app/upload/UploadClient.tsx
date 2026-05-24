@@ -17,6 +17,9 @@ type Asset = {
   tags?: string[];
   preview_url?: string | null;
   is_nsfw?: boolean;
+  likes?: number;
+  uses?: number;
+  downloads?: number;
   user_email?: string | null;
   created_at: string;
 };
@@ -41,18 +44,24 @@ export default function UploadClient() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [query, setQuery] = useState('');
   const [showNsfw, setShowNsfw] = useState(false);
+  const [assetType, setAssetType] = useState('');
+  const [baseModel, setBaseModel] = useState('');
+  const [sort, setSort] = useState('recent');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
 
   async function loadAssets() {
-    const res = await fetch(`/api/model-assets?q=${encodeURIComponent(query)}&nsfw=${showNsfw}`);
+    const params = new URLSearchParams({ q: query, nsfw: String(showNsfw), sort });
+    if (assetType) params.set('type', assetType);
+    if (baseModel) params.set('baseModel', baseModel);
+    const res = await fetch(`/api/model-assets?${params.toString()}`);
     if (res.ok) setAssets((await res.json()).assets || []);
   }
 
   useEffect(() => {
     const timer = setTimeout(() => { loadAssets().catch(() => {}); }, 200);
     return () => clearTimeout(timer);
-  }, [query, showNsfw]);
+  }, [query, showNsfw, assetType, baseModel, sort]);
 
   function setField(name: string, value: string | boolean) {
     setForm(prev => ({ ...prev, [name]: value }));
@@ -96,8 +105,32 @@ export default function UploadClient() {
       <span className="eyebrow">Model asset marketplace v1</span>
       <h1>Upload and share LoRAs, checkpoints, workflows, and datasets.</h1>
       <p>Not trying to clone Civitai overnight. We are building the sharp wedge: useful metadata, generation links, comments, and a public board for reusable model assets.</p>
-      <div className="lora-search-row">
+      <div className="lora-search-row asset-board-filters">
         <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search assets, triggers, base models..." />
+        <select value={assetType} onChange={e => setAssetType(e.target.value)}>
+          <option value="">All types</option>
+          <option value="lora">LoRA</option>
+          <option value="checkpoint">Checkpoint</option>
+          <option value="textual_inversion">Textual inversion</option>
+          <option value="vae">VAE</option>
+          <option value="workflow">Workflow</option>
+          <option value="dataset">Dataset</option>
+        </select>
+        <select value={baseModel} onChange={e => setBaseModel(e.target.value)}>
+          <option value="">All bases</option>
+          <option value="flux">Flux</option>
+          <option value="sdxl">SDXL</option>
+          <option value="sd15">SD 1.5</option>
+          <option value="pony">Pony</option>
+          <option value="wan">Wan</option>
+          <option value="hunyuan">Hunyuan</option>
+        </select>
+        <select value={sort} onChange={e => setSort(e.target.value)}>
+          <option value="recent">Recent</option>
+          <option value="popular">Most liked</option>
+          <option value="used">Most used</option>
+          <option value="downloaded">Most downloaded</option>
+        </select>
         <button onClick={() => setShowNsfw(v => !v)}>{showNsfw ? 'NSFW on' : 'SFW only'}</button>
         <Link href="/loras">LoRA explorer</Link>
       </div>
@@ -156,6 +189,7 @@ export default function UploadClient() {
           <h2><Link href={`/asset/${asset.id}`}>{asset.name}</Link></h2>
           <p>{asset.description || asset.trigger_words?.join(', ') || 'No notes yet.'}</p>
           <small>{asset.trigger_words?.join(', ') || asset.tags?.join(', ') || asset.file_url}</small>
+          <small>{asset.likes || 0} likes · {asset.uses || 0} uses · {asset.downloads || 0} downloads</small>
         </div>
         <div className="lora-card-actions three">
           <Link href={`/asset/${asset.id}`}>Details</Link>
