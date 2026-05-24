@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { trackEvent } from '@/lib/track';
 
 export function AuthModal() {
-  const { showAuthModal, setShowAuthModal, signInWithEmail, signUpWithEmail, signInWithGoogle, session } = useAuth();
+  const { showAuthModal, setShowAuthModal, signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithGithub, session } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,21 +27,24 @@ export function AuthModal() {
     setPassword('');
   };
 
-  const handleGoogle = async () => {
+  const handleOAuth = async (provider: 'google' | 'github') => {
     setError(null);
     setSuccess(null);
     setSubmitting(true);
     try {
-      trackEvent('oauth_google_click', { mode }, { token: session?.access_token || null, sendBeacon: false });
-      const { error } = await signInWithGoogle();
+      trackEvent(`oauth_${provider}_click`, { mode }, { token: session?.access_token || null, sendBeacon: false });
+      const { error } = provider === 'google' ? await signInWithGoogle() : await signInWithGithub();
       if (error) {
-        trackEvent('oauth_google_error', { error }, { sendBeacon: false });
+        trackEvent(`oauth_${provider}_error`, { error }, { sendBeacon: false });
         setError(error);
       }
     } finally {
       setSubmitting(false);
     }
   };
+
+  const handleGoogle = async () => handleOAuth('google');
+  const handleGithub = async () => handleOAuth('github');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,14 +100,24 @@ export function AuthModal() {
 
         <p className="text-[13px] text-white/45 leading-relaxed">Sign in to save galleries, likes, credits, and generation history.</p>
 
-        <button
-          type="button"
-          onClick={handleGoogle}
-          disabled={submitting}
-          className="w-full py-2.5 rounded-xl text-[13px] font-medium text-white bg-white/[0.06] border border-white/[0.1] hover:bg-white/[0.1] disabled:opacity-50 transition-all"
-        >
-          Continue with Google
-        </button>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={submitting}
+            className="py-2.5 rounded-xl text-[13px] font-medium text-white bg-white/[0.06] border border-white/[0.1] hover:bg-white/[0.1] disabled:opacity-50 transition-all"
+          >
+            Google
+          </button>
+          <button
+            type="button"
+            onClick={handleGithub}
+            disabled={submitting}
+            className="py-2.5 rounded-xl text-[13px] font-medium text-white bg-white/[0.06] border border-white/[0.1] hover:bg-white/[0.1] disabled:opacity-50 transition-all"
+          >
+            GitHub
+          </button>
+        </div>
 
         <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-white/25"><span className="h-px flex-1 bg-white/[0.08]" />or email<span className="h-px flex-1 bg-white/[0.08]" /></div>
 

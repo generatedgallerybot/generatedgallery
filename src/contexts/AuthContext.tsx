@@ -11,6 +11,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
   signUpWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
   signInWithGoogle: () => Promise<{ error: string | null }>;
+  signInWithGithub: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   showAuthModal: boolean;
   setShowAuthModal: (show: boolean) => void;
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   signInWithEmail: async () => ({ error: null }),
   signUpWithEmail: async () => ({ error: null }),
   signInWithGoogle: async () => ({ error: null }),
+  signInWithGithub: async () => ({ error: null }),
   signOut: async () => {},
   showAuthModal: false,
   setShowAuthModal: () => {},
@@ -151,6 +153,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const signInWithGithub = useCallback(async () => {
+    try {
+      const { error } = await supabaseBrowser.auth.signInWithOAuth({
+        provider: 'github',
+        options: { redirectTo: `${window.location.origin}/generate` },
+      });
+      return { error: error?.message || null };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : 'GitHub sign-in failed' };
+    }
+  }, []);
+
   const signOut = useCallback(async () => {
     try {
       window.localStorage.removeItem(AUTH_STORAGE_KEY);
@@ -163,7 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user, session, loading,
-      signInWithEmail, signUpWithEmail, signInWithGoogle, signOut,
+      signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithGithub, signOut,
       showAuthModal, setShowAuthModal,
     }}>
       {children}
