@@ -153,14 +153,14 @@ export default function UploadClient() {
         {asset.preview_url ? <img src={asset.preview_url} alt="" loading="lazy" /> : <div className="lora-preview-fallback">{asset.asset_type}</div>}
         <div>
           <span>{asset.base_model} · {asset.asset_type}{asset.is_nsfw ? ' · NSFW' : ''}</span>
-          <h2>{asset.name}</h2>
+          <h2><Link href={`/asset/${asset.id}`}>{asset.name}</Link></h2>
           <p>{asset.description || asset.trigger_words?.join(', ') || 'No notes yet.'}</p>
           <small>{asset.trigger_words?.join(', ') || asset.tags?.join(', ') || asset.file_url}</small>
         </div>
         <div className="lora-card-actions three">
+          <Link href={`/asset/${asset.id}`}>Details</Link>
           <Link href={generateHref(asset)}>Use</Link>
           <a href={asset.file_url} target="_blank" rel="noopener noreferrer">File</a>
-          {asset.source_url ? <a href={asset.source_url} target="_blank" rel="noopener noreferrer">Source</a> : <button onClick={() => navigator.clipboard?.writeText(asset.file_url)}>Copy</button>}
         </div>
       </article>) : <div className="empty-generations"><b>No assets yet</b><span>Upload the first useful model creature.</span></div>}
     </section>

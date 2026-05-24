@@ -70,7 +70,15 @@ export async function GET(request: NextRequest) {
   const includeNsfw = searchParams.get('nsfw') === 'true';
   const q = (searchParams.get('q') || '').toLowerCase().trim();
   const type = searchParams.get('type') || '';
-  const assets = (await readAssets())
+  const id = searchParams.get('id') || '';
+  const allAssets = await readAssets();
+  if (id) {
+    const asset = allAssets.find(row => row.id === id && row.status === 'published');
+    if (!asset) return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
+    if (asset.is_nsfw && !includeNsfw) return NextResponse.json({ error: 'NSFW asset hidden' }, { status: 403 });
+    return NextResponse.json({ ok: true, asset });
+  }
+  const assets = allAssets
     .filter(asset => asset.status === 'published')
     .filter(asset => includeNsfw || !asset.is_nsfw)
     .filter(asset => !type || asset.asset_type === type)
