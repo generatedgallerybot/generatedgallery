@@ -16,6 +16,8 @@ The public protocol surface is live at:
 - https://generatedgallery.com/machine-dream-finds
 - https://generatedgallery.com/index/manifest.json
 - https://generatedgallery.com/index/generated-gallery.jsonl
+- https://generatedgallery.com/index/generated-gallery.jsonl.gz
+- https://generatedgallery.com/index/generated-gallery.prompts.jsonl.gz
 
 ## Record shape
 
@@ -49,6 +51,25 @@ A record is one generated media item plus enough provenance to render it respons
     "category": "portraits",
     "tags": ["portrait", "cinematic"]
   },
+  "labels": {
+    "subjects": ["person"],
+    "styles": ["cinematic", "photorealistic"],
+    "medium": ["photo"],
+    "composition": ["portrait"],
+    "use_cases": ["social-avatar"],
+    "quality_flags": [],
+    "avoidance_flags": ["low-detail"],
+    "safety": ["sfw"],
+    "model_family": "flux",
+    "confidence": { "subjects": 0.75, "styles": 0.81 },
+    "quality_score": 0.74,
+    "labeler": "generatedgallery-rules-v0.2.0"
+  },
+  "rights": {
+    "metadata": "CC0 where possible",
+    "media": "upstream terms apply",
+    "training_use": "unknown"
+  },
   "safety": {
     "nsfw": false,
     "rating": "sfw"
@@ -58,7 +79,7 @@ A record is one generated media item plus enough provenance to render it respons
 }
 ```
 
-The canonical JSON Schema is in [`schemas/generated-gallery-record.schema.json`](../../schemas/generated-gallery-record.schema.json).
+The canonical JSON Schema is in [`public/schemas/generated-gallery-record.schema.json`](../../public/schemas/generated-gallery-record.schema.json).
 
 ## Principles
 
@@ -133,17 +154,22 @@ A small JSON file describing a feed:
   "byteSize": 1234567,
   "sha256": "...",
   "sourceCounts": { "civitai": 10000 },
-  "sampleRecordsUrl": "https://generatedgallery.com/index/generated-gallery.sample.json"
+  "sampleRecordsUrl": "https://generatedgallery.com/index/generated-gallery.sample.json",
+  "compressedItemsUrl": "https://generatedgallery.com/index/generated-gallery.jsonl.gz",
+  "promptOnlyUrl": "https://generatedgallery.com/index/generated-gallery.prompts.jsonl"
 }
 ```
 
 ## Current status
 
-This is v0.1. It matches the existing Generated Gallery database and Civitai crawler, but is intentionally conservative.
+This is v0.2. It adds weak labels, rights/provenance caveats, prompt-only exports, compressed JSONL, and manifest-level label counts. It is intentionally conservative: metadata first, upstream media rights preserved.
 
 Already live:
 
 - public JSONL snapshot
+- compressed JSONL exports
+- prompt-only split
+- weak label taxonomy and label counts
 - public manifest and sample records
 - JSON Schema validation script
 - read-only `/api/index` endpoint
@@ -157,3 +183,5 @@ Next migration steps:
 - publish a CLI-friendly pack validator
 - add per-gallery manifest export
 - publish contributor docs for adding new source adapters
+- create a small human/agent-audited gold label set
+- publish the metadata-only Hugging Face dataset card

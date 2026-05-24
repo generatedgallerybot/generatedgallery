@@ -1,104 +1,26 @@
 [
   {
-    "id": "civitai.com:37c9f476-4e3d-446b-8559-402003cc8e52",
-    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4697e138-f976-44e8-bc01-cabb5204bf64/original=true/4697e138-f976-44e8-bc01-cabb5204bf64.jpeg",
-    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4697e138-f976-44e8-bc01-cabb5204bf64/original=true/4697e138-f976-44e8-bc01-cabb5204bf64.jpeg",
+    "id": "civitai.com:b4d479fc-b6e8-4b08-bde7-b1c08339bc78",
+    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/05cd0d21-3f96-4f68-b304-c30f1241e71a/original=true/05cd0d21-3f96-4f68-b304-c30f1241e71a.jpeg",
+    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/05cd0d21-3f96-4f68-b304-c30f1241e71a/original=true/05cd0d21-3f96-4f68-b304-c30f1241e71a.jpeg",
     "title": null,
     "description": null,
     "source": {
       "site": "civitai.com",
-      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4697e138-f976-44e8-bc01-cabb5204bf64/original=true/4697e138-f976-44e8-bc01-cabb5204bf64.jpeg",
+      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/05cd0d21-3f96-4f68-b304-c30f1241e71a/original=true/05cd0d21-3f96-4f68-b304-c30f1241e71a.jpeg",
       "externalId": null,
       "creator": null
     },
     "media": {
       "type": "image",
-      "width": 1024,
-      "height": 1024,
-      "mimeType": null
-    },
-    "generation": {
-      "prompt": "Clowncore.  a clown with clocks for eyes",
-      "negativePrompt": "bad anatomy, low effort",
-      "model": null
-    },
-    "taxonomy": {
-      "category": null,
-      "tags": []
-    },
-    "safety": {
-      "nsfw": false,
-      "rating": "sfw"
-    },
-    "stats": {
-      "views": 0,
-      "downloads": 0,
-      "upvotes": 0
-    },
-    "createdAt": "2026-05-07T02:19:46.267316+00:00",
-    "indexedAt": "2026-05-07T02:19:46.214+00:00"
-  },
-  {
-    "id": "civitai.com:b2bca516-908d-4dd7-abb7-8e05a26ce9b1",
-    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/fe93c02a-6f95-49d1-83ec-18d6e2bcece1/original=true/fe93c02a-6f95-49d1-83ec-18d6e2bcece1.jpeg",
-    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/fe93c02a-6f95-49d1-83ec-18d6e2bcece1/original=true/fe93c02a-6f95-49d1-83ec-18d6e2bcece1.jpeg",
-    "title": null,
-    "description": null,
-    "source": {
-      "site": "civitai.com",
-      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/fe93c02a-6f95-49d1-83ec-18d6e2bcece1/original=true/fe93c02a-6f95-49d1-83ec-18d6e2bcece1.jpeg",
-      "externalId": null,
-      "creator": null
-    },
-    "media": {
-      "type": "image",
-      "width": 1024,
-      "height": 1024,
-      "mimeType": null
-    },
-    "generation": {
-      "prompt": "Clowncore.  a clown with clocks for eyes",
-      "negativePrompt": "bad anatomy, low effort",
-      "model": null
-    },
-    "taxonomy": {
-      "category": null,
-      "tags": []
-    },
-    "safety": {
-      "nsfw": false,
-      "rating": "sfw"
-    },
-    "stats": {
-      "views": 0,
-      "downloads": 0,
-      "upvotes": 0
-    },
-    "createdAt": "2026-05-07T02:19:45.871706+00:00",
-    "indexedAt": "2026-05-07T02:19:45.819+00:00"
-  },
-  {
-    "id": "civitai.com:d7b9f193-f7d8-4ba5-b883-db3a7fa2d37c",
-    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/266129f3-900f-440a-bb05-9715b5ca22fc/original=true/266129f3-900f-440a-bb05-9715b5ca22fc.jpeg",
-    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/266129f3-900f-440a-bb05-9715b5ca22fc/original=true/266129f3-900f-440a-bb05-9715b5ca22fc.jpeg",
-    "title": null,
-    "description": null,
-    "source": {
-      "site": "civitai.com",
-      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/266129f3-900f-440a-bb05-9715b5ca22fc/original=true/266129f3-900f-440a-bb05-9715b5ca22fc.jpeg",
-      "externalId": null,
-      "creator": null
-    },
-    "media": {
-      "type": "image",
-      "width": 2048,
-      "height": 2048,
+      "width": 600,
+      "height": 800,
       "mimeType": null
     },
     "generation": {
       "prompt": null,
-      "negativePrompt": null,
-      "model": null
+      "negativePrompt": "score_5, score_4, score_3_down, ugly, poorly drawn face, blurry, blurry face, (3d), realistic, muscular, blurry eyes, poorly drawn eyes, patreon, artist name,lowres, worst quality, bad quality, sketch, error, bad hands, logo, text, watermark, username, date, ugly, distorted, censored, multiple views, 2koma, 4koma, comic, manga, bad anatomy, bad proportions, extra limbs, extra digit, extra legs, extra legs and arms, disfigured, missing arms, fused fingers, missing fingers, unclear eyes, mammal, furry, ambiguous form, futa",
+      "model": "cyberrealisticXL_desireV30"
     },
     "taxonomy": {
       "category": null,
@@ -113,7 +35,205 @@
       "downloads": 0,
       "upvotes": 0
     },
-    "createdAt": "2026-05-07T02:19:45.47473+00:00",
-    "indexedAt": "2026-05-07T02:19:45.424+00:00"
+    "createdAt": "2026-05-24T04:11:17.508454+00:00",
+    "indexedAt": "2026-05-24T04:11:17.467+00:00",
+    "protocolVersion": "0.2.0",
+    "labels": {
+      "subjects": [],
+      "styles": [],
+      "aesthetic": [],
+      "medium": [],
+      "composition": [],
+      "use_cases": [],
+      "quality_flags": [],
+      "avoidance_flags": [
+        "watermark",
+        "text-artifacts",
+        "bad-hands",
+        "low-detail",
+        "anatomy-issues"
+      ],
+      "safety": [
+        "sfw"
+      ],
+      "model_family": "stable-diffusion",
+      "confidence": {
+        "subjects": 0,
+        "styles": 0,
+        "quality_flags": 0
+      },
+      "quality_score": 0.32,
+      "labeler": "generatedgallery-rules-v0.2.0"
+    },
+    "rights": {
+      "metadata": "CC0 where possible",
+      "media": "upstream terms apply",
+      "training_use": "unknown",
+      "notes": "GeneratedGallery exports metadata and source URLs. Verify upstream media rights before image training or redistribution."
+    },
+    "provenance": {
+      "source_site": "civitai.com",
+      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/05cd0d21-3f96-4f68-b304-c30f1241e71a/original=true/05cd0d21-3f96-4f68-b304-c30f1241e71a.jpeg",
+      "indexed_by": "generatedgallery.com",
+      "indexed_at": "2026-05-24T04:11:17.467+00:00"
+    }
+  },
+  {
+    "id": "civitai.com:979b9ac7-5055-4709-a652-8bdefe620cdb",
+    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/724f72bb-9b88-4aef-b605-f45a016dee1c/original=true/724f72bb-9b88-4aef-b605-f45a016dee1c.jpeg",
+    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/724f72bb-9b88-4aef-b605-f45a016dee1c/original=true/724f72bb-9b88-4aef-b605-f45a016dee1c.jpeg",
+    "title": null,
+    "description": null,
+    "source": {
+      "site": "civitai.com",
+      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/724f72bb-9b88-4aef-b605-f45a016dee1c/original=true/724f72bb-9b88-4aef-b605-f45a016dee1c.jpeg",
+      "externalId": null,
+      "creator": null
+    },
+    "media": {
+      "type": "image",
+      "width": 600,
+      "height": 800,
+      "mimeType": null
+    },
+    "generation": {
+      "prompt": null,
+      "negativePrompt": "score_5, score_4, score_3_down, ugly, poorly drawn face, blurry, blurry face, (3d), realistic, muscular, blurry eyes, poorly drawn eyes, patreon, artist name,lowres, worst quality, bad quality, sketch, error, bad hands, logo, text, watermark, username, date, ugly, distorted, censored, multiple views, 2koma, 4koma, comic, manga, bad anatomy, bad proportions, extra limbs, extra digit, extra legs, extra legs and arms, disfigured, missing arms, fused fingers, missing fingers, unclear eyes, mammal, furry, ambiguous form, futa",
+      "model": "cyberrealisticXL_desireV30"
+    },
+    "taxonomy": {
+      "category": null,
+      "tags": []
+    },
+    "safety": {
+      "nsfw": false,
+      "rating": "sfw"
+    },
+    "stats": {
+      "views": 0,
+      "downloads": 0,
+      "upvotes": 0
+    },
+    "createdAt": "2026-05-24T04:11:17.123211+00:00",
+    "indexedAt": "2026-05-24T04:11:17.081+00:00",
+    "protocolVersion": "0.2.0",
+    "labels": {
+      "subjects": [],
+      "styles": [],
+      "aesthetic": [],
+      "medium": [],
+      "composition": [],
+      "use_cases": [],
+      "quality_flags": [],
+      "avoidance_flags": [
+        "watermark",
+        "text-artifacts",
+        "bad-hands",
+        "low-detail",
+        "anatomy-issues"
+      ],
+      "safety": [
+        "sfw"
+      ],
+      "model_family": "stable-diffusion",
+      "confidence": {
+        "subjects": 0,
+        "styles": 0,
+        "quality_flags": 0
+      },
+      "quality_score": 0.32,
+      "labeler": "generatedgallery-rules-v0.2.0"
+    },
+    "rights": {
+      "metadata": "CC0 where possible",
+      "media": "upstream terms apply",
+      "training_use": "unknown",
+      "notes": "GeneratedGallery exports metadata and source URLs. Verify upstream media rights before image training or redistribution."
+    },
+    "provenance": {
+      "source_site": "civitai.com",
+      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/724f72bb-9b88-4aef-b605-f45a016dee1c/original=true/724f72bb-9b88-4aef-b605-f45a016dee1c.jpeg",
+      "indexed_by": "generatedgallery.com",
+      "indexed_at": "2026-05-24T04:11:17.081+00:00"
+    }
+  },
+  {
+    "id": "civitai.com:02d87b2e-736e-406b-b8df-94367ff3a5b5",
+    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d53d35a2-f6e6-4862-92f4-01aed2f4d765/original=true/d53d35a2-f6e6-4862-92f4-01aed2f4d765.jpeg",
+    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d53d35a2-f6e6-4862-92f4-01aed2f4d765/original=true/d53d35a2-f6e6-4862-92f4-01aed2f4d765.jpeg",
+    "title": null,
+    "description": null,
+    "source": {
+      "site": "civitai.com",
+      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d53d35a2-f6e6-4862-92f4-01aed2f4d765/original=true/d53d35a2-f6e6-4862-92f4-01aed2f4d765.jpeg",
+      "externalId": null,
+      "creator": null
+    },
+    "media": {
+      "type": "image",
+      "width": 600,
+      "height": 800,
+      "mimeType": null
+    },
+    "generation": {
+      "prompt": null,
+      "negativePrompt": "score_5, score_4, score_3_down, ugly, poorly drawn face, blurry, blurry face, (3d), realistic, muscular, blurry eyes, poorly drawn eyes, patreon, artist name,lowres, worst quality, bad quality, sketch, error, bad hands, logo, text, watermark, username, date, ugly, distorted, censored, multiple views, 2koma, 4koma, comic, manga, bad anatomy, bad proportions, extra limbs, extra digit, extra legs, extra legs and arms, disfigured, missing arms, fused fingers, missing fingers, unclear eyes, mammal, furry, ambiguous form, futa",
+      "model": "cyberrealisticXL_desireV30"
+    },
+    "taxonomy": {
+      "category": null,
+      "tags": []
+    },
+    "safety": {
+      "nsfw": false,
+      "rating": "sfw"
+    },
+    "stats": {
+      "views": 0,
+      "downloads": 0,
+      "upvotes": 0
+    },
+    "createdAt": "2026-05-24T04:11:16.739605+00:00",
+    "indexedAt": "2026-05-24T04:11:16.693+00:00",
+    "protocolVersion": "0.2.0",
+    "labels": {
+      "subjects": [],
+      "styles": [],
+      "aesthetic": [],
+      "medium": [],
+      "composition": [],
+      "use_cases": [],
+      "quality_flags": [],
+      "avoidance_flags": [
+        "watermark",
+        "text-artifacts",
+        "bad-hands",
+        "low-detail",
+        "anatomy-issues"
+      ],
+      "safety": [
+        "sfw"
+      ],
+      "model_family": "stable-diffusion",
+      "confidence": {
+        "subjects": 0,
+        "styles": 0,
+        "quality_flags": 0
+      },
+      "quality_score": 0.32,
+      "labeler": "generatedgallery-rules-v0.2.0"
+    },
+    "rights": {
+      "metadata": "CC0 where possible",
+      "media": "upstream terms apply",
+      "training_use": "unknown",
+      "notes": "GeneratedGallery exports metadata and source URLs. Verify upstream media rights before image training or redistribution."
+    },
+    "provenance": {
+      "source_site": "civitai.com",
+      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d53d35a2-f6e6-4862-92f4-01aed2f4d765/original=true/d53d35a2-f6e6-4862-92f4-01aed2f4d765.jpeg",
+      "indexed_by": "generatedgallery.com",
+      "indexed_at": "2026-05-24T04:11:16.693+00:00"
+    }
   }
 ]

@@ -12,6 +12,8 @@ Useful links:
 - [Machine Dream Finds](https://generatedgallery.com/machine-dream-finds)
 - [Public manifest](https://generatedgallery.com/index/manifest.json)
 - [Public JSONL feed](https://generatedgallery.com/index/generated-gallery.jsonl)
+- [Compressed dataset export](https://generatedgallery.com/index/generated-gallery.jsonl.gz)
+- [Prompt-only dataset export](https://generatedgallery.com/index/generated-gallery.prompts.jsonl.gz)
 
 ![Generated Gallery Screenshot](https://generatedgallery.com/og-image.png)
 
@@ -52,11 +54,13 @@ See the live hub at [generatedgallery.com/machine-dream-finds](https://generated
 - Infinite scroll with masonry grid layout
 - Mobile friendly
 
-## Protocol
+## Protocol and dataset
 
-The v0.1 protocol spec lives in [`docs/protocol/README.md`](docs/protocol/README.md).
+The v0.2 protocol spec lives in [`docs/protocol/README.md`](docs/protocol/README.md).
 
-The canonical record schema lives in [`schemas/generated-gallery-record.schema.json`](schemas/generated-gallery-record.schema.json).
+The dataset roadmap lives in [`docs/DATASET_ROADMAP.md`](docs/DATASET_ROADMAP.md), and the Hugging Face-ready dataset card draft lives in [`docs/dataset/HUGGINGFACE_DATASET_CARD.md`](docs/dataset/HUGGINGFACE_DATASET_CARD.md).
+
+The canonical record schema lives in [`public/schemas/generated-gallery-record.schema.json`](public/schemas/generated-gallery-record.schema.json).
 
 A protocol record looks like this:
 
@@ -68,6 +72,13 @@ A protocol record looks like this:
   "media": { "type": "image", "width": 1024, "height": 1024 },
   "generation": { "prompt": "cinematic portrait", "model": "Flux" },
   "taxonomy": { "category": "portraits", "tags": ["portrait"] },
+  "labels": {
+    "subjects": ["person"],
+    "styles": ["cinematic", "photorealistic"],
+    "medium": ["photo"],
+    "quality_score": 0.74,
+    "labeler": "generatedgallery-rules-v0.2.0"
+  },
   "safety": { "nsfw": false, "rating": "sfw" },
   "indexedAt": "2026-05-06T00:00:00.000Z"
 }
@@ -138,6 +149,8 @@ By default this writes SFW records to `public/index/generated-gallery.jsonl`, pl
 
 - `public/index/manifest.json` — feed metadata, record count, checksum, source/category counts
 - `public/index/generated-gallery.sample.json` — first 3 sample records for quick inspection
+- `public/index/generated-gallery.prompts.jsonl` — prompt/label-focused split
+- `.jsonl.gz` versions of both large exports for downstream consumers
 
 You can pass a path and limit:
 
@@ -156,7 +169,7 @@ npm run validate:index -- ./exports/all.jsonl
 
 ```text
 docs/protocol/   protocol spec and feed notes
-schemas/         JSON Schema for portable records
+public/schemas/  JSON Schema for portable records
 scripts/         crawlers, dedupe, and export tools
 src/app/         Next.js App Router pages
 src/components/  viewer UI components
@@ -172,6 +185,8 @@ Useful contributions:
 
 - Source adapters for new AI media sites
 - Better prompt and model metadata extraction
+- Label audits and taxonomy improvements
+- Dataset loaders/notebooks for Python, DuckDB, Polars, and JS
 - Deduplication improvements
 - Search improvements, including embeddings or hybrid search
 - Static JSONL feed support in the viewer

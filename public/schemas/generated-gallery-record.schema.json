@@ -2,76 +2,367 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://generatedgallery.com/schemas/generated-gallery-record.schema.json",
   "title": "Generated Gallery Record",
+  "description": "Metadata record for generated media indexed by GeneratedGallery. Media URLs remain subject to upstream rights.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "url", "source", "media", "generation", "taxonomy", "safety", "indexedAt"],
+  "required": [
+    "id",
+    "url",
+    "source",
+    "media",
+    "generation",
+    "taxonomy",
+    "safety",
+    "indexedAt"
+  ],
   "properties": {
-    "id": { "type": "string", "minLength": 1 },
-    "url": { "type": "string", "format": "uri" },
-    "thumbnailUrl": { "type": ["string", "null"], "format": "uri" },
-    "title": { "type": ["string", "null"] },
-    "description": { "type": ["string", "null"] },
+    "protocolVersion": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "thumbnailUrl": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri"
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["site"],
+      "required": [
+        "site"
+      ],
       "properties": {
-        "site": { "type": "string", "minLength": 1 },
-        "url": { "type": ["string", "null"], "format": "uri" },
-        "externalId": { "type": ["string", "null"] },
-        "creator": { "type": ["string", "null"] }
+        "site": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "externalId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "creator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "media": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
-        "type": { "enum": ["image", "video", "gif", "unknown"] },
-        "width": { "type": ["integer", "null"], "minimum": 1 },
-        "height": { "type": ["integer", "null"], "minimum": 1 },
-        "mimeType": { "type": ["string", "null"] }
+        "type": {
+          "enum": [
+            "image",
+            "video",
+            "gif",
+            "unknown"
+          ]
+        },
+        "width": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "height": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "mimeType": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "generation": {
       "type": "object",
       "additionalProperties": true,
       "properties": {
-        "prompt": { "type": ["string", "null"] },
-        "negativePrompt": { "type": ["string", "null"] },
-        "model": { "type": ["string", "null"] },
-        "seed": { "type": ["string", "number", "null"] },
-        "steps": { "type": ["integer", "null"], "minimum": 1 },
-        "sampler": { "type": ["string", "null"] }
+        "prompt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "negativePrompt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seed": {
+          "type": [
+            "string",
+            "number",
+            "null"
+          ]
+        },
+        "steps": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "sampler": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "taxonomy": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "category": { "type": ["string", "null"] },
-        "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "styles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "aesthetic": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "medium": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "composition": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "use_cases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "quality_flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "safety": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "model_family": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "labeler": {
+          "type": "string"
+        },
+        "avoidance_flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "type": "string"
+        },
+        "media": {
+          "type": "string"
+        },
+        "training_use": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_site": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "indexed_by": {
+          "type": "string"
+        },
+        "indexed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
       }
     },
     "safety": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["nsfw"],
+      "required": [
+        "nsfw"
+      ],
       "properties": {
-        "nsfw": { "type": "boolean" },
-        "rating": { "enum": ["sfw", "mature", "nsfw", "unknown"] }
+        "nsfw": {
+          "type": "boolean"
+        },
+        "rating": {
+          "enum": [
+            "sfw",
+            "mature",
+            "nsfw",
+            "unknown"
+          ]
+        }
       }
     },
     "stats": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "views": { "type": "integer", "minimum": 0 },
-        "downloads": { "type": "integer", "minimum": 0 },
-        "upvotes": { "type": "integer", "minimum": 0 }
+        "views": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "downloads": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "upvotes": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
-    "createdAt": { "type": ["string", "null"], "format": "date-time" },
-    "indexedAt": { "type": "string", "format": "date-time" }
+    "createdAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "indexedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
   }
 }

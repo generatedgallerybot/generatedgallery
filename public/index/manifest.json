@@ -1,38 +1,122 @@
 {
   "name": "Generated Gallery public SFW index",
-  "protocolVersion": "0.1.0",
-  "updatedAt": "2026-05-07T02:20:29.725Z",
-  "generatedAt": "2026-05-07T02:20:25.270Z",
+  "protocolVersion": "0.2.0",
+  "labelerVersion": "generatedgallery-rules-v0.2.0",
+  "updatedAt": "2026-05-24T06:01:37.036Z",
+  "generatedAt": "2026-05-24T06:01:28.157Z",
   "itemsUrl": "https://generatedgallery.com/index/generated-gallery.jsonl",
   "apiUrl": "https://generatedgallery.com/api/index?safety=sfw",
   "schemaUrl": "https://generatedgallery.com/schemas/generated-gallery-record.schema.json",
+  "promptOnlyUrl": "https://generatedgallery.com/index/generated-gallery.prompts.jsonl",
+  "compressedItemsUrl": "https://generatedgallery.com/index/generated-gallery.jsonl.gz",
+  "compressedPromptOnlyUrl": "https://generatedgallery.com/index/generated-gallery.prompts.jsonl.gz",
   "license": "metadata: CC0 where possible, media: upstream terms apply",
   "defaultSafety": "sfw",
   "format": "jsonl",
   "recordCount": 10000,
-  "byteSize": 16472410,
-  "sha256": "212fb12fb34a2e823ffc3495e307c1f8db178cea36c8d6838a6a66a355155430",
+  "byteSize": 25294721,
+  "compressedByteSize": 2673421,
+  "promptOnlyByteSize": 17375562,
+  "compressedPromptOnlyByteSize": 2224551,
+  "sha256": "800f3361f3e013c58c593cc944fd5d09e03b84e4f0ab269cfa7d97ff932b6f77",
   "sourceCounts": {
-    "civitai.com": 9921,
-    "prompthero": 79
+    "civitai.com": 9898,
+    "prompthero": 72,
+    "generatedgallery.com": 30
   },
   "categoryCounts": {
-    "unknown": 5224,
-    "anime": 1380,
-    "vehicles": 756,
-    "portraits": 536,
-    "fantasy": 333,
-    "3d-render": 311,
-    "animals": 295,
-    "landscapes": 263,
-    "photorealistic": 211,
-    "abstract": 153,
-    "architecture": 131,
-    "interior-design": 128,
-    "fashion": 125,
-    "food": 111,
-    "sci-fi": 27,
-    "digital-art": 16
+    "unknown": 5723,
+    "anime": 850,
+    "vehicles": 840,
+    "portraits": 642,
+    "fantasy": 355,
+    "landscapes": 323,
+    "animals": 241,
+    "3d-render": 232,
+    "photorealistic": 153,
+    "abstract": 143,
+    "interior-design": 134,
+    "fashion": 120,
+    "architecture": 101,
+    "food": 56,
+    "sci-fi": 53,
+    "digital-art": 31,
+    "Prompts": 3
+  },
+  "labelCounts": {
+    "subjects": {
+      "person": 5218,
+      "architecture": 1294,
+      "landscape": 1187,
+      "animal": 1039,
+      "product": 614,
+      "food": 281,
+      "vehicle": 245,
+      "robot": 228
+    },
+    "styles": {
+      "anime": 3578,
+      "cinematic": 1536,
+      "photorealistic": 1142,
+      "fantasy": 946,
+      "sci-fi": 498,
+      "3d-render": 456,
+      "line-art": 206,
+      "watercolor": 168,
+      "oil-painting": 147,
+      "pixel-art": 85
+    },
+    "medium": {
+      "photo": 1093,
+      "illustration": 897,
+      "painting": 510,
+      "render": 393,
+      "poster": 41
+    },
+    "use_cases": {
+      "wallpaper": 2877,
+      "character-reference": 760,
+      "concept-art": 156,
+      "social-avatar": 35,
+      "product-mockup": 8
+    },
+    "quality_flags": {
+      "text-artifacts": 193,
+      "low-detail": 181,
+      "watermark": 158,
+      "anatomy-issues": 16,
+      "bad-hands": 1
+    },
+    "avoidance_flags": {
+      "low-detail": 4971,
+      "watermark": 4128,
+      "anatomy-issues": 3618,
+      "text-artifacts": 2863,
+      "bad-hands": 2568
+    },
+    "safety": {
+      "sfw": 10000
+    },
+    "model_family": {
+      "stable-diffusion": 9051,
+      "stable-diffusion-xl": 867,
+      "unknown": 79,
+      "flux": 3
+    }
+  },
+  "splits": {
+    "default": {
+      "safety": "sfw",
+      "recordCount": 10000,
+      "url": "https://generatedgallery.com/index/generated-gallery.jsonl",
+      "compressedUrl": "https://generatedgallery.com/index/generated-gallery.jsonl.gz"
+    },
+    "prompts": {
+      "safety": "sfw",
+      "recordCount": 10000,
+      "url": "https://generatedgallery.com/index/generated-gallery.prompts.jsonl",
+      "compressedUrl": "https://generatedgallery.com/index/generated-gallery.prompts.jsonl.gz"
+    }
   },
   "sampleRecordsUrl": "https://generatedgallery.com/index/generated-gallery.sample.json"
 }

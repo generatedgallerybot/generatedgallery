@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Live dataset manifest
+    url: https://generatedgallery.com/index/manifest.json
+    about: Current public export metadata, schema version, and counts
+  - name: Protocol docs
+    url: https://generatedgallery.com/protocol
+    about: Human-readable protocol overview
