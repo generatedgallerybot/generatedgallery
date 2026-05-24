@@ -78,6 +78,7 @@ export default function AdminClient() {
   }
 
   const recentUsers = useMemo(() => overview?.users || [], [overview]);
+  const usersById = useMemo(() => Object.fromEntries(recentUsers.map((item: any) => [item.id, item])), [recentUsers]);
 
   if (loading) return <main className="admin-page"><p>Loading...</p></main>;
   if (!user) return <main className="admin-page"><Panel><h1>Admin</h1><p>Sign in as Cody to continue.</p><button className="admin-primary" onClick={() => setShowAuthModal(true)}>Sign in</button></Panel></main>;
@@ -147,14 +148,14 @@ export default function AdminClient() {
         </Panel>
         <Panel>
           <h2>Recent generation jobs + results</h2>
-          <div className="admin-list">{overview.jobs.length ? overview.jobs.map(job => <JobRow key={job.id} job={job} />) : <p>No jobs yet.</p>}</div>
+          <div className="admin-list">{overview.jobs.length ? overview.jobs.map(job => <JobRow key={job.id} job={job} user={usersById[job.user_id]} userBusy={userBusy} onBan={updateUserBan} />) : <p>No jobs yet.</p>}</div>
         </Panel>
       </section>
 
       <section className="admin-grid wide">
         <Panel>
           <h2>Recent generated outputs</h2>
-          <div className="admin-list admin-output-list">{overview.outputs?.length ? overview.outputs.map(output => <OutputThumb key={output.id} output={output} />) : <p>No outputs yet.</p>}</div>
+          <div className="admin-list admin-output-list">{overview.outputs?.length ? overview.outputs.map(output => <OutputThumb key={output.id} output={output} user={usersById[output.user_id]} userBusy={userBusy} onBan={updateUserBan} />) : <p>No outputs yet.</p>}</div>
         </Panel>
         <Panel>
           <h2>Recent ledger entries</h2>
@@ -177,20 +178,29 @@ function Row({ title, meta, sub }: { title: string; meta?: string; sub?: string 
   return <div className="admin-row"><b>{title}</b>{meta && <span>{meta}</span>}{sub && <em>{sub}</em>}</div>;
 }
 
-function JobRow({ job }: { job: any }) {
+function JobRow({ job, user, userBusy, onBan }: { job: any; user?: any; userBusy?: string | null; onBan?: (target: any, action: 'ban' | 'unban') => void }) {
+  const banned = Boolean(user?.banned_until && new Date(user.banned_until).getTime() > Date.now());
   return <div className="admin-row">
     <b>{job.status} · {job.workflow_key} · {job.credit_cost} credits</b>
     <span>{job.prompt}</span>
-    <span>User {job.user_id} · {job.outputs?.length || 0} output(s)</span>
+    <span>User {user?.email || job.user_id} · {job.outputs?.length || 0} output(s){banned ? ' · banned' : ''}</span>
+    {user && onBan && <button className={banned ? 'admin-secondary' : 'admin-danger'} disabled={userBusy === user.id} onClick={() => onBan(user, banned ? 'unban' : 'ban')}>
+      {userBusy === user.id ? 'Saving...' : banned ? 'Unban user' : 'Ban user'}
+    </button>}
     {job.error && <span>Error: {job.error}</span>}
     <em>{new Date(job.created_at).toLocaleString()}</em>
     {job.outputs?.length ? <div className="admin-thumbs">{job.outputs.map((output: any) => <OutputThumb key={output.id} output={output} compact />)}</div> : null}
   </div>;
 }
 
-function OutputThumb({ output, compact = false }: { output: any; compact?: boolean }) {
-  return <a className={compact ? 'admin-thumb compact' : 'admin-thumb'} href={output.image_url} target="_blank" rel="noopener noreferrer">
-    <img src={output.image_url} alt="Generated result" loading="lazy" />
+function OutputThumb({ output, compact = false, user, userBusy, onBan }: { output: any; compact?: boolean; user?: any; userBusy?: string | null; onBan?: (target: any, action: 'ban' | 'unban') => void }) {
+  const banned = Boolean(user?.banned_until && new Date(user.banned_until).getTime() > Date.now());
+  return <div className={compact ? 'admin-thumb compact' : 'admin-thumb'}>
+    <a href={output.image_url} target="_blank" rel="noopener noreferrer"><img src={output.image_url} alt="Generated result" loading="lazy" /></a>
     {!compact && <span>{output.width || '?'}×{output.height || '?'} · {new Date(output.created_at).toLocaleString()}</span>}
-  </a>;
+    {!compact && <span>User {user?.email || output.user_id}{banned ? ' · banned' : ''}</span>}
+    {!compact && user && onBan && <button className={banned ? 'admin-secondary' : 'admin-danger'} disabled={userBusy === user.id} onClick={() => onBan(user, banned ? 'unban' : 'ban')}>
+      {userBusy === user.id ? 'Saving...' : banned ? 'Unban user' : 'Ban user'}
+    </button>}
+  </div>;
 }
