@@ -17,6 +17,9 @@ type Asset = {
   tags?: string[];
   preview_url?: string | null;
   is_nsfw?: boolean;
+  likes?: number;
+  uses?: number;
+  downloads?: number;
   user_email?: string | null;
   created_at: string;
 };
@@ -35,6 +38,20 @@ export default function AssetDetailClient({ id }: { id: string }) {
     fetch(`/api/model-assets?id=${encodeURIComponent(id)}&nsfw=true`).then(r => r.ok ? r.json() : null).then(body => setAsset(body?.asset || null)).catch(() => {});
     fetch(`/api/comments?targetType=model_asset&targetId=${encodeURIComponent(id)}`).then(r => r.ok ? r.json() : null).then(body => setComments(body?.comments || [])).catch(() => {});
   }, [id]);
+
+  async function recordAction(action: 'like' | 'use' | 'download') {
+    if (!asset) return;
+    if (action === 'like' && !user) { setShowAuthModal(true); return; }
+    try {
+      const res = await fetch('/api/model-assets/action', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ assetId: asset.id, action }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok) setAsset(prev => prev ? { ...prev, likes: body.likes ?? prev.likes, uses: body.uses ?? prev.uses, downloads: body.downloads ?? prev.downloads } : prev);
+    } catch {}
+  }
 
   function generateHref() {
     if (!asset) return '/generate';
@@ -76,8 +93,9 @@ export default function AssetDetailClient({ id }: { id: string }) {
         <h1>{asset.name}</h1>
         <p>{asset.description || 'No description yet. Mysterious artifact. Possibly powerful. Possibly cursed.'}</p>
         <div className="lora-search-row asset-actions">
-          <Link href={generateHref()}>Use in Studio</Link>
-          <a href={asset.file_url} target="_blank" rel="noopener noreferrer">Open file</a>
+          <Link href={generateHref()} onClick={() => recordAction('use')}>Use in Studio</Link>
+          <a href={asset.file_url} target="_blank" rel="noopener noreferrer" onClick={() => recordAction('download')}>Open file</a>
+          <button onClick={() => recordAction('like')}>Like {asset.likes ? `(${asset.likes})` : ''}</button>
           {asset.source_url && <a href={asset.source_url} target="_blank" rel="noopener noreferrer">Source</a>}
         </div>
       </div>
@@ -92,6 +110,7 @@ export default function AssetDetailClient({ id }: { id: string }) {
         <p><b>Tags:</b> {asset.tags?.join(', ') || 'none listed'}</p>
         <p><b>License:</b> {asset.license || 'not specified'}</p>
         <p><b>Shared by:</b> {asset.user_email || 'gallery creature'}</p>
+        <p><b>Stats:</b> {asset.likes || 0} likes · {asset.uses || 0} uses · {asset.downloads || 0} downloads</p>
       </div>
 
       <div className="lora-upload-card">
