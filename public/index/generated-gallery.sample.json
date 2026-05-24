@@ -1,30 +1,33 @@
 [
   {
-    "id": "civitai.com:b4d479fc-b6e8-4b08-bde7-b1c08339bc78",
-    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/05cd0d21-3f96-4f68-b304-c30f1241e71a/original=true/05cd0d21-3f96-4f68-b304-c30f1241e71a.jpeg",
-    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/05cd0d21-3f96-4f68-b304-c30f1241e71a/original=true/05cd0d21-3f96-4f68-b304-c30f1241e71a.jpeg",
+    "id": "civitai.com:8c9d01f7-5c70-4d34-921d-19db958c5878",
+    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1edf766b-b369-4e4b-a581-1cd3fc47fdd7/original=true/1edf766b-b369-4e4b-a581-1cd3fc47fdd7.jpeg",
+    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1edf766b-b369-4e4b-a581-1cd3fc47fdd7/original=true/1edf766b-b369-4e4b-a581-1cd3fc47fdd7.jpeg",
     "title": null,
     "description": null,
     "source": {
       "site": "civitai.com",
-      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/05cd0d21-3f96-4f68-b304-c30f1241e71a/original=true/05cd0d21-3f96-4f68-b304-c30f1241e71a.jpeg",
+      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1edf766b-b369-4e4b-a581-1cd3fc47fdd7/original=true/1edf766b-b369-4e4b-a581-1cd3fc47fdd7.jpeg",
       "externalId": null,
       "creator": null
     },
     "media": {
       "type": "image",
-      "width": 600,
-      "height": 800,
+      "width": 832,
+      "height": 1216,
       "mimeType": null
     },
     "generation": {
-      "prompt": null,
-      "negativePrompt": "score_5, score_4, score_3_down, ugly, poorly drawn face, blurry, blurry face, (3d), realistic, muscular, blurry eyes, poorly drawn eyes, patreon, artist name,lowres, worst quality, bad quality, sketch, error, bad hands, logo, text, watermark, username, date, ugly, distorted, censored, multiple views, 2koma, 4koma, comic, manga, bad anatomy, bad proportions, extra limbs, extra digit, extra legs, extra legs and arms, disfigured, missing arms, fused fingers, missing fingers, unclear eyes, mammal, furry, ambiguous form, futa",
-      "model": "cyberrealisticXL_desireV30"
+      "prompt": "1girl, vintage, pinup, long hair, red hair, green eye, detailed eyes, light freckles, smiling, natural skin, dress , floral motif, upper body only, on a balcony, ((sky background)),  from below, looking at viewer, highly detailed, fence in the foreground, masterwork, masterpiece, best quality, detailed, depth of field, high detail, best quality, very aesthetic, 8k, pinup pose, close-up",
+      "negativePrompt": "Building, legs, lowres, worst quality, low quality, bad anatomy, bad hands, jpeg artifacts, frame",
+      "model": null
     },
     "taxonomy": {
       "category": null,
-      "tags": []
+      "tags": [
+        "vintage",
+        "detailed"
+      ]
     },
     "safety": {
       "nsfw": false,
@@ -35,20 +38,29 @@
       "downloads": 0,
       "upvotes": 0
     },
-    "createdAt": "2026-05-24T04:11:17.508454+00:00",
-    "indexedAt": "2026-05-24T04:11:17.467+00:00",
+    "createdAt": "2026-05-24T12:08:44.978948+00:00",
+    "indexedAt": "2026-05-24T12:08:44.93+00:00",
     "protocolVersion": "0.2.0",
     "labels": {
-      "subjects": [],
-      "styles": [],
-      "aesthetic": [],
+      "subjects": [
+        "person"
+      ],
+      "styles": [
+        "anime"
+      ],
+      "aesthetic": [
+        "high-detail",
+        "vintage"
+      ],
       "medium": [],
-      "composition": [],
-      "use_cases": [],
+      "composition": [
+        "portrait"
+      ],
+      "use_cases": [
+        "wallpaper"
+      ],
       "quality_flags": [],
       "avoidance_flags": [
-        "watermark",
-        "text-artifacts",
         "bad-hands",
         "low-detail",
         "anatomy-issues"
@@ -58,11 +70,11 @@
       ],
       "model_family": "stable-diffusion",
       "confidence": {
-        "subjects": 0,
-        "styles": 0,
+        "subjects": 0.75,
+        "styles": 0.75,
         "quality_flags": 0
       },
-      "quality_score": 0.32,
+      "quality_score": 0.78,
       "labeler": "generatedgallery-rules-v0.2.0"
     },
     "rights": {
@@ -73,37 +85,40 @@
     },
     "provenance": {
       "source_site": "civitai.com",
-      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/05cd0d21-3f96-4f68-b304-c30f1241e71a/original=true/05cd0d21-3f96-4f68-b304-c30f1241e71a.jpeg",
+      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1edf766b-b369-4e4b-a581-1cd3fc47fdd7/original=true/1edf766b-b369-4e4b-a581-1cd3fc47fdd7.jpeg",
       "indexed_by": "generatedgallery.com",
-      "indexed_at": "2026-05-24T04:11:17.467+00:00"
+      "indexed_at": "2026-05-24T12:08:44.93+00:00"
     }
   },
   {
-    "id": "civitai.com:979b9ac7-5055-4709-a652-8bdefe620cdb",
-    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/724f72bb-9b88-4aef-b605-f45a016dee1c/original=true/724f72bb-9b88-4aef-b605-f45a016dee1c.jpeg",
-    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/724f72bb-9b88-4aef-b605-f45a016dee1c/original=true/724f72bb-9b88-4aef-b605-f45a016dee1c.jpeg",
+    "id": "civitai.com:1d7e48cd-e66d-4e03-a8d8-580b64c89171",
+    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/517f11c3-880d-4411-a4aa-a1877200799c/original=true/517f11c3-880d-4411-a4aa-a1877200799c.jpeg",
+    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/517f11c3-880d-4411-a4aa-a1877200799c/original=true/517f11c3-880d-4411-a4aa-a1877200799c.jpeg",
     "title": null,
     "description": null,
     "source": {
       "site": "civitai.com",
-      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/724f72bb-9b88-4aef-b605-f45a016dee1c/original=true/724f72bb-9b88-4aef-b605-f45a016dee1c.jpeg",
+      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/517f11c3-880d-4411-a4aa-a1877200799c/original=true/517f11c3-880d-4411-a4aa-a1877200799c.jpeg",
       "externalId": null,
       "creator": null
     },
     "media": {
       "type": "image",
-      "width": 600,
-      "height": 800,
+      "width": 832,
+      "height": 1216,
       "mimeType": null
     },
     "generation": {
-      "prompt": null,
-      "negativePrompt": "score_5, score_4, score_3_down, ugly, poorly drawn face, blurry, blurry face, (3d), realistic, muscular, blurry eyes, poorly drawn eyes, patreon, artist name,lowres, worst quality, bad quality, sketch, error, bad hands, logo, text, watermark, username, date, ugly, distorted, censored, multiple views, 2koma, 4koma, comic, manga, bad anatomy, bad proportions, extra limbs, extra digit, extra legs, extra legs and arms, disfigured, missing arms, fused fingers, missing fingers, unclear eyes, mammal, furry, ambiguous form, futa",
-      "model": "cyberrealisticXL_desireV30"
+      "prompt": "1girl, vintage, pinup, long hair, red hair, green eye, detailed eyes, light freckles, smiling, natural skin, dress , floral motif, upper body only, on a balcony, ((sky background)),  from below, looking at viewer, highly detailed, fence in the foreground, masterwork, masterpiece, best quality, detailed, depth of field, high detail, best quality, very aesthetic, 8k, pinup pose, close-up",
+      "negativePrompt": "Building, legs, lowres, worst quality, low quality, bad anatomy, bad hands, jpeg artifacts, frame",
+      "model": null
     },
     "taxonomy": {
       "category": null,
-      "tags": []
+      "tags": [
+        "vintage",
+        "detailed"
+      ]
     },
     "safety": {
       "nsfw": false,
@@ -114,20 +129,29 @@
       "downloads": 0,
       "upvotes": 0
     },
-    "createdAt": "2026-05-24T04:11:17.123211+00:00",
-    "indexedAt": "2026-05-24T04:11:17.081+00:00",
+    "createdAt": "2026-05-24T12:08:44.589915+00:00",
+    "indexedAt": "2026-05-24T12:08:44.546+00:00",
     "protocolVersion": "0.2.0",
     "labels": {
-      "subjects": [],
-      "styles": [],
-      "aesthetic": [],
+      "subjects": [
+        "person"
+      ],
+      "styles": [
+        "anime"
+      ],
+      "aesthetic": [
+        "high-detail",
+        "vintage"
+      ],
       "medium": [],
-      "composition": [],
-      "use_cases": [],
+      "composition": [
+        "portrait"
+      ],
+      "use_cases": [
+        "wallpaper"
+      ],
       "quality_flags": [],
       "avoidance_flags": [
-        "watermark",
-        "text-artifacts",
         "bad-hands",
         "low-detail",
         "anatomy-issues"
@@ -137,11 +161,11 @@
       ],
       "model_family": "stable-diffusion",
       "confidence": {
-        "subjects": 0,
-        "styles": 0,
+        "subjects": 0.75,
+        "styles": 0.75,
         "quality_flags": 0
       },
-      "quality_score": 0.32,
+      "quality_score": 0.78,
       "labeler": "generatedgallery-rules-v0.2.0"
     },
     "rights": {
@@ -152,37 +176,40 @@
     },
     "provenance": {
       "source_site": "civitai.com",
-      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/724f72bb-9b88-4aef-b605-f45a016dee1c/original=true/724f72bb-9b88-4aef-b605-f45a016dee1c.jpeg",
+      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/517f11c3-880d-4411-a4aa-a1877200799c/original=true/517f11c3-880d-4411-a4aa-a1877200799c.jpeg",
       "indexed_by": "generatedgallery.com",
-      "indexed_at": "2026-05-24T04:11:17.081+00:00"
+      "indexed_at": "2026-05-24T12:08:44.546+00:00"
     }
   },
   {
-    "id": "civitai.com:02d87b2e-736e-406b-b8df-94367ff3a5b5",
-    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d53d35a2-f6e6-4862-92f4-01aed2f4d765/original=true/d53d35a2-f6e6-4862-92f4-01aed2f4d765.jpeg",
-    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d53d35a2-f6e6-4862-92f4-01aed2f4d765/original=true/d53d35a2-f6e6-4862-92f4-01aed2f4d765.jpeg",
+    "id": "civitai.com:e4d45a24-44c3-4b88-bb45-55186793b749",
+    "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/62fe8380-2d2c-4370-83b4-2bc75e5fd7c1/original=true/62fe8380-2d2c-4370-83b4-2bc75e5fd7c1.jpeg",
+    "thumbnailUrl": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/62fe8380-2d2c-4370-83b4-2bc75e5fd7c1/original=true/62fe8380-2d2c-4370-83b4-2bc75e5fd7c1.jpeg",
     "title": null,
     "description": null,
     "source": {
       "site": "civitai.com",
-      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d53d35a2-f6e6-4862-92f4-01aed2f4d765/original=true/d53d35a2-f6e6-4862-92f4-01aed2f4d765.jpeg",
+      "url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/62fe8380-2d2c-4370-83b4-2bc75e5fd7c1/original=true/62fe8380-2d2c-4370-83b4-2bc75e5fd7c1.jpeg",
       "externalId": null,
       "creator": null
     },
     "media": {
       "type": "image",
-      "width": 600,
-      "height": 800,
+      "width": 832,
+      "height": 1216,
       "mimeType": null
     },
     "generation": {
-      "prompt": null,
-      "negativePrompt": "score_5, score_4, score_3_down, ugly, poorly drawn face, blurry, blurry face, (3d), realistic, muscular, blurry eyes, poorly drawn eyes, patreon, artist name,lowres, worst quality, bad quality, sketch, error, bad hands, logo, text, watermark, username, date, ugly, distorted, censored, multiple views, 2koma, 4koma, comic, manga, bad anatomy, bad proportions, extra limbs, extra digit, extra legs, extra legs and arms, disfigured, missing arms, fused fingers, missing fingers, unclear eyes, mammal, furry, ambiguous form, futa",
-      "model": "cyberrealisticXL_desireV30"
+      "prompt": "1girl, vintage, pinup, long hair, red hair, green eye, light freckles, smiling, natural skin, dress , floral motif, upper body only, on a balcony, ((sky background)),  from below, looking at viewer, highly detailed, fence in the foreground, masterwork, masterpiece, best quality, detailed, depth of field, high detail, best quality, very aesthetic, 8k, pinup pose, close-up",
+      "negativePrompt": "Building, legs, lowres, worst quality, low quality, bad anatomy, bad hands, jpeg artifacts, frame",
+      "model": null
     },
     "taxonomy": {
       "category": null,
-      "tags": []
+      "tags": [
+        "vintage",
+        "detailed"
+      ]
     },
     "safety": {
       "nsfw": false,
@@ -193,20 +220,29 @@
       "downloads": 0,
       "upvotes": 0
     },
-    "createdAt": "2026-05-24T04:11:16.739605+00:00",
-    "indexedAt": "2026-05-24T04:11:16.693+00:00",
+    "createdAt": "2026-05-24T12:08:44.206857+00:00",
+    "indexedAt": "2026-05-24T12:08:44.157+00:00",
     "protocolVersion": "0.2.0",
     "labels": {
-      "subjects": [],
-      "styles": [],
-      "aesthetic": [],
+      "subjects": [
+        "person"
+      ],
+      "styles": [
+        "anime"
+      ],
+      "aesthetic": [
+        "high-detail",
+        "vintage"
+      ],
       "medium": [],
-      "composition": [],
-      "use_cases": [],
+      "composition": [
+        "portrait"
+      ],
+      "use_cases": [
+        "wallpaper"
+      ],
       "quality_flags": [],
       "avoidance_flags": [
-        "watermark",
-        "text-artifacts",
         "bad-hands",
         "low-detail",
         "anatomy-issues"
@@ -216,11 +252,11 @@
       ],
       "model_family": "stable-diffusion",
       "confidence": {
-        "subjects": 0,
-        "styles": 0,
+        "subjects": 0.75,
+        "styles": 0.75,
         "quality_flags": 0
       },
-      "quality_score": 0.32,
+      "quality_score": 0.78,
       "labeler": "generatedgallery-rules-v0.2.0"
     },
     "rights": {
@@ -231,9 +267,9 @@
     },
     "provenance": {
       "source_site": "civitai.com",
-      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d53d35a2-f6e6-4862-92f4-01aed2f4d765/original=true/d53d35a2-f6e6-4862-92f4-01aed2f4d765.jpeg",
+      "source_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/62fe8380-2d2c-4370-83b4-2bc75e5fd7c1/original=true/62fe8380-2d2c-4370-83b4-2bc75e5fd7c1.jpeg",
       "indexed_by": "generatedgallery.com",
-      "indexed_at": "2026-05-24T04:11:16.693+00:00"
+      "indexed_at": "2026-05-24T12:08:44.157+00:00"
     }
   }
 ]

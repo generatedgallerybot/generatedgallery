@@ -161,6 +161,24 @@ function countLabels(labelCounts, labels) {
   increment(labelCounts.model_family, labels.model_family || 'unknown');
 }
 
+
+function auditBatches() {
+  const auditDir = path.resolve(__dirname, '../public/index/audit');
+  if (!fs.existsSync(auditDir)) return [];
+  return fs.readdirSync(auditDir)
+    .filter(name => name.endsWith('.jsonl'))
+    .sort()
+    .map(name => {
+      const fullPath = path.join(auditDir, name);
+      const lineCount = fs.readFileSync(fullPath, 'utf8').split('\n').filter(Boolean).length;
+      return {
+        name: name.replace(/\.jsonl$/, ''),
+        url: publicUrlFor(fullPath),
+        recordCount: lineCount
+      };
+    });
+}
+
 function promptOnlyRecord(record) {
   return {
     id: record.id,
@@ -268,6 +286,7 @@ async function main() {
     sourceCounts: topEntries(sourceCounts),
     categoryCounts: topEntries(categoryCounts),
     labelCounts: Object.fromEntries(Object.entries(labelCounts).map(([key, value]) => [key, topEntries(value)])),
+    auditBatches: auditBatches(),
     splits: {
       default: { safety: options.safety, recordCount: written, url: publicUrlFor(options.outPath), compressedUrl: publicUrlFor(gzipStats.path) },
       prompts: { safety: options.safety, recordCount: written, url: publicUrlFor(options.promptOnlyPath), compressedUrl: publicUrlFor(promptGzipStats.path) }

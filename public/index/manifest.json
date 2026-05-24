@@ -2,8 +2,8 @@
   "name": "Generated Gallery public SFW index",
   "protocolVersion": "0.2.0",
   "labelerVersion": "generatedgallery-rules-v0.2.0",
-  "updatedAt": "2026-05-24T06:01:37.036Z",
-  "generatedAt": "2026-05-24T06:01:28.157Z",
+  "updatedAt": "2026-05-24T13:17:07.483Z",
+  "generatedAt": "2026-05-24T13:17:00.511Z",
   "itemsUrl": "https://generatedgallery.com/index/generated-gallery.jsonl",
   "apiUrl": "https://generatedgallery.com/api/index?safety=sfw",
   "schemaUrl": "https://generatedgallery.com/schemas/generated-gallery-record.schema.json",
@@ -14,96 +14,103 @@
   "defaultSafety": "sfw",
   "format": "jsonl",
   "recordCount": 10000,
-  "byteSize": 25294721,
-  "compressedByteSize": 2673421,
-  "promptOnlyByteSize": 17375562,
-  "compressedPromptOnlyByteSize": 2224551,
-  "sha256": "800f3361f3e013c58c593cc944fd5d09e03b84e4f0ab269cfa7d97ff932b6f77",
+  "byteSize": 25276317,
+  "compressedByteSize": 2664591,
+  "promptOnlyByteSize": 17356966,
+  "compressedPromptOnlyByteSize": 2216086,
+  "sha256": "1a65fb7939403f8f969af839e6162d2c6be9b7345fb5d36aa2881c2bf5aa74a6",
   "sourceCounts": {
     "civitai.com": 9898,
     "prompthero": 72,
     "generatedgallery.com": 30
   },
   "categoryCounts": {
-    "unknown": 5723,
-    "anime": 850,
-    "vehicles": 840,
-    "portraits": 642,
+    "unknown": 5698,
+    "vehicles": 851,
+    "anime": 844,
+    "portraits": 649,
     "fantasy": 355,
-    "landscapes": 323,
-    "animals": 241,
-    "3d-render": 232,
-    "photorealistic": 153,
-    "abstract": 143,
-    "interior-design": 134,
-    "fashion": 120,
-    "architecture": 101,
+    "landscapes": 312,
+    "animals": 242,
+    "3d-render": 235,
+    "photorealistic": 155,
+    "abstract": 142,
+    "interior-design": 142,
+    "fashion": 118,
+    "architecture": 99,
+    "sci-fi": 68,
     "food": 56,
-    "sci-fi": 53,
     "digital-art": 31,
     "Prompts": 3
   },
   "labelCounts": {
     "subjects": {
-      "person": 5218,
-      "architecture": 1294,
-      "landscape": 1187,
-      "animal": 1039,
-      "product": 614,
-      "food": 281,
-      "vehicle": 245,
-      "robot": 228
+      "person": 5211,
+      "architecture": 1312,
+      "landscape": 1176,
+      "animal": 1023,
+      "product": 634,
+      "food": 286,
+      "vehicle": 241,
+      "robot": 232
     },
     "styles": {
-      "anime": 3578,
-      "cinematic": 1536,
-      "photorealistic": 1142,
-      "fantasy": 946,
-      "sci-fi": 498,
-      "3d-render": 456,
-      "line-art": 206,
-      "watercolor": 168,
+      "anime": 3564,
+      "cinematic": 1541,
+      "photorealistic": 1145,
+      "fantasy": 934,
+      "sci-fi": 513,
+      "3d-render": 462,
+      "line-art": 207,
+      "watercolor": 179,
       "oil-painting": 147,
-      "pixel-art": 85
+      "pixel-art": 89
     },
     "medium": {
-      "photo": 1093,
-      "illustration": 897,
-      "painting": 510,
-      "render": 393,
-      "poster": 41
+      "photo": 1097,
+      "illustration": 877,
+      "painting": 508,
+      "render": 398,
+      "poster": 44
     },
     "use_cases": {
-      "wallpaper": 2877,
-      "character-reference": 760,
+      "wallpaper": 2899,
+      "character-reference": 770,
       "concept-art": 156,
       "social-avatar": 35,
       "product-mockup": 8
     },
     "quality_flags": {
-      "text-artifacts": 193,
+      "text-artifacts": 195,
       "low-detail": 181,
-      "watermark": 158,
-      "anatomy-issues": 16,
+      "watermark": 160,
+      "anatomy-issues": 17,
       "bad-hands": 1
     },
     "avoidance_flags": {
-      "low-detail": 4971,
-      "watermark": 4128,
-      "anatomy-issues": 3618,
-      "text-artifacts": 2863,
-      "bad-hands": 2568
+      "low-detail": 5022,
+      "watermark": 4155,
+      "anatomy-issues": 3679,
+      "text-artifacts": 2904,
+      "bad-hands": 2586
     },
     "safety": {
       "sfw": 10000
     },
     "model_family": {
-      "stable-diffusion": 9051,
-      "stable-diffusion-xl": 867,
+      "stable-diffusion": 9052,
+      "stable-diffusion-xl": 866,
       "unknown": 79,
       "flux": 3
     }
   },
+  "auditBatches": [
+    {
+      "name": "label-audit-001",
+      "url": "https://generatedgallery.com/index/audit/label-audit-001.jsonl",
+      "recordCount": 100
+    }
+  ],
   "splits": {
     "default": {
       "safety": "sfw",
