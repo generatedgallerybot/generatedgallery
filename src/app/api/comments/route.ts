@@ -18,9 +18,14 @@ type CommentRecord = {
   user_id: string;
   user_email: string | null;
   body: string;
-  status: 'visible' | 'hidden';
+  status: 'visible' | 'hidden' | 'deleted' | 'flagged';
   created_at: string;
 };
+
+function isMissingTable(error: any) {
+  const msg = String(error?.message || error || '');
+  return msg.includes('comments') && (msg.includes('schema cache') || msg.includes('does not exist'));
+}
 
 async function readLocalComments(): Promise<CommentRecord[]> {
   try {
@@ -33,6 +38,17 @@ async function readLocalComments(): Promise<CommentRecord[]> {
 
 function cleanBody(value: unknown) {
   return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 1000);
+}
+
+function publicComment(comment: any) {
+  return {
+    id: comment.id,
+    body: comment.body,
+    userEmail: comment.user_email,
+    userId: comment.user_id,
+    createdAt: comment.created_at,
+    upvotes: comment.upvotes || 0,
+  };
 }
 
 async function isBanned(userId: string) {
@@ -54,19 +70,26 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'targetType and targetId required' }, { status: 400 });
   }
 
+  const supabase = getServerSupabase();
+  const { data, error } = await supabase
+    .from('comments')
+    .select('id,target_type,target_id,user_id,user_email,body,status,upvotes,created_at')
+    .eq('target_type', targetType)
+    .eq('target_id', targetId)
+    .eq('status', 'visible')
+    .order('created_at', { ascending: true })
+    .limit(100);
+
+  if (!error) return NextResponse.json({ ok: true, comments: (data || []).map(publicComment), storage: 'supabase' });
+  if (!isMissingTable(error)) return NextResponse.json({ ok: false, comments: [], storage: 'supabase_error', error: error.message }, { status: 500 });
+
   const comments = (await readLocalComments())
     .filter(comment => comment.status === 'visible' && comment.target_type === targetType && comment.target_id === targetId)
     .sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))
     .slice(-100)
-    .map(comment => ({
-      id: comment.id,
-      body: comment.body,
-      userEmail: comment.user_email,
-      userId: comment.user_id,
-      createdAt: comment.created_at,
-    }));
+    .map(publicComment);
 
-  return NextResponse.json({ ok: true, comments, storage: 'local_jsonl' });
+  return NextResponse.json({ ok: true, comments, storage: 'local_jsonl_missing_table' });
 }
 
 export async function POST(request: NextRequest) {
@@ -94,13 +117,12 @@ export async function POST(request: NextRequest) {
     created_at: new Date().toISOString(),
   };
 
+  const supabase = getServerSupabase();
+  const { data, error: insertError } = await supabase.from('comments').insert(record).select('*').single();
+  if (!insertError) return NextResponse.json({ ok: true, comment: publicComment(data), storage: 'supabase' });
+  if (!isMissingTable(insertError)) return NextResponse.json({ error: insertError.message }, { status: 500 });
+
   await mkdir(COMMENTS_DIR, { recursive: true });
   await appendFile(COMMENTS_FILE, JSON.stringify(record) + '\n', 'utf8');
-  return NextResponse.json({ ok: true, comment: {
-    id: record.id,
-    body: record.body,
-    userEmail: record.user_email,
-    userId: record.user_id,
-    createdAt: record.created_at,
-  } });
+  return NextResponse.json({ ok: true, comment: publicComment(record), storage: 'local_jsonl_missing_table' });
 }

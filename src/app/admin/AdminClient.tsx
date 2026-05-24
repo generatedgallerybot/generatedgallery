@@ -6,9 +6,12 @@ import { ADMIN_EMAIL_LABEL, isAdminEmail } from '@/lib/admins';
 
 type Overview = {
   storage: 'supabase' | 'local_fallback';
+  socialStorage?: 'supabase' | 'local_fallback';
   totals: { creditsIssued: number; creditsSpent: number; queued: number; completed: number; failed: number };
   jobs: any[];
   outputs?: any[];
+  comments?: any[];
+  modelAssets?: any[];
   ledger: any[];
   users: any[];
   funnel?: { summary: Record<string, number>; events: any[] };
@@ -20,6 +23,7 @@ export default function AdminClient() {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [userBusy, setUserBusy] = useState<string | null>(null);
+  const [moderationBusy, setModerationBusy] = useState<string | null>(null);
   const [grantEmail, setGrantEmail] = useState('');
   const [grantAmount, setGrantAmount] = useState('100');
   const [grantNote, setGrantNote] = useState('admin_credit_grant');
@@ -58,6 +62,21 @@ export default function AdminClient() {
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Credit grant failed');
     } finally { setBusy(false); }
+  }
+
+  async function moderateItem(kind: 'comment' | 'model_asset', id: string, action: 'hide' | 'restore' | 'delete' | 'flag') {
+    setModerationBusy(`${kind}:${id}`); setMessage('');
+    try {
+      const body = await adminFetch('/api/admin/moderation', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ kind, id, action }),
+      });
+      setMessage(`Moderation updated via ${body.storage}.`);
+      await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Moderation update failed');
+    } finally { setModerationBusy(null); }
   }
 
   async function updateUserBan(target: any, action: 'ban' | 'unban') {
@@ -99,6 +118,7 @@ export default function AdminClient() {
     {overview && <>
       <section className="admin-stats">
         <Stat label="Storage" value={overview.storage === 'local_fallback' ? 'Local fallback' : 'Supabase'} />
+        <Stat label="Social DB" value={overview.socialStorage === 'local_fallback' ? 'Local fallback' : 'Supabase'} />
         <Stat label="Credits issued" value={overview.totals.creditsIssued.toLocaleString()} />
         <Stat label="Credits spent" value={overview.totals.creditsSpent.toLocaleString()} />
         <Stat label="Queued jobs" value={overview.totals.queued.toLocaleString()} />
@@ -106,6 +126,8 @@ export default function AdminClient() {
         <Stat label="Failed" value={overview.totals.failed.toLocaleString()} />
         <Stat label="Users" value={recentUsers.length.toLocaleString()} />
         <Stat label="Outputs" value={(overview.outputs?.length || 0).toLocaleString()} />
+        <Stat label="Comments" value={(overview.comments?.length || 0).toLocaleString()} />
+        <Stat label="Assets" value={(overview.modelAssets?.length || 0).toLocaleString()} />
         <Stat label="Gen page views" value={(overview.funnel?.summary?.generate_page_view || 0).toLocaleString()} />
         <Stat label="Gen submits" value={(overview.funnel?.summary?.generate_submit || 0).toLocaleString()} />
         <Stat label="Gen successes" value={(overview.funnel?.summary?.generate_success || 0).toLocaleString()} />
@@ -158,6 +180,17 @@ export default function AdminClient() {
           <div className="admin-list admin-output-list">{overview.outputs?.length ? overview.outputs.map(output => <OutputThumb key={output.id} output={output} user={usersById[output.user_id]} userBusy={userBusy} onBan={updateUserBan} />) : <p>No outputs yet.</p>}</div>
         </Panel>
         <Panel>
+          <h2>Recent comments</h2>
+          <div className="admin-list">{overview.comments?.length ? overview.comments.map(comment => <ModerationRow key={comment.id} kind="comment" item={comment} busy={moderationBusy} onModerate={moderateItem} />) : <p>No comments yet.</p>}</div>
+        </Panel>
+      </section>
+
+      <section className="admin-grid wide">
+        <Panel>
+          <h2>Model assets</h2>
+          <div className="admin-list">{overview.modelAssets?.length ? overview.modelAssets.map(asset => <ModerationRow key={asset.id} kind="model_asset" item={asset} busy={moderationBusy} onModerate={moderateItem} />) : <p>No model assets yet.</p>}</div>
+        </Panel>
+        <Panel>
           <h2>Recent ledger entries</h2>
           <div className="admin-list">{overview.ledger.length ? overview.ledger.map(entry => <Row key={entry.id} title={`${Number(entry.amount) > 0 ? '+' : ''}${entry.amount} credits · ${entry.reason}`} meta={entry.metadata?.targetEmail || entry.metadata?.customerEmail || entry.user_id} sub={new Date(entry.created_at).toLocaleString()} />) : <p>No ledger entries yet.</p>}</div>
         </Panel>
@@ -176,6 +209,23 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function Row({ title, meta, sub }: { title: string; meta?: string; sub?: string }) {
   return <div className="admin-row"><b>{title}</b>{meta && <span>{meta}</span>}{sub && <em>{sub}</em>}</div>;
+}
+
+function ModerationRow({ kind, item, busy, onModerate }: { kind: 'comment' | 'model_asset'; item: any; busy?: string | null; onModerate: (kind: 'comment' | 'model_asset', id: string, action: 'hide' | 'restore' | 'delete' | 'flag') => void }) {
+  const isBusy = busy === `${kind}:${item.id}`;
+  const status = item.status || (kind === 'model_asset' ? 'published' : 'visible');
+  const title = kind === 'model_asset' ? item.name : `${item.target_type || 'target'} · ${item.target_id || ''}`;
+  const body = kind === 'model_asset' ? [item.asset_type, item.base_model, item.user_email].filter(Boolean).join(' · ') : item.body;
+  return <div className="admin-row">
+    <b>{title} · {status}</b>
+    <span>{body}</span>
+    <em>{new Date(item.created_at).toLocaleString()}</em>
+    <div className="admin-mini-actions">
+      <button className="admin-secondary" disabled={isBusy} onClick={() => onModerate(kind, item.id, 'restore')}>Restore</button>
+      <button className="admin-secondary" disabled={isBusy} onClick={() => onModerate(kind, item.id, 'flag')}>Flag</button>
+      <button className="admin-danger" disabled={isBusy} onClick={() => onModerate(kind, item.id, 'hide')}>Hide</button>
+    </div>
+  </div>;
 }
 
 function JobRow({ job, user, userBusy, onBan }: { job: any; user?: any; userBusy?: string | null; onBan?: (target: any, action: 'ban' | 'unban') => void }) {

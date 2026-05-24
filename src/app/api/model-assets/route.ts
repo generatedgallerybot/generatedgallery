@@ -28,9 +28,14 @@ type AssetRecord = {
   tags: string[];
   preview_url: string | null;
   is_nsfw: boolean;
-  status: 'published' | 'hidden';
+  status: 'published' | 'hidden' | 'deleted' | 'flagged';
   created_at: string;
 };
+
+function isMissingTable(error: any) {
+  const msg = String(error?.message || error || '');
+  return msg.includes('model_assets') && (msg.includes('schema cache') || msg.includes('does not exist'));
+}
 
 async function readAssets(): Promise<AssetRecord[]> {
   try {
@@ -54,6 +59,19 @@ function cleanUrl(value: unknown) {
   return '';
 }
 
+function matchesSearch(asset: AssetRecord, q: string) {
+  if (!q) return true;
+  return [asset.name, asset.description, asset.base_model, asset.asset_type, ...asset.tags, ...asset.trigger_words]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+    .includes(q);
+}
+
+function sortRecent<T extends { created_at: string }>(items: T[]) {
+  return items.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+}
+
 async function isBanned(userId: string) {
   try {
     const supabase = getServerSupabase();
@@ -65,8 +83,29 @@ async function isBanned(userId: string) {
   }
 }
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+async function readFromSupabase(searchParams: URLSearchParams) {
+  const includeNsfw = searchParams.get('nsfw') === 'true';
+  const q = (searchParams.get('q') || '').toLowerCase().trim();
+  const type = searchParams.get('type') || '';
+  const id = searchParams.get('id') || '';
+  const supabase = getServerSupabase();
+
+  if (id) {
+    const { data, error } = await supabase.from('model_assets').select('*').eq('id', id).eq('status', 'published').single();
+    if (error) return { error };
+    if (data?.is_nsfw && !includeNsfw) return { hidden: true };
+    return { asset: data };
+  }
+
+  let query = supabase.from('model_assets').select('*').eq('status', 'published').order('created_at', { ascending: false }).limit(120);
+  if (!includeNsfw) query = query.eq('is_nsfw', false);
+  if (type) query = query.eq('asset_type', type);
+  const { data, error } = await query;
+  if (error) return { error };
+  return { assets: (data || []).filter(asset => matchesSearch(asset, q)) };
+}
+
+async function readFromLocal(searchParams: URLSearchParams) {
   const includeNsfw = searchParams.get('nsfw') === 'true';
   const q = (searchParams.get('q') || '').toLowerCase().trim();
   const type = searchParams.get('type') || '';
@@ -74,18 +113,34 @@ export async function GET(request: NextRequest) {
   const allAssets = await readAssets();
   if (id) {
     const asset = allAssets.find(row => row.id === id && row.status === 'published');
-    if (!asset) return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
-    if (asset.is_nsfw && !includeNsfw) return NextResponse.json({ error: 'NSFW asset hidden' }, { status: 403 });
-    return NextResponse.json({ ok: true, asset });
+    if (!asset) return { notFound: true };
+    if (asset.is_nsfw && !includeNsfw) return { hidden: true };
+    return { asset };
   }
-  const assets = allAssets
+  const assets = sortRecent(allAssets)
     .filter(asset => asset.status === 'published')
     .filter(asset => includeNsfw || !asset.is_nsfw)
     .filter(asset => !type || asset.asset_type === type)
-    .filter(asset => !q || [asset.name, asset.description, asset.base_model, asset.asset_type, ...asset.tags, ...asset.trigger_words].filter(Boolean).join(' ').toLowerCase().includes(q))
-    .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
+    .filter(asset => matchesSearch(asset, q))
     .slice(0, 120);
-  return NextResponse.json({ ok: true, assets });
+  return { assets };
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const fromDb = await readFromSupabase(searchParams);
+  if (!fromDb.error) {
+    if (fromDb.hidden) return NextResponse.json({ error: 'NSFW asset hidden' }, { status: 403 });
+    if (fromDb.asset) return NextResponse.json({ ok: true, asset: fromDb.asset, storage: 'supabase' });
+    return NextResponse.json({ ok: true, assets: fromDb.assets || [], storage: 'supabase' });
+  }
+  if (!isMissingTable(fromDb.error)) return NextResponse.json({ error: fromDb.error.message }, { status: 500 });
+
+  const local = await readFromLocal(searchParams);
+  if (local.notFound) return NextResponse.json({ error: 'Asset not found' }, { status: 404 });
+  if (local.hidden) return NextResponse.json({ error: 'NSFW asset hidden' }, { status: 403 });
+  if (local.asset) return NextResponse.json({ ok: true, asset: local.asset, storage: 'local_jsonl_missing_table' });
+  return NextResponse.json({ ok: true, assets: local.assets || [], storage: 'local_jsonl_missing_table' });
 }
 
 export async function POST(request: NextRequest) {
@@ -119,7 +174,13 @@ export async function POST(request: NextRequest) {
     status: 'published',
     created_at: new Date().toISOString(),
   };
+
+  const supabase = getServerSupabase();
+  const { data, error: insertError } = await supabase.from('model_assets').insert(record).select('*').single();
+  if (!insertError) return NextResponse.json({ ok: true, asset: data, storage: 'supabase' });
+  if (!isMissingTable(insertError)) return NextResponse.json({ error: insertError.message }, { status: 500 });
+
   await mkdir(ASSETS_DIR, { recursive: true });
   await appendFile(ASSETS_FILE, JSON.stringify(record) + '\n', 'utf8');
-  return NextResponse.json({ ok: true, asset: record });
+  return NextResponse.json({ ok: true, asset: record, storage: 'local_jsonl_missing_table' });
 }

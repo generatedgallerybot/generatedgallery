@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { readFile } from 'fs/promises';
+import path from 'path';
 import { requireAdmin } from '@/lib/admin-auth';
 import { getServerSupabase } from '@/lib/server-db';
 import { isMissingGenerationSchema, listAllLocalGenerationJobs, listLocalLedgerEntries } from '@/lib/local-generation-store';
@@ -7,6 +9,16 @@ export const dynamic = 'force-dynamic';
 
 function sumCredits(entries: any[]) {
   return entries.reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+}
+
+function isMissingSocialTable(error: any, table: string) {
+  const msg = String(error?.message || error || '');
+  return msg.includes(table) && (msg.includes('schema cache') || msg.includes('does not exist'));
+}
+
+async function readJsonl(file: string) {
+  try { return (await readFile(file, 'utf8')).split('\n').filter(Boolean).map(line => JSON.parse(line)); }
+  catch { return []; }
 }
 
 export async function GET(request: Request) {
@@ -21,6 +33,9 @@ export async function GET(request: Request) {
   let funnelEvents: any[] = [];
   let funnelSummary: Record<string, number> = {};
   let outputs: any[] = [];
+  let comments: any[] = [];
+  let modelAssets: any[] = [];
+  let socialStorage: 'supabase' | 'local_fallback' = 'supabase';
 
   const [jobsResult, ledgerResult, outputsResult] = await Promise.all([
     supabase.from('generation_jobs').select('*').order('created_at', { ascending: false }).limit(100),
@@ -70,6 +85,22 @@ export async function GET(request: Request) {
     return acc;
   }, {});
 
+  const [commentsResult, assetsResult] = await Promise.all([
+    supabase.from('comments').select('*').order('created_at', { ascending: false }).limit(80),
+    supabase.from('model_assets').select('*').order('created_at', { ascending: false }).limit(80),
+  ]);
+  if (commentsResult.error || assetsResult.error) {
+    if (!isMissingSocialTable(commentsResult.error, 'comments') && !isMissingSocialTable(assetsResult.error, 'model_assets')) {
+      return NextResponse.json({ error: (commentsResult.error || assetsResult.error)?.message || 'Could not load moderation data' }, { status: 500 });
+    }
+    socialStorage = 'local_fallback';
+    comments = (await readJsonl(path.join(process.cwd(), '.cache', 'comments', 'comments.jsonl'))).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).slice(0, 80);
+    modelAssets = (await readJsonl(path.join(process.cwd(), '.cache', 'model-assets', 'assets.jsonl'))).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).slice(0, 80);
+  } else {
+    comments = commentsResult.data || [];
+    modelAssets = assetsResult.data || [];
+  }
+
   const { data: usersData } = await supabase.auth.admin.listUsers({ page: 1, perPage: 100 }).catch(() => ({ data: null } as any));
 
   const users = usersData?.users || [];
@@ -85,9 +116,12 @@ export async function GET(request: Request) {
   return NextResponse.json({
     ok: true,
     storage,
+    socialStorage,
     totals,
     jobs,
     outputs,
+    comments,
+    modelAssets,
     ledger,
     users: users.map((user: any) => ({
       id: user.id,
