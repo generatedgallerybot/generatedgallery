@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/daily`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.85 },
     { url: `${baseUrl}/machine-dream-finds`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.86 },
     { url: `${baseUrl}/galleries`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.82 },
+    { url: `${baseUrl}/models`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.86 },
     { url: `${baseUrl}/upload`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
     { url: `${baseUrl}/llms.txt`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${baseUrl}/llms-full.txt`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.65 },

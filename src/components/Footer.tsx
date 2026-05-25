@@ -30,7 +30,7 @@ export function Footer() {
               <a href="/" className="text-[13px] text-white/50 hover:text-white/80 transition-colors">Browse AI images</a>
               <a href="/ai-art-gallery" className="text-[13px] text-white/50 hover:text-white/80 transition-colors">Free AI art gallery</a>
               <a href="/ai-image-prompts" className="text-[13px] text-white/50 hover:text-white/80 transition-colors">AI image prompts</a>
-              <a href="/upload" className="text-[13px] text-white/50 hover:text-white/80 transition-colors">Model asset board</a>
+              <a href="/models" className="text-[13px] text-white/50 hover:text-white/80 transition-colors">Model asset board</a>
               <a href="/profile" className="text-[13px] text-white/50 hover:text-white/80 transition-colors">Creator profile</a>
               <a href="/search/free-ai-art" className="text-[13px] text-white/50 hover:text-white/80 transition-colors">Free AI art</a>
               <a href="/search/stable-diffusion-prompts" className="text-[13px] text-white/50 hover:text-white/80 transition-colors">Stable Diffusion prompts</a>

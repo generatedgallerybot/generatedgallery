@@ -8,7 +8,7 @@ import { isAdminEmail } from '@/lib/admins';
 
 const primaryLinks = [
   { href: '/', label: 'Explore' },
-  { href: '/upload', label: 'Models' },
+  { href: '/models', label: 'Models' },
   { href: '/galleries', label: 'Galleries' },
   { href: '/ai-image-dataset', label: 'Dataset' },
 ];
